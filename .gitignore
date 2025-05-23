@@ -1,0 +1,8 @@
+Client/BoardGame/Library/
+**/bin/
+**/obj/Debug/*
+Share/.vs/
+**/GameServer/obj/*
+**/.vs/*
+Client/BoardGame/Temp/
+Client/BoardGame/Logs/
