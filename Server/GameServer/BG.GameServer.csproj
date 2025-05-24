@@ -21,7 +21,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Share\DataContainer\DataContainer.csproj" />
     <ProjectReference Include="..\..\Share\Protocol.GSAndClient\Protocol.GSAndClient.csproj" />
   </ItemGroup>
   
