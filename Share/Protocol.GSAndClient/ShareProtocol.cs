@@ -7,4 +7,11 @@
 
         Max,
     }
+    public enum GameType
+    {
+        WallGo,
+
+        Max,
+    }
+
 }

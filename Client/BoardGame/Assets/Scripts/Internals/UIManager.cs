@@ -1,7 +1,10 @@
+using Assets.Scripts.Extensions;
+using Assets.Scripts.Scene.Common;
 using Dignus.Unity;
 using Dignus.Unity.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -63,12 +66,12 @@ namespace Assets.Scripts.Internals
             popupCanvasScaler.referenceResolution = ApplicationManager.Instance.GetTargetResolution();
             popupCanvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Shrink;
 
-            //var dimPrefab = DignusUnityResourceManager.Instance.LoadAsset<GameObject>(Path.Combine(Consts.Path.Common, "Dim"));
+            var dimPrefab = DignusUnityResourceManager.Instance.LoadAsset<GameObject>(Path.Combine(Consts.Path.Common, "Dim"));
 
-            //var dimTransform = this.InstantiateWithPool<RectTransform>(dimPrefab);
-            //dimTransform.SetParent(_uiPopupCanvas.transform, false);
-            //_popupDim = dimTransform.gameObject;
-            //_popupDim.SetActive(false);
+            var dimTransform = this.InstantiateWithPool<RectTransform>(dimPrefab);
+            dimTransform.SetParent(_uiPopupCanvas.transform, false);
+            _popupDim = dimTransform.gameObject;
+            _popupDim.SetActive(false);
 
             var eventSystem = gameObject.AddComponent<EventSystem>();
             eventSystem.firstSelectedGameObject = _uiCanvas;
@@ -78,8 +81,8 @@ namespace Assets.Scripts.Internals
         }
         public void ShowAlert(string title, string body, Action onConfirmCallback = null)
         {
-            //var alert = AddPopupUI<AlertPopup>();
-            //alert.Init(AlertPopupType.Alert, title, body, onConfirmCallback);
+            var alert = AddPopupUI<AlertPopup>();
+            alert.Init(AlertPopupType.Alert, title, body, onConfirmCallback);
         }
         public T AddPopupUI<T>() where T : UiItem
         {

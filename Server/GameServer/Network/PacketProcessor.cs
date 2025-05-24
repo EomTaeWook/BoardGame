@@ -1,5 +1,6 @@
 ﻿using BG.GameServer.Network.Handlers;
 using Dignus.Collections;
+using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
 using Dignus.Sockets;
 using Dignus.Sockets.Interfaces;
@@ -9,13 +10,14 @@ using System.Text;
 
 namespace BG.GameServer.Network
 {
+    [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
     internal class PacketProcessor(CGProtocolHandler cgProtocolHandler,
         WallGoCommandHandler wallGoCommandHandler) : SessionPacketProcessorBase, IPacketSerializer, ISessionComponent
     {
         protected const int SizeToInt = sizeof(int);
         protected const int ProtocolSize = sizeof(ushort);
         protected const int CategorySize = sizeof(ushort);
-        protected const int TotalHeaderSize = sizeof(ushort);
+        protected const int TotalHeaderSize = CategorySize + ProtocolSize;
 
         public CGProtocolHandler CGProtocolHandler { get => cgProtocolHandler; }
         public WallGoCommandHandler WallGoCommandHandler { get => wallGoCommandHandler; }

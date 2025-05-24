@@ -1,7 +1,9 @@
 ﻿using BG.GameServer.Network;
 using BG.GameServer.Network.Handlers;
+using BG.GameServer.ServerContents;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.DependencyInjection.Extensions;
+using Dignus.Log;
 using Dignus.Sockets;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
@@ -31,11 +33,17 @@ namespace BG.GameServer.Internals
         private Tuple<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>> MakeSerializersFunc()
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
+            RobbyManager robbyManager = _serviceProvider.GetService<RobbyManager>();
 
             return Tuple.Create<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>>(
                 packetProcessor,
                 packetProcessor,
-                [packetProcessor, packetProcessor.CGProtocolHandler, packetProcessor.WallGoCommandHandler]);
+                [
+                    packetProcessor,
+                    packetProcessor.CGProtocolHandler,
+                    packetProcessor.WallGoCommandHandler,
+                    robbyManager
+                ]);
         }
     }
 
@@ -43,7 +51,7 @@ namespace BG.GameServer.Internals
     {
         protected override void OnAccepted(ISession session)
         {
-
+            LogHelper.Debug($"accepted session : {session.Id}");
         }
 
         protected override void OnDisconnected(ISession session)

@@ -16,8 +16,8 @@ namespace Assets.Scripts.Internals
 {
     public class ApplicationManager : SingletonMonoBehaviour<ApplicationManager>
     {
-        public int TargetWidth { get; private set; } = 1080;
-        public int TargetHeight { get; private set; } = 1920;
+        public int TargetWidth { get; private set; } = 768;
+        public int TargetHeight { get; private set; } = 1280;
 
         public int DeviceWidth { get; set; }
         public int DeviceHeight { get; set; }

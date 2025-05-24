@@ -1,0 +1,69 @@
+using Assets.Scripts.Internals;
+using Assets.Scripts.Network;
+using Assets.Scripts.Service;
+using Dignus.DependencyInjection.Attributes;
+using Dignus.Unity.Framework;
+using Protocol.GSAndClient;
+
+namespace Assets.Scripts.Scene.Title
+{
+    [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
+    public class TitleSceneController : SceneControllerBase<TitleScene>
+    {
+        private readonly UserService _userService;
+        private readonly GameClientService _gameClientService;
+        public TitleSceneController(UserService userService,
+            GameClientService gameClientService)
+        {
+            _userService = userService;
+            _gameClientService = gameClientService;
+        }
+
+        public void Init()
+        {
+            if (_userService.Load() == false)
+            {
+                Scene.ShowCreateAccountUI();
+                return;
+            }
+
+            ProcessLogin();
+        }
+
+        private void ProcessLogin()
+        {
+            if (Scene.GetBuildTargetType() == Internals.BuildTaretType.Dev)
+            {
+                _gameClientService.Connect("127.0.0.1", 20000);
+            }
+
+            if (_gameClientService.IsConnect() == false)
+            {
+                UIManager.Instance.ShowAlert("Alert", "failed to connect game server");
+                return;
+            }
+
+            var userModel = _userService.GetUserModel();
+
+            _gameClientService.Send(Packet.MakePacket(Protocol.GSAndClient.CGSProtocol.Login, new Login()
+            {
+                AccountId = userModel.AccountId,
+                Nickname = userModel.Nickname
+            }));
+        }
+        public void CreateAccount(string nickname)
+        {
+            var accountId = _userService.CreateAccountId();
+
+            _userService.SetUserModel(new UserModel()
+            {
+                AccountId = accountId,
+                Nickname = nickname
+            });
+            _userService.SaveData();
+        }
+        public override void Dispose()
+        {
+        }
+    }
+}

@@ -21,4 +21,8 @@
     {
         public long RoomNumber { get; set; }
     }
+    public class LobbyRoomList
+    {
+        public int PageIndex { get; set; }
+    }
 }

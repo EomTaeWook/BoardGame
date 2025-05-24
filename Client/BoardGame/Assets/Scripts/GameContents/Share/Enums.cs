@@ -8,10 +8,5 @@ namespace Assets.Scripts.GameContents.Share
         Right
     }
 
-    public enum GameType
-    {
-        WallGo,
 
-        Max,
-    }
 }

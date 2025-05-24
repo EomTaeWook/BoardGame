@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.GameContents.Share;
-using BG.GameServer.Network;
+﻿using BG.GameServer.Network;
 using Dignus.DependencyInjection.Attributes;
+using Dignus.Sockets.Interfaces;
+using Protocol.GSAndClient;
 using System.Collections.Concurrent;
 
 namespace BG.GameServer.ServerContents
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Singleton)]
-    internal class RobbyManager(IServiceProvider serviceProvider)
+    internal class RobbyManager(IServiceProvider serviceProvider) : ISessionComponent
     {
         private readonly ConcurrentDictionary<string, Player> _players = new();
         private readonly ConcurrentDictionary<long, RoomBase> _rooms = new();
@@ -59,6 +60,14 @@ namespace BG.GameServer.ServerContents
         public bool TryGetGameRoom(long roomNumber, out RoomBase room)
         {
             return _rooms.TryGetValue(roomNumber, out room);
+        }
+
+        void ISessionComponent.SetSession(ISession session)
+        {
+        }
+
+        void ISessionComponent.Dispose()
+        {
         }
     }
 }

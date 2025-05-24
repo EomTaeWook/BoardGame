@@ -3,7 +3,9 @@ namespace Assets.Scripts.Internals
     public enum SceneType
     {
         TitleScene,
+        LobbyScene,
 
+        WallGoScene,
     }
 
     public enum BuildTaretType

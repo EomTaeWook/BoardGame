@@ -1,4 +1,7 @@
-﻿namespace Protocol.GSAndClient
+﻿using Protocol.GSAndClient.Models;
+using System.Collections.Generic;
+
+namespace Protocol.GSAndClient
 {
     public class Ping
     {
@@ -23,5 +26,10 @@
         public bool Ok { get; set; }
 
         public long RoomNumber { get; set; }
+    }
+
+    public class LobbyRoomListResponse
+    {
+        public List<RoomInfo> RoomInfos { get; set; }
     }
 }
