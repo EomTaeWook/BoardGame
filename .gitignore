@@ -6,3 +6,6 @@ Share/.vs/
 **/.vs/*
 Client/BoardGame/Temp/
 Client/BoardGame/Logs/
+**/Properties/*
+**/Layouts/*
+**/UserSettings/*

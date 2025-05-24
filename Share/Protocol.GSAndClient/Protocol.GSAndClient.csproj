@@ -41,9 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ShareProtocol.cs" />
+    <Compile Include="GSCProtocol.cs" />
+    <Compile Include="CGSProtocol.cs" />
     <Compile Include="GSCProtocolModel.cs" />
     <Compile Include="CGSProtocolModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /s/y $(TargetPath) $(ProjectDir)\..\..\Client\BoardGame\Assets\\Plugins\\$(ConfigurationName)\\$(TargetName).*</PostBuildEvent>
+  </PropertyGroup>
 </Project>
