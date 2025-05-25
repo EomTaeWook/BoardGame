@@ -53,18 +53,19 @@ namespace BG.GameServer.Network
 
             if (packetCategory == PacketCategory.Lobby)
             {
-                int protocol = BitConverter.ToInt16(packet.Array, CategorySize);
+                int protocol = BitConverter.ToInt16(packet.Array, packet.Offset + CategorySize);
                 if (ProtocolHandlerMapper.ValidateProtocol<CGProtocolHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return;
                 }
+
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
                 ProtocolHandlerMapper.DispatchToHandler(cgProtocolHandler, protocol, body);
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
-                int protocol = BitConverter.ToInt16(packet.Array, CategorySize);
+                int protocol = BitConverter.ToInt16(packet.Array, packet.Offset + CategorySize);
 
                 if (ProtocolHandlerMapper.ValidateProtocol<WallGoCommandHandler>(protocol) == false)
                 {

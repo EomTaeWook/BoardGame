@@ -14,12 +14,13 @@ namespace Protocol.GSAndClient
 
     public class LeaveRoomResponse
     {
-        public string AccountId { get; set; }
+        public List<PlayerModel> Members { get; set; }
     }
     public class JoinRoomResponse
     {
         public bool Ok { get; set; }
-        public string AccountId { get; set; }
+
+        public List<PlayerModel> Members { get; set; }
     }
     public class CreateRoomResponse
     {

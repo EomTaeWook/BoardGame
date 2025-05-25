@@ -1,3 +1,4 @@
+using Assets.Scripts.GameContents.Share;
 using Dignus.Collections;
 using System;
 
@@ -5,7 +6,6 @@ namespace Assets.Scripts.GameContents.WallGo
 {
     public class WallGoPlayer : IPlayer
     {
-        public enum StateType { SpawnPiece, SpawnPiece1, MovePeice, PlaceWall }
         public string AccountId { get; set; }
 
         public string Nickname { get; set; }

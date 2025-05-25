@@ -13,7 +13,7 @@ namespace Assets.Scripts.Extensions
             var newCompleteCallback = new Action<SceneBase>((sceneBase) =>
             {
                 var scene = sceneBase as T;
-                completeCallback(scene);
+                completeCallback?.Invoke(scene);
             });
             sceneManager.LoadScene(sceneType.ToString(), newCompleteCallback);
         }

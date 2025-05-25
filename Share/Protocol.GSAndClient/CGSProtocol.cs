@@ -5,7 +5,8 @@ namespace Protocol.GSAndClient
         Login,
         LeaveRoom,
         JoinRoom,
-        LobbyRoomList,
+        CreateRoom,
+        StartGameRoom,
 
         Max
     }

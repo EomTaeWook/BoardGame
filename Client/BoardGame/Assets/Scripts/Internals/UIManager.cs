@@ -1,5 +1,5 @@
 using Assets.Scripts.Extensions;
-using Assets.Scripts.Scene.Common;
+using Assets.Scripts.Internals.UI;
 using Dignus.Unity;
 using Dignus.Unity.Extensions;
 using System;
@@ -83,6 +83,29 @@ namespace Assets.Scripts.Internals
         {
             var alert = AddPopupUI<AlertPopup>();
             alert.Init(AlertPopupType.Alert, title, body, onConfirmCallback);
+        }
+        public void ShowToastAlert(string body, float duration)
+        {
+            var toastMessage = AddPopupUI<ToastMessage>();
+            toastMessage.Init(body, duration);
+            toastMessage.Show();
+        }
+        public T AddUI<T>() where T : UiItem
+        {
+            var prefab = DignusUnityResourceManager.Instance.LoadAsset<T>();
+            var item = DignusUnityObjectPool.Instance.Pop<UiItem>(prefab);
+            _uiContainer.Add(item);
+            item.transform.SetParent(_uiCanvas.transform, false);
+            item.gameObject.SetActive(true);
+            return item.GetComponent<T>();
+        }
+        public UiItem AddUI(UiItem prefab)
+        {
+            var item = DignusUnityObjectPool.Instance.Pop<UiItem>(prefab);
+            _uiContainer.Add(item);
+            item.transform.SetParent(_uiCanvas.transform, false);
+            item.gameObject.SetActive(true);
+            return item;
         }
         public T AddPopupUI<T>() where T : UiItem
         {

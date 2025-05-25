@@ -62,6 +62,11 @@ namespace BG.GameServer.ServerContents
             return _rooms.TryGetValue(roomNumber, out room);
         }
 
+        public bool RemoveRoom(long roomNumber)
+        {
+            return _rooms.TryRemove(roomNumber, out var _);
+        }
+
         void ISessionComponent.SetSession(ISession session)
         {
         }

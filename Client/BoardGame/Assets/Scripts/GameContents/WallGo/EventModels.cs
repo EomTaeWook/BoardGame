@@ -8,6 +8,7 @@ namespace Assets.Scripts.GameContents.WallGo
     }
     public class EndGame : IWallGoEvent
     {
+        public string AccountId { get; set; }
     }
     public class StartTurn : IWallGoEvent
     {
@@ -17,7 +18,7 @@ namespace Assets.Scripts.GameContents.WallGo
     {
         public string AccountId { get; set; }
 
-        public WallGoPlayer.StateType UpdateStateType { get; set; }
+        public StateType UpdateStateType { get; set; }
     }
     public class SpawnPiece : IWallGoEvent
     {

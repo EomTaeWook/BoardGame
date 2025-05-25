@@ -61,7 +61,7 @@ namespace Assets.Scripts.Network
 
             if (packetCategory == PacketCategory.Lobby)
             {
-                int protocol = BitConverter.ToInt16(packet.Array, CategorySize);
+                int protocol = BitConverter.ToInt16(packet.Array, packet.Offset + CategorySize);
                 if (ProtocolHandlerMapper.ValidateProtocol<GSCProtocolHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
@@ -72,7 +72,7 @@ namespace Assets.Scripts.Network
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
-                int protocol = BitConverter.ToInt16(packet.Array, CategorySize);
+                int protocol = BitConverter.ToInt16(packet.Array, packet.Offset + CategorySize);
 
                 if (ProtocolHandlerMapper.ValidateProtocol<WallGoCommandHandler>(protocol) == false)
                 {

@@ -135,8 +135,8 @@ namespace Assets.Scripts.GameContents.WallGo
             {
                 if (IsTurnTimeout(_currentPlayer) == true)
                 {
-                    if (_currentPlayer.State == WallGoPlayer.StateType.SpawnPiece ||
-                        _currentPlayer.State == WallGoPlayer.StateType.SpawnPiece1)
+                    if (_currentPlayer.State == StateType.SpawnPiece ||
+                        _currentPlayer.State == StateType.SpawnPiece1)
                     {
                         TryForceSpawn();
                         var currentState = _currentPlayer.State;
@@ -147,15 +147,15 @@ namespace Assets.Scripts.GameContents.WallGo
                         _currentPlayer = _turnQueue.Peek();
                         StartTurn(_currentPlayer);
                     }
-                    else if (_currentPlayer.State == WallGoPlayer.StateType.MovePeice ||
-                        _currentPlayer.State == WallGoPlayer.StateType.PlaceWall)
+                    else if (_currentPlayer.State == StateType.MovePeice ||
+                        _currentPlayer.State == StateType.PlaceWall)
                     {
-                        _currentPlayer.ChangeState(WallGoPlayer.StateType.PlaceWall);
+                        _currentPlayer.ChangeState(StateType.PlaceWall);
 
                         //EndTurn 까지 호출실패
                         if (TryForcePlaceWall() == false)
                         {
-                            _currentPlayer.ChangeState(WallGoPlayer.StateType.MovePeice);
+                            _currentPlayer.ChangeState(StateType.MovePeice);
                             _wallGoEventHandler.Process(new ChangeState
                             {
                                 AccountId = _currentPlayer.AccountId,
@@ -170,7 +170,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 yield return null;
             }
         }
-        private void ChangeState(WallGoPlayer wallGoPlayer, WallGoPlayer.StateType changeState)
+        private void ChangeState(WallGoPlayer wallGoPlayer, StateType changeState)
         {
             wallGoPlayer.ChangeState(changeState);
             _wallGoEventHandler.Process(new ChangeState
@@ -260,8 +260,8 @@ namespace Assets.Scripts.GameContents.WallGo
                 LogHelper.Error($"not player turn. expected: {_currentPlayer.AccountId}");
                 return false;
             }
-            if (_currentPlayer.State == WallGoPlayer.StateType.MovePeice ||
-                _currentPlayer.State == WallGoPlayer.StateType.PlaceWall)
+            if (_currentPlayer.State == StateType.MovePeice ||
+                _currentPlayer.State == StateType.PlaceWall)
             {
                 LogHelper.Error("cannot spawn piece. current state: " + _currentPlayer.State);
                 return false;
@@ -337,7 +337,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
-            if (_currentPlayer.State != WallGoPlayer.StateType.PlaceWall)
+            if (_currentPlayer.State != StateType.PlaceWall)
             {
                 LogHelper.Error("cannot place wall. current state: " + _currentPlayer.State);
                 return false;
@@ -367,7 +367,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 Direction = direction,
             });
 
-            ChangeState(_currentPlayer, WallGoPlayer.StateType.MovePeice);
+            ChangeState(_currentPlayer, StateType.MovePeice);
 
             EndTurn();
 
@@ -485,7 +485,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
-            if (_currentPlayer.State != WallGoPlayer.StateType.MovePeice)
+            if (_currentPlayer.State != StateType.MovePeice)
             {
                 LogHelper.Error($"current state is not MovePiece. currnet: {_currentPlayer.State}");
                 return false;
@@ -535,7 +535,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
             if (_currentPlayer.MovePieceCount == 0)
             {
-                ChangeState(_currentPlayer, WallGoPlayer.StateType.PlaceWall);
+                ChangeState(_currentPlayer, StateType.PlaceWall);
             }
 
             return true;

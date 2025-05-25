@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\RoomInfo.cs" />
     <Compile Include="ShareProtocol.cs" />
     <Compile Include="GSCProtocol.cs" />

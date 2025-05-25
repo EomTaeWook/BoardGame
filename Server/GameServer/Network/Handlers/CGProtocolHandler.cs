@@ -1,8 +1,9 @@
-﻿using Assets.Scripts.GameContents.Share;
-using BG.GameServer.ServerContents;
+﻿using BG.GameServer.ServerContents;
 using Dignus.DependencyInjection.Attributes;
+using Dignus.Log;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
+using Protocol.GSAndClient.Models;
 using System.Text.Json;
 
 namespace BG.GameServer.Network.Handlers
@@ -24,17 +25,25 @@ namespace BG.GameServer.Network.Handlers
                 var room = _player.Room;
                 if (room != null)
                 {
-                    room.Leave(_player);
-
-                    room.Broadcast(Packet.MakePacket(GSCProtocol.LeaveRoomResponse, new LeaveRoomResponse()
-                    {
-                        AccountId = _player.AccountId,
-                    }));
+                    LeaveRoom(new LeaveRoom());
                 }
-
                 _robbyManager.TryRemovePlayer(_player);
             }
             _player = null;
+        }
+        public void StartGameRoom(StartGameRoom startGameRoom)
+        {
+            if (_player == null)
+            {
+                _session.Dispose();
+                return;
+            }
+
+            if (_player.Room == null)
+            {
+                _session.Dispose();
+                return;
+            }
         }
         public void CreateRoom(CreateRoom createRoom)
         {
@@ -88,10 +97,30 @@ namespace BG.GameServer.Network.Handlers
 
             if (room.Join(_player))
             {
+                var roomMembers = new List<PlayerModel>();
+
+                foreach (var member in room.Members())
+                {
+                    var isHost = room.Host == member;
+                    roomMembers.Add(new PlayerModel()
+                    {
+                        AccountId = member.AccountId,
+                        IsHost = isHost,
+                        Nickname = member.Nickname,
+                    });
+                }
+
                 room.Broadcast(Packet.MakePacket(GSCProtocol.JoinRoomResponse, new JoinRoomResponse()
                 {
                     Ok = true,
-                    AccountId = _player.AccountId,
+                    Members = roomMembers
+                }));
+            }
+            else
+            {
+                room.Broadcast(Packet.MakePacket(GSCProtocol.JoinRoomResponse, new JoinRoomResponse()
+                {
+                    Ok = false,
                 }));
             }
         }
@@ -109,16 +138,38 @@ namespace BG.GameServer.Network.Handlers
             }
 
             room.Leave(_player);
+
+            var roomMembers = new List<PlayerModel>();
+
+            foreach (var member in room.Members())
+            {
+                var isHost = room.Host == member;
+                roomMembers.Add(new PlayerModel()
+                {
+                    AccountId = member.AccountId,
+                    IsHost = isHost,
+                    Nickname = member.Nickname,
+                });
+            }
+
             room.Broadcast(Packet.MakePacket(GSCProtocol.LeaveRoomResponse, new LeaveRoomResponse()
             {
-                AccountId = _player.AccountId,
+                Members = roomMembers
             }));
+
+            _player.SetRoom(null);
+
+            if (room.IsEmpty())
+            {
+                _robbyManager.RemoveRoom(room.RoomNumber);
+            }
         }
 
         public void Login(Login login)
         {
             if (string.IsNullOrEmpty(login.AccountId))
             {
+                LogHelper.Error($"account Id is empty");
                 _session.Dispose();
                 return;
             }

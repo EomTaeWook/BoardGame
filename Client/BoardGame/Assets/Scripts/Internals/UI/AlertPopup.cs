@@ -1,11 +1,10 @@
-using Assets.Scripts.Internals;
 using Dignus.Unity.Attributes;
 using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Scene.Common
+namespace Assets.Scripts.Internals.UI
 {
     public enum AlertPopupType
     {
@@ -31,8 +30,6 @@ namespace Assets.Scripts.Scene.Common
         private Button _confirmButton;
         [SerializeField]
         private Button _cancelButton;
-        [SerializeField]
-        private Sprite[] _actionPopupBackgrounds;
 
         private Action _confrimCallback;
         private Action _cancelCallback;

@@ -21,8 +21,7 @@
     {
         public long RoomNumber { get; set; }
     }
-    public class LobbyRoomList
+    public class StartGameRoom
     {
-        public int PageIndex { get; set; }
     }
 }

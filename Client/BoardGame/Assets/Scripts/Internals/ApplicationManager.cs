@@ -6,6 +6,7 @@ using Dignus.Log.LogTarget;
 using Dignus.Log.Model;
 using Dignus.Log.Rule;
 using Dignus.Unity;
+using Dignus.Unity.Coroutine;
 using Dignus.Unity.DependencyInjection;
 using System;
 using System.IO;
@@ -51,6 +52,8 @@ namespace Assets.Scripts.Internals
                 DignusUnitySceneManager.Instance.OnSceneLoadCompleted += OnSceneLoadCompleted;
 
                 var _ = UIManager.Instance;
+
+                DignusUnityCoroutineManager.Start(UnityMainThread.ExecutePending());
             }
         }
         private void InitResolution()

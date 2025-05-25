@@ -31,20 +31,32 @@ namespace Assets.Scripts.Network.Handlers
 
         public void LoginResponse(LoginResponse loginResponse)
         {
-            if (loginResponse.Ok == false)
+            UnityMainThread.Run(() =>
             {
-                UIManager.Instance.ShowAlert("Alert", "failed to login");
-                DignusUnitySceneManager.Instance.LoadScene<TitleScene>(SceneType.TitleScene);
-                return;
-            }
-
-            DignusUnitySceneManager.Instance.LoadScene<LobbyScene>(SceneType.LobbyScene);
+                if (loginResponse.Ok == false)
+                {
+                    UIManager.Instance.ShowAlert("Alert", "failed to login");
+                    DignusUnitySceneManager.Instance.LoadScene<TitleScene>(SceneType.TitleScene);
+                    return;
+                }
+                DignusUnitySceneManager.Instance.LoadScene<LobbyScene>(SceneType.LobbyScene);
+            });
         }
+        public void JoinRoomResponse(JoinRoomResponse joinRoom)
+        {
+            UnityMainThread.Run(() =>
+            {
+                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
 
+
+            });
+        }
         public void LobbyRoomListResponse(LobbyRoomListResponse lobbyRoomListResponse)
         {
-            var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
-            controller.SetRoomInfos(lobbyRoomListResponse.RoomInfos);
+            UnityMainThread.Run(() =>
+            {
+                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+            });
         }
     }
 }

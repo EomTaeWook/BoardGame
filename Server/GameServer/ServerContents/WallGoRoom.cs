@@ -10,13 +10,14 @@ namespace BG.GameServer.ServerContents
     {
         private WallGoBoard _wallGoBoard;
         private WallGoEventHandler _wallGoEventHandler;
-        public WallGoRoom(long roomNumber, IServiceProvider serviceProvider) : base(roomNumber)
+        public WallGoRoom(long roomNumber, IServiceProvider serviceProvider) : base(roomNumber, 4)
         {
             _wallGoEventHandler = new WallGoEventHandler();
             _wallGoBoard = new WallGoBoard(_wallGoEventHandler);
 
             RegisterEventHandlers();
         }
+
         public void Start()
         {
             _wallGoBoard.StartGame();
