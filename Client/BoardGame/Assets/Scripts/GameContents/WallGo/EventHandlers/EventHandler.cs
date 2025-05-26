@@ -11,5 +11,6 @@ namespace Assets.Scripts.GameContents.WallGo.EventHandler
         public void Process(SpawnPiece evt);
         public void Process(MovePiece evt);
         public void Process(PlaceWall evt);
+        public void Process(RemoveWall evt);
     }
 }

@@ -9,7 +9,6 @@ namespace Assets.Scripts.Scene.WallGo
 {
     public class BoardGo : MonoBehaviour
     {
-
         private readonly ArrayQueue<TileGo> _tiles = new();
         private void Awake()
         {

@@ -34,6 +34,7 @@ namespace BG.GameServer.Internals
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
             RobbyManager robbyManager = _serviceProvider.GetService<RobbyManager>();
+            HeartBeat heartBeat = _serviceProvider.GetService<HeartBeat>();
 
             return Tuple.Create<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>>(
                 packetProcessor,
@@ -42,7 +43,8 @@ namespace BG.GameServer.Internals
                     packetProcessor,
                     packetProcessor.CGProtocolHandler,
                     packetProcessor.WallGoCommandHandler,
-                    robbyManager
+                    robbyManager,
+                    heartBeat
                 ]);
         }
     }
@@ -56,7 +58,7 @@ namespace BG.GameServer.Internals
 
         protected override void OnDisconnected(ISession session)
         {
-
+            LogHelper.Debug($"disconnect session : {session.Id}");
         }
     }
 }

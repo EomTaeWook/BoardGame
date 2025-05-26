@@ -595,6 +595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InjectedComponents:
   - {fileID: 1187084639}
+  - {fileID: 221020091}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using BG.GameServer.Internals;
 using BG.GameServer.Models;
+using BG.GameServer.Network;
 using Dignus.DependencyInjection;
 using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
@@ -34,6 +35,8 @@ namespace BG.GameServer
             var serviceContainer = new ServiceContainer();
 
             serviceContainer.RegisterDependencies(Assembly.GetExecutingAssembly());
+
+            serviceContainer.RegisterType<HeartBeat, HeartBeat>();
 
             LoadConfig(serviceContainer);
 

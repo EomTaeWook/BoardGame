@@ -8,6 +8,8 @@ namespace Protocol.GSAndClient
         CreateRoom,
         StartGameRoom,
 
+        Pong,
+
         Max
     }
     public enum WallGoCommandProtocol : ushort
@@ -15,6 +17,7 @@ namespace Protocol.GSAndClient
         PlaceWall,
         MovePiece,
         SpawnPiece,
+        RemoveWall,
 
         Max
     }

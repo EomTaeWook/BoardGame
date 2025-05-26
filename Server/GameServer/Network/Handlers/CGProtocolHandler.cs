@@ -14,6 +14,7 @@ namespace BG.GameServer.Network.Handlers
         private RobbyManager _robbyManager;
         private Player _player;
         private ISession _session;
+        private HeartBeat _heartBeat;
         public T DeserializeBody<T>(string body)
         {
             return JsonSerializer.Deserialize<T>(body);
@@ -29,9 +30,16 @@ namespace BG.GameServer.Network.Handlers
                 }
                 _robbyManager.TryRemovePlayer(_player);
             }
+
+            if (_heartBeat != null)
+            {
+                _heartBeat.Dispose();
+                _heartBeat = null;
+            }
+
             _player = null;
         }
-        public void StartGameRoom(StartGameRoom startGameRoom)
+        public void StartGameRoom(StartGameRoom _)
         {
             if (_player == null)
             {
@@ -39,11 +47,24 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            if (_player.Room == null)
+            var room = _player.Room;
+
+            if (room == null)
             {
                 _session.Dispose();
                 return;
             }
+
+            if(room.Host.AccountId != _player.AccountId)
+            {
+                return;
+            }
+            var isStart = room.StartGame();
+
+            room.Broadcast(Packet.MakePacket(GSCProtocol.StartGameRoomResponse, new StartGameRoomResponse()
+            {
+                Ok = isStart
+            }));
         }
         public void CreateRoom(CreateRoom createRoom)
         {
@@ -52,8 +73,23 @@ namespace BG.GameServer.Network.Handlers
                 _session.Dispose();
                 return;
             }
+
+            var room = _player.Room;
+
+            if(room != null)
+            {
+                _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
+                    new CreateRoomResponse()
+                    {
+                        Ok = false,
+                    }));
+
+                return;
+            }
+
+
             var gameType = (GameType)createRoom.GameType;
-            if (_robbyManager.TryCreateGameRoom(gameType, out var room) == false)
+            if (_robbyManager.TryCreateGameRoom(gameType, out room) == false)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
                     new CreateRoomResponse()
@@ -99,7 +135,7 @@ namespace BG.GameServer.Network.Handlers
             {
                 var roomMembers = new List<PlayerModel>();
 
-                foreach (var member in room.Members())
+                foreach (var member in room.GetMembers())
                 {
                     var isHost = room.Host == member;
                     roomMembers.Add(new PlayerModel()
@@ -141,7 +177,7 @@ namespace BG.GameServer.Network.Handlers
 
             var roomMembers = new List<PlayerModel>();
 
-            foreach (var member in room.Members())
+            foreach (var member in room.GetMembers())
             {
                 var isHost = room.Host == member;
                 roomMembers.Add(new PlayerModel()
@@ -211,6 +247,16 @@ namespace BG.GameServer.Network.Handlers
                 {
                     _robbyManager = robbyManager;
                 }
+                else if(component is HeartBeat heartBeat)
+                {
+                    _heartBeat = heartBeat;
+                }
+            }
+
+
+            if(_heartBeat != null)
+            {
+                _= _heartBeat.SendPingAsync((ushort)GSCProtocol.Ping);
             }
         }
     }

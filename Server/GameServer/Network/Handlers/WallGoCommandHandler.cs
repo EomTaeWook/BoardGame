@@ -30,7 +30,22 @@ namespace BG.GameServer.Network.Handlers
         {
             _player = null;
         }
+        public void RemoveWall(RemoveWall removeWall)
+        {
+            if (_player == null)
+            {
+                _session.Dispose();
+                return;
+            }
 
+            if (_player.Room is not WallGoRoom wallGoRoom)
+            {
+                _session.Dispose();
+                return;
+            }
+
+            wallGoRoom.RemoveWallReqeust(_player, removeWall);
+        }
         public void PlaceWall(PlaceWall placeWall)
         {
             if (_player == null)
@@ -44,7 +59,8 @@ namespace BG.GameServer.Network.Handlers
                 _session.Dispose();
                 return;
             }
-            wallGoRoom.PlacWallReqeust(_player, placeWall);
+
+            wallGoRoom.PlaceWallReqeust(_player, placeWall);
         }
         public void MovePiece(MovePiece movePiece)
         {
@@ -53,11 +69,13 @@ namespace BG.GameServer.Network.Handlers
                 _session.Dispose();
                 return;
             }
+
             if (_player.Room is not WallGoRoom wallGoRoom)
             {
                 _session.Dispose();
                 return;
             }
+
             wallGoRoom.MovePieceReqeust(_player, movePiece);
         }
         public void SpawnPiece(SpawnPiece spawnPiece)

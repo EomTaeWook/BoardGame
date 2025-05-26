@@ -1,5 +1,6 @@
 using Assets.Scripts.Internals;
 using Assets.Scripts.Scene.Title;
+using Dignus.Unity.Attributes;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Scene.Lobby.UI
 {
+    [PrefabPath(Consts.Path.Lobby)]
     public class RoomUI : UiItem
     {
         [SerializeField]
@@ -20,7 +22,7 @@ namespace Assets.Scripts.Scene.Lobby.UI
 
         private LobbySceneController _lobbySceneController;
         private Action _onCloseCallback;
-        public void Init(LobbySceneController lobbySceneController, Action onCloseCallback)
+        public void Init(LobbySceneController lobbySceneController,int roomNumber, Action onCloseCallback)
         {
             _lobbySceneController = lobbySceneController;
             _onCloseCallback = onCloseCallback;
@@ -29,6 +31,8 @@ namespace Assets.Scripts.Scene.Lobby.UI
                 item.gameObject.SetActive(false);
             }
             _startButton.interactable = false;
+
+            _roomNumber.text = roomNumber.ToString();
         }
 
         public void RefreshUI()

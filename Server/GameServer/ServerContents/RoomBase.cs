@@ -1,4 +1,5 @@
-﻿using BG.GameServer.Network;
+﻿using Assets.Scripts.GameContents;
+using BG.GameServer.Network;
 using Dignus.Sockets.Interfaces;
 using System.Collections.Concurrent;
 
@@ -6,17 +7,26 @@ namespace BG.GameServer.ServerContents
 {
     internal abstract class RoomBase
     {
-        public long RoomNumber { get; private set; }
+        public int MinUserCount { get; private set; }
+        public int MaxUserCount { get; private set; }
+
+        public int RoomNumber { get; private set; }
         public Player Host { get => _hostPlayer; }
         protected readonly ConcurrentDictionary<string, Player> _accountIdToPlayerMap = new();
-        private readonly int _maxUserCount;
         private Player _hostPlayer;
-        public RoomBase(long roomNumber, int maxUserCount)
+
+        public abstract bool StartGame();
+
+        public RoomBase(int roomNumber, int maxUserCount) : this(roomNumber, 1, maxUserCount)
         {
-            RoomNumber = roomNumber;
-            _maxUserCount = maxUserCount;
         }
-        public ICollection<Player> Members()
+        public RoomBase(int roomNumber, int minUserCount, int maxUserCount)
+        {
+            MinUserCount = minUserCount;
+            RoomNumber = roomNumber;
+            MaxUserCount = maxUserCount;
+        }
+        public ICollection<Player> GetMembers()
         {
             return _accountIdToPlayerMap.Values;
         }
@@ -35,7 +45,7 @@ namespace BG.GameServer.ServerContents
 
         public bool IsFull()
         {
-            return _accountIdToPlayerMap.Count >= _maxUserCount;
+            return _accountIdToPlayerMap.Count >= MaxUserCount;
         }
         public bool Join(Player player)
         {

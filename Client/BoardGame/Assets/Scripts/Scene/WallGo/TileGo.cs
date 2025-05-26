@@ -9,5 +9,14 @@ namespace Assets.Scripts.Scene.WallGo
     public class TileGo : MonoBehaviour
     {
         public Tile Tile { get; set; }
+
+        [SerializeField]
+        private SpriteRenderer _topWall;
+        [SerializeField]
+        private SpriteRenderer _rightWall;
+        [SerializeField]
+        private SpriteRenderer _bottomWall;
+        [SerializeField]
+        private SpriteRenderer _leftWall;
     }
 }

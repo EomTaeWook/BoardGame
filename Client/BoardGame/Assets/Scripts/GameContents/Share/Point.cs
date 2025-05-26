@@ -2,7 +2,6 @@ using System;
 
 namespace Assets.Scripts.GameContents.Share
 {
-
     public readonly struct Point
     {
         public static readonly Point Right = new(1, 0);

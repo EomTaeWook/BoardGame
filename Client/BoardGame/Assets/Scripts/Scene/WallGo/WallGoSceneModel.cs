@@ -6,7 +6,7 @@ namespace Assets.Scripts.Scene.WallGo
 {
     public class WallGoSceneModel : ISceneModel
     {
-        public List<WallGoPlayer> Players { get; set; }
+        public Dictionary<string, WallGoPlayer> PlayersToMap { get; set; }
 
         public WallGoPlayer CurrentPlayer { get; set; }
     }

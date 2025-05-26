@@ -26,11 +26,11 @@ namespace Protocol.GSAndClient
     {
         public bool Ok { get; set; }
 
-        public long RoomNumber { get; set; }
+        public int RoomNumber { get; set; }
     }
 
-    public class LobbyRoomListResponse
+    public class StartGameRoomResponse
     {
-        public List<RoomInfo> RoomInfos { get; set; }
+        public bool Ok { get; set; }
     }
 }

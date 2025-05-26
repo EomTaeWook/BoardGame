@@ -6,6 +6,9 @@ namespace Protocol.GSAndClient
         LeaveRoomResponse,
         JoinRoomResponse,
         CreateRoomResponse,
+        StartGameRoomResponse,
+
+        Ping,
 
         Max
     }
@@ -19,6 +22,7 @@ namespace Protocol.GSAndClient
         StartGame,
         EndGame,
         StartTurn,
+        RemoveWall,
 
         Max
     }

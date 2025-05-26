@@ -1,5 +1,6 @@
 using Assets.Scripts.Internals;
 using Assets.Scripts.Network;
+using Assets.Scripts.Scene.Lobby.UI;
 using Assets.Scripts.Service;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Unity.Framework;
@@ -30,18 +31,29 @@ namespace Assets.Scripts.Scene.Title
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.CreateRoom, createRoom));
         }
-        public void JoinRoomRequest(long roomNumber)
+        public void JoinRoomRequest(int roomNumber)
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.JoinRoom, new JoinRoom()
             {
                 RoomNumber = roomNumber
             }));
+
+            Model.JoinRoomNumber = roomNumber;
         }
         public void StartGameRoomRequest()
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.StartGameRoom, new StartGameRoom()));
         }
 
+        public void CreateRoom(CreateRoomResponse createRoomResponse)
+        {
+            if (createRoomResponse.Ok == false)
+            {
+                UIManager.Instance.ShowAlert("alert", "failed to create room");
+                return;
+            }
+            Model.JoinRoomNumber = createRoomResponse.RoomNumber;
+        }
         public void JoinRoom(JoinRoomResponse joinRoomResponse)
         {
             if (joinRoomResponse.Ok == false)
@@ -50,6 +62,12 @@ namespace Assets.Scripts.Scene.Title
                 return;
             }
 
+            Scene.CreateRoomUI(Model.JoinRoomNumber);
+
+            Scene.CloseCreateRoomUI();
+
+            Scene.CloseJoinRoomUI();
+            
             Model.RoomMembers = joinRoomResponse.Members;
 
             Scene.RoomUIRefresh();

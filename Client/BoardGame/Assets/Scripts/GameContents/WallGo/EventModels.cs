@@ -1,5 +1,7 @@
 using Assets.Scripts.GameContents.Share;
 using Assets.Scripts.GameContents.WallGo.EventHandlers;
+using Protocol.GSAndClient.Models;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.GameContents.WallGo
 {
@@ -8,7 +10,7 @@ namespace Assets.Scripts.GameContents.WallGo
     }
     public class EndGame : IWallGoEvent
     {
-        public string AccountId { get; set; }
+        public List<ScoreModel> ScoreModels { get; set; } = new List<ScoreModel>();
     }
     public class StartTurn : IWallGoEvent
     {
@@ -34,6 +36,14 @@ namespace Assets.Scripts.GameContents.WallGo
     }
 
     public class PlaceWall : IWallGoEvent
+    {
+        public string AccountId { get; set; }
+
+        public Point Point { get; set; }
+        public Direction Direction { get; set; }
+    }
+
+    public class RemoveWall : IWallGoEvent
     {
         public string AccountId { get; set; }
 

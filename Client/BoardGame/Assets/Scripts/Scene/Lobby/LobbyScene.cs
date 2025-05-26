@@ -29,10 +29,14 @@ namespace Assets.Scripts.Scene.Title
             _joinRoomUI.Init(SceneController, CloseJoinRoomUI);
         }
 
-        public void CreateRoomUI()
+        public void CreateRoomUI(int roomNumber)
         {
+            if(_roomUI != null)
+            {
+                return;
+            }
             _roomUI = UIManager.Instance.AddUI<RoomUI>();
-            _roomUI.Init(SceneController, CloseRoomUI);
+            _roomUI.Init(SceneController, roomNumber, CloseRoomUI);
         }
 
         public void RoomUIRefresh()

@@ -42,20 +42,22 @@ namespace Assets.Scripts.Network.Handlers
                 DignusUnitySceneManager.Instance.LoadScene<LobbyScene>(SceneType.LobbyScene);
             });
         }
+        public void CreateRoomResponse(CreateRoomResponse createRoomResponse)
+        {
+            UnityMainThread.Run(() =>
+            {
+                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+
+                controller.CreateRoom(createRoomResponse);
+            });
+        }
         public void JoinRoomResponse(JoinRoomResponse joinRoom)
         {
             UnityMainThread.Run(() =>
             {
                 var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
 
-
-            });
-        }
-        public void LobbyRoomListResponse(LobbyRoomListResponse lobbyRoomListResponse)
-        {
-            UnityMainThread.Run(() =>
-            {
-                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                controller.JoinRoom(joinRoom);
             });
         }
     }

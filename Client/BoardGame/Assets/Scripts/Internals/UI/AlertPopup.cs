@@ -24,8 +24,7 @@ namespace Assets.Scripts.Internals.UI
         private TextMeshProUGUI _confirmButtonText;
         [SerializeField]
         private TextMeshProUGUI _cancelButtonText;
-        [SerializeField]
-        private Image _actionPopupBgImage;
+
         [SerializeField]
         private Button _confirmButton;
         [SerializeField]
@@ -41,12 +40,6 @@ namespace Assets.Scripts.Internals.UI
             Action onCancelCallback = null)
         {
             InitPopup(alertPopupType, title, body, onConfrimCallback, onCancelCallback);
-
-            var confirmText = "Confrim";
-            var cancelText = "Cancel";
-
-            _confirmButtonText.text = confirmText;
-            _cancelButtonText.text = cancelText;
         }
 
         private void InitPopup(AlertPopupType alertPopupType, string title, string body,

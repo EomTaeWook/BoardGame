@@ -6,6 +6,7 @@ using Dignus.Log;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Assets.Scripts.GameContents.WallGo
@@ -43,9 +44,13 @@ namespace Assets.Scripts.GameContents.WallGo
             }
         }
 
-        public void SetPlayers(ArrayQueue<WallGoPlayer> wallGoPlayers)
+        public void SetPlayers(ICollection<IPlayer> players)
         {
-            _players.AddRange(wallGoPlayers);
+            _players.Clear();
+            foreach (var item in players)
+            {
+                _players.Add(new WallGoPlayer(item.AccountId, item.Nickname));
+            }
         }
         public void StartGame()
         {
@@ -88,14 +93,117 @@ namespace Assets.Scripts.GameContents.WallGo
                 AccountId = wallGoPlayer.AccountId
             });
         }
+        private List<Point> FloodFill(Point start, bool[,] visited)
+        {
+            var result = new List<Point>();
+            var queue = new Queue<Point>();
+            queue.Enqueue(start);
+            visited[start.X, start.Y] = true;
+
+            var directions = new[] { Direction.Up, Direction.Down, Direction.Left, Direction.Right };
+
+            while (queue.Count > 0)
+            {
+                var curr = queue.Dequeue();
+                result.Add(curr);
+
+                foreach (var dir in directions)
+                {
+                    var next = GetNeighborPoint(curr, dir);
+
+                    if (!IsInsideBoard(next) || visited[next.X, next.Y])
+                    {
+                        continue;
+                    }
+
+                    if (IsBlocked(curr, next))
+                    {
+                        continue;
+                    }
+
+                    visited[next.X, next.Y] = true;
+                    queue.Enqueue(next);
+                }
+            }
+            return result;
+        }
         public bool IsEndGame()
         {
-            return false;
+            var visited = new bool[_tiles.GetLength(0), _tiles.GetLength(1)];
+
+            var piecePositions = new List<Point>();
+            foreach (var player in _players)
+            {
+                foreach (var piece in player.PlayerPieces)
+                {
+                    piecePositions.Add(piece.GridPosition);
+                }
+            }
+            foreach (var point in piecePositions)
+            {
+                if (visited[point.X, point.Y])
+                {
+                    continue;
+                }
+
+                var connectedPoints = FloodFill(point, visited);
+
+                var piecesInRegion = 0;
+
+                foreach (var item in piecePositions)
+                {
+                    if(connectedPoints.Contains(item))
+                    {
+                        piecesInRegion++;
+                    }
+                }
+
+                if (piecesInRegion != 1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private IEnumerable<KeyValuePair<IPlayer, int>> GetScore()
+        {
+            var visited = new bool[_tiles.GetLength(0), _tiles.GetLength(1)];
+
+            var pieces = new List<Piece>();
+            Dictionary<IPlayer, int> scores = new Dictionary<IPlayer, int>();
+            foreach (var player in _players)
+            {
+                scores.Add(player, 0);
+                foreach (var piece in player.PlayerPieces)
+                {
+                    pieces.Add(piece);
+                }
+            }
+            
+            foreach(var piece in pieces)
+            {
+                var connectedPoints = FloodFill(piece.GridPosition, visited);
+                scores[piece.Owner] += connectedPoints.Count;
+            }
+
+            return scores.OrderByDescending(r=>r.Value);
         }
         public void EndGame()
         {
             _isRunning = false;
             _coroutineHandler.StopAll();
+            var scores = GetScore();
+            var endGame = new EndGame();
+            foreach (var item in scores)
+            {
+                endGame.ScoreModels.Add(new Protocol.GSAndClient.Models.ScoreModel()
+                {
+                    AccountId = item.Key.AccountId,
+                    Score = item.Value
+                });
+            }
+            _wallGoEventHandler.Process(endGame);
         }
         private bool TryForceSpawn()
         {
@@ -329,6 +437,51 @@ namespace Assets.Scripts.GameContents.WallGo
 
             throw new ArgumentOutOfRangeException(nameof(direction));
         }
+
+        public bool TryRemoveWall(IPlayer player, Point point, Direction direction)
+        {
+            if (_currentPlayer.AccountId != player.AccountId)
+            {
+                LogHelper.Error($"not player turn. expected: {_currentPlayer.AccountId}");
+                return false;
+            }
+
+            if (_currentPlayer.State != StateType.MovePeice)
+            {
+                LogHelper.Error($"cannot remove wall. current state: {_currentPlayer.State}");
+                return false;
+            }
+
+            if (_currentPlayer.HasUsedBreakWall == true)
+            {
+                LogHelper.Error($"already used break wall remove wall. account id: {_currentPlayer.AccountId}");
+                return false;
+            }
+
+            Point neighbor = GetNeighborPoint(point, direction);
+
+            Tile fromTile = IsInsideBoard(point) ? GetTile(point) : null;
+            Tile toTile = IsInsideBoard(neighbor) ? GetTile(neighbor) : null;
+
+            if (IsWallAlreadyExists(fromTile, toTile, direction) == false)
+            {
+                LogHelper.Error($"wall not exists. from: {point}, dir: {direction}");
+                return false;
+            }
+
+            SetWallBetween(fromTile, toTile, direction, false);
+
+            _currentPlayer.HasUsedBreakWall = true;
+
+            _wallGoEventHandler.Process(new RemoveWall()
+            {
+                AccountId = player.AccountId,
+                Point = point,
+                Direction = direction,
+            });
+
+            return true;
+        }
         public bool TryPlaceWall(IPlayer player, Direction direction)
         {
             if (_currentPlayer.AccountId != player.AccountId)
@@ -345,7 +498,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
             var lastMovePiece = _currentPlayer.LastMovePiece;
 
-            var point = lastMovePiece.GridPos;
+            var point = lastMovePiece.GridPosition;
 
             Point neighbor = GetNeighborPoint(point, direction);
 
@@ -358,7 +511,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
-            SetWallBetween(fromTile, toTile, direction);
+            SetWallBetween(fromTile, toTile, direction, true);
 
             _wallGoEventHandler.Process(new PlaceWall()
             {
@@ -369,54 +522,62 @@ namespace Assets.Scripts.GameContents.WallGo
 
             ChangeState(_currentPlayer, StateType.MovePeice);
 
-            EndTurn();
+            if(IsEndGame() == true)
+            {
+                EndGame();
+            }
+            else
+            {
+                EndTurn();
+            }
 
             return true;
         }
-        private void SetWallBetween(Tile fromTile, Tile toTile, Direction direction)
+
+        private void SetWallBetween(Tile fromTile, Tile toTile, Direction direction, bool value)
         {
             if (direction == Direction.Up)
             {
                 if (fromTile != null)
                 {
-                    fromTile.WallTop = true;
+                    fromTile.WallTop = value;
                 }
                 if (toTile != null)
                 {
-                    toTile.WallBottom = true;
+                    toTile.WallBottom = value;
                 }
             }
             else if (direction == Direction.Down)
             {
                 if (fromTile != null)
                 {
-                    fromTile.WallBottom = true;
+                    fromTile.WallBottom = value;
                 }
                 if (toTile != null)
                 {
-                    toTile.WallTop = true;
+                    toTile.WallTop = value;
                 }
             }
             else if (direction == Direction.Left)
             {
                 if (fromTile != null)
                 {
-                    fromTile.WallLeft = true;
+                    fromTile.WallLeft = value;
                 }
                 if (toTile != null)
                 {
-                    toTile.WallRight = true;
+                    toTile.WallRight = value;
                 }
             }
             else if (direction == Direction.Right)
             {
                 if (fromTile != null)
                 {
-                    fromTile.WallRight = true;
+                    fromTile.WallRight = value;
                 }
                 if (toTile != null)
                 {
-                    toTile.WallLeft = true;
+                    toTile.WallLeft = value;
                 }
             }
         }
@@ -499,7 +660,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
             var piece = _currentPlayer.PlayerPieces[pieceId];
 
-            Point diff = piece.GridPos - dest;
+            Point diff = piece.GridPosition - dest;
 
             int absX = Math.Abs(diff.X);
             int absY = Math.Abs(diff.Y);
@@ -510,7 +671,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
-            if (IsBlocked(piece.GridPos, dest))
+            if (IsBlocked(piece.GridPosition, dest))
             {
                 LogHelper.Error("wall is blocking the movement.");
                 return false;
@@ -521,7 +682,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
-            piece.GridPos = dest;
+            piece.GridPosition = dest;
             _currentPlayer.LastMovePiece = piece;
 
             _wallGoEventHandler.Process(new MovePiece()
@@ -546,7 +707,7 @@ namespace Assets.Scripts.GameContents.WallGo
             {
                 foreach (var piece in player.PlayerPieces)
                 {
-                    if (piece.Spawned && piece.GridPos == point)
+                    if (piece.Spawned && piece.GridPosition == point)
                     {
                         return true;
                     }

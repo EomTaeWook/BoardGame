@@ -12,6 +12,7 @@ namespace BG.GameServer.ServerContents.EventHandler
         public event Action<SpawnPiece> SpawnPiece;
         public event Action<MovePiece> MovePiece;
         public event Action<PlaceWall> PlaceWall;
+        public event Action<RemoveWall> RemoveWall;
         public void Process(StartGame evt)
         {
             StartGame?.Invoke(evt);
@@ -40,6 +41,11 @@ namespace BG.GameServer.ServerContents.EventHandler
         public void Process(PlaceWall evt)
         {
             PlaceWall?.Invoke(evt);
+        }
+
+        public void Process(RemoveWall evt)
+        {
+            RemoveWall?.Invoke(evt);
         }
     }
 }

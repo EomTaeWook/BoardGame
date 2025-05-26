@@ -293,6 +293,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee27a2082b6c4e8499e7a45b064ecca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _topWall: {fileID: 3893979295161505154}
+  _rightWall: {fileID: 4944322351941798064}
+  _bottomWall: {fileID: 7753896405713453000}
+  _leftWall: {fileID: 4986218262064430572}
 --- !u!1 &7046649980153268596
 GameObject:
   m_ObjectHideFlags: 0

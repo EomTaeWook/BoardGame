@@ -8,9 +8,9 @@ namespace BG.GameServer.ServerContents
 {
     internal class WallGoRoom : RoomBase
     {
-        private WallGoBoard _wallGoBoard;
-        private WallGoEventHandler _wallGoEventHandler;
-        public WallGoRoom(long roomNumber, IServiceProvider serviceProvider) : base(roomNumber, 4)
+        private readonly WallGoBoard _wallGoBoard;
+        private readonly WallGoEventHandler _wallGoEventHandler;
+        public WallGoRoom(int roomNumber, IServiceProvider serviceProvider) : base(roomNumber, 2, 4)
         {
             _wallGoEventHandler = new WallGoEventHandler();
             _wallGoBoard = new WallGoBoard(_wallGoEventHandler);
@@ -18,9 +18,19 @@ namespace BG.GameServer.ServerContents
             RegisterEventHandlers();
         }
 
-        public void Start()
+        public override bool StartGame()
         {
+            if(MinUserCount > GetMembers().Count)
+            {
+                return false;
+            }
+
+            var players = new List<IPlayer>();
+            players.AddRange(GetMembers());
+            _wallGoBoard.SetPlayers(players);
             _wallGoBoard.StartGame();
+
+            return true;
         }
         public void Dispose()
         {
@@ -31,6 +41,7 @@ namespace BG.GameServer.ServerContents
             _wallGoEventHandler.SpawnPiece -= WallGoEventHandler_SpawnPiece;
             _wallGoEventHandler.MovePiece -= WallGoEventHandler_MovePiece;
             _wallGoEventHandler.PlaceWall -= WallGoEventHandler_PlaceWall;
+            _wallGoEventHandler.RemoveWall -= WallGoEventHandler_RemoveWall;
         }
         private void RegisterEventHandlers()
         {
@@ -41,18 +52,29 @@ namespace BG.GameServer.ServerContents
             _wallGoEventHandler.SpawnPiece += WallGoEventHandler_SpawnPiece;
             _wallGoEventHandler.MovePiece += WallGoEventHandler_MovePiece;
             _wallGoEventHandler.PlaceWall += WallGoEventHandler_PlaceWall;
+            _wallGoEventHandler.RemoveWall += WallGoEventHandler_RemoveWall;
         }
+
         public void MovePieceReqeust(IPlayer wallGoPlayer, MovePiece movePiece)
         {
             _wallGoBoard.MovePiece(wallGoPlayer, movePiece.PieceId, movePiece.Dest);
         }
-        public void PlacWallReqeust(IPlayer wallGoPlayer, PlaceWall placeWall)
+        public bool PlaceWallReqeust(IPlayer wallGoPlayer, PlaceWall placeWall)
         {
-            _wallGoBoard.TryPlaceWall(wallGoPlayer, placeWall.Direction);
+            return _wallGoBoard.TryPlaceWall(wallGoPlayer, placeWall.Direction);
+        }
+        public bool RemoveWallReqeust(IPlayer wallGoPlayer, RemoveWall removeWall)
+        {
+            return _wallGoBoard.TryRemoveWall(wallGoPlayer, removeWall.Point, removeWall.Direction);
         }
         public void SpawnPieceReqeust(IPlayer wallGoPlayer, SpawnPiece spawnPiece)
         {
             _wallGoBoard.TrySpawnPiece(wallGoPlayer, spawnPiece.PieceId, spawnPiece.SpawnedPoint);
+        }
+
+        private void WallGoEventHandler_RemoveWall(RemoveWall obj)
+        {
+            Broadcast(Packet.MakePacket(WallGoServerEvent.RemoveWall, obj));
         }
         private void WallGoEventHandler_PlaceWall(PlaceWall obj)
         {
@@ -81,6 +103,9 @@ namespace BG.GameServer.ServerContents
         private void WallGoEventHandler_EndGame(EndGame obj)
         {
             Broadcast(Packet.MakePacket(WallGoServerEvent.EndGame, obj));
+
+
+
         }
 
         private void WallGoEventHandler_StartTurn(StartTurn obj)

@@ -1,4 +1,5 @@
 using Assets.Scripts.GameContents.Share;
+using Assets.Scripts.GameContents.WallGo;
 using Assets.Scripts.Internals;
 using Dignus.Unity.Attributes;
 using TMPro;
@@ -21,7 +22,9 @@ namespace Assets.Scripts.Scene.WallGo.UI
 
         private WallGoSceneController _wallGoSceneController;
 
-        private Color[] _colors = new Color[]
+        private WallGoPlayer _player;
+
+        private readonly Color[] _colors = new Color[]
         {
             new Color32(43, 218, 207, 255),// ¹ÎÆ®
             new Color32(245, 166, 35, 255),// ÁÖÈ²
@@ -29,21 +32,31 @@ namespace Assets.Scripts.Scene.WallGo.UI
             new Color32(255, 229, 143, 255)// ³ë¶û
         };
 
-        public void Init(WallGoSceneController wallGoSceneController, int index)
+        public void Init(WallGoSceneController wallGoSceneController, int index, WallGoPlayer player)
         {
+            _player = player;
             _wallGoSceneController = wallGoSceneController;
-
             _profileBackground.color = _colors[index];
+
+            _nicknameText.text = _player.Nickname;
+
+        }
+
+        public void RefreshUI()
+        {
+            
         }
         public void SetTurnIndicator(bool isActive)
         {
             if (isActive == true)
             {
                 _imageTurn.color = Color.red;
+                _stateText.gameObject.SetActive(true);
             }
             else
             {
                 _imageTurn.color = Color.white;
+                _stateText.gameObject.SetActive(false);
             }
         }
         public void ChangeState(StateType stateType)
@@ -52,22 +65,14 @@ namespace Assets.Scripts.Scene.WallGo.UI
                 stateType == StateType.SpawnPiece)
             {
                 _stateText.text = "spawn piece";
-                _stateText.gameObject.SetActive(true);
             }
             else if (stateType == StateType.MovePeice)
             {
-                var count = _wallGoSceneController.Model.CurrentPlayer.MovePieceCount;
-                _stateText.text = $"move piece : {count}";
-                _stateText.gameObject.SetActive(true);
+                _stateText.text = $"move piece : {_player.MovePieceCount}";
             }
             else if (stateType == StateType.PlaceWall)
             {
                 _stateText.text = "place wall";
-                _stateText.gameObject.SetActive(true);
-            }
-            else
-            {
-                _stateText.gameObject.SetActive(false);
             }
         }
     }

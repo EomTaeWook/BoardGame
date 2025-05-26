@@ -6,9 +6,9 @@ namespace Assets.Scripts.GameContents.WallGo
 {
     public class WallGoPlayer : IPlayer
     {
-        public string AccountId { get; set; }
+        public string AccountId { get; private set; }
 
-        public string Nickname { get; set; }
+        public string Nickname { get; private set; }
 
         public bool HasUsedBreakWall { get; set; } = false;
 
@@ -21,8 +21,10 @@ namespace Assets.Scripts.GameContents.WallGo
         public StateType State { get; private set; }
         public DateTime TurnStartTime { get; private set; }
 
-        public WallGoPlayer()
+        public WallGoPlayer(string accountId, string nickname)
         {
+            AccountId = accountId;
+            Nickname = nickname;
             for (int i = 0; i < 2; ++i)
             {
                 PlayerPieces.Add(new Piece(i, this));

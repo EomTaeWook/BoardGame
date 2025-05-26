@@ -46,5 +46,10 @@ namespace Assets.Scripts.Scene.WallGo.EventHandler
         {
             _wallGoEvents.Add(evt);
         }
+
+        public void Process(RemoveWall evt)
+        {
+            _wallGoEvents.Add(evt);
+        }
     }
 }

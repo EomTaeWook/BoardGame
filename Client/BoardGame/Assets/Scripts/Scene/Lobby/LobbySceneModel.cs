@@ -9,5 +9,7 @@ namespace Assets.Scripts.Scene.Title
     {
         public GamePlayer CurrentPlayer { get; set; }
         public List<PlayerModel> RoomMembers { get; set; }
+
+        public int JoinRoomNumber { get; set; }
     }
 }
