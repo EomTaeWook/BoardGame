@@ -32,5 +32,7 @@ namespace Protocol.GSAndClient
     public class StartGameRoomResponse
     {
         public bool Ok { get; set; }
+
+        public GameType GameType { get; set; }
     }
 }

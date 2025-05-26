@@ -55,7 +55,7 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            if(room.Host.AccountId != _player.AccountId)
+            if (room.Host.AccountId != _player.AccountId)
             {
                 return;
             }
@@ -63,7 +63,8 @@ namespace BG.GameServer.Network.Handlers
 
             room.Broadcast(Packet.MakePacket(GSCProtocol.StartGameRoomResponse, new StartGameRoomResponse()
             {
-                Ok = isStart
+                Ok = isStart,
+                GameType = room.GameType,
             }));
         }
         public void CreateRoom(CreateRoom createRoom)
@@ -76,7 +77,7 @@ namespace BG.GameServer.Network.Handlers
 
             var room = _player.Room;
 
-            if(room != null)
+            if (room != null)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
                     new CreateRoomResponse()
@@ -247,16 +248,16 @@ namespace BG.GameServer.Network.Handlers
                 {
                     _robbyManager = robbyManager;
                 }
-                else if(component is HeartBeat heartBeat)
+                else if (component is HeartBeat heartBeat)
                 {
                     _heartBeat = heartBeat;
                 }
             }
 
 
-            if(_heartBeat != null)
+            if (_heartBeat != null)
             {
-                _= _heartBeat.SendPingAsync((ushort)GSCProtocol.Ping);
+                _ = _heartBeat.SendPingAsync((ushort)GSCProtocol.Ping);
             }
         }
     }

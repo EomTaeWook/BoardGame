@@ -49,7 +49,7 @@ namespace BG.GameServer.ServerContents
 
             if (gameType == GameType.WallGo)
             {
-                room = new WallGoRoom(roomNumber, serviceProvider);
+                room = new WallGoRoom(roomNumber);
             }
 
             _rooms[roomNumber] = room;

@@ -1,10 +1,14 @@
+using Assets.Scripts.Extensions;
+using Assets.Scripts.GameContents.WallGo;
 using Assets.Scripts.Internals;
 using Assets.Scripts.Network;
-using Assets.Scripts.Scene.Lobby.UI;
+using Assets.Scripts.Scene.WallGo;
 using Assets.Scripts.Service;
 using Dignus.DependencyInjection.Attributes;
+using Dignus.Unity;
 using Dignus.Unity.Framework;
 using Protocol.GSAndClient;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Scene.Title
 {
@@ -67,7 +71,7 @@ namespace Assets.Scripts.Scene.Title
             Scene.CloseCreateRoomUI();
 
             Scene.CloseJoinRoomUI();
-            
+
             Model.RoomMembers = joinRoomResponse.Members;
 
             Scene.RoomUIRefresh();
@@ -77,6 +81,34 @@ namespace Assets.Scripts.Scene.Title
             Model.RoomMembers = leaveRoomResponse.Members;
 
             Scene.RoomUIRefresh();
+        }
+
+        public void StartGameRoom(StartGameRoomResponse startGameRoomResponse)
+        {
+            if (startGameRoomResponse.Ok == false)
+            {
+                UIManager.Instance.ShowAlert("alert", "failed to game start");
+                return;
+            }
+
+            if (startGameRoomResponse.GameType == GameType.WallGo)
+            {
+                var wallGoPlayers = new Dictionary<string, WallGoPlayer>();
+
+                foreach (var item in Model.RoomMembers)
+                {
+                    wallGoPlayers[item.AccountId] = new WallGoPlayer(item.AccountId, item.Nickname);
+                }
+
+                var currentPlayer = new WallGoPlayer(Model.CurrentPlayer.AccountId, Model.CurrentPlayer.Nickname);
+
+                DignusUnitySceneManager.Instance.LoadScene<WallGoScene>(SceneType.WallGoScene, (scene) =>
+                {
+                    scene.SceneController.Model.PlayersToMap = wallGoPlayers;
+                    scene.SceneController.Model.CurrentPlayer = currentPlayer;
+                    scene.SceneController.OnAwake();
+                });
+            }
         }
 
         public override void Dispose()

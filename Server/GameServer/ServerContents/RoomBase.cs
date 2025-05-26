@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.GameContents;
-using BG.GameServer.Network;
+﻿using BG.GameServer.Network;
 using Dignus.Sockets.Interfaces;
+using Protocol.GSAndClient;
 using System.Collections.Concurrent;
 
 namespace BG.GameServer.ServerContents
 {
     internal abstract class RoomBase
     {
+        public GameType GameType { get; private set; }
         public int MinUserCount { get; private set; }
         public int MaxUserCount { get; private set; }
 
@@ -16,15 +17,12 @@ namespace BG.GameServer.ServerContents
         private Player _hostPlayer;
 
         public abstract bool StartGame();
-
-        public RoomBase(int roomNumber, int maxUserCount) : this(roomNumber, 1, maxUserCount)
-        {
-        }
-        public RoomBase(int roomNumber, int minUserCount, int maxUserCount)
+        public RoomBase(int roomNumber, GameType gameType, int minUserCount, int maxUserCount)
         {
             MinUserCount = minUserCount;
             RoomNumber = roomNumber;
             MaxUserCount = maxUserCount;
+            GameType = gameType;
         }
         public ICollection<Player> GetMembers()
         {

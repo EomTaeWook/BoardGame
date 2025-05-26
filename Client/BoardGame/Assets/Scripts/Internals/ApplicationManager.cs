@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Assets.Scripts.Internals
 {
@@ -134,6 +135,8 @@ namespace Assets.Scripts.Internals
         private void OnSceneLoadCompleted(string sceneName)
         {
             AdjustCameraViewportToAspectRatio(Camera.main);
+            var mainCamData = Camera.main.GetUniversalAdditionalCameraData();
+            mainCamData.cameraStack.Add(UIManager.Instance.UICamera);
         }
 
         public void AdjustCameraViewportToAspectRatio(Camera camera)

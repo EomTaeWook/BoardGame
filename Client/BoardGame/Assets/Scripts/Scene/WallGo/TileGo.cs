@@ -18,5 +18,21 @@ namespace Assets.Scripts.Scene.WallGo
         private SpriteRenderer _bottomWall;
         [SerializeField]
         private SpriteRenderer _leftWall;
+
+        [SerializeField]
+        private GameObject _active;
+
+        public void Init()
+        {
+            _topWall.gameObject.SetActive(false);
+            _rightWall.gameObject.SetActive(false);
+            _bottomWall.gameObject.SetActive(false);
+            _leftWall.gameObject.SetActive(false);
+        }
+
+        public void SetAvailable(bool available)
+        {
+            _active.SetActive(available);
+        }
     }
 }

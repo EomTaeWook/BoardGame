@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace Assets.Scripts.Internals
@@ -34,6 +36,9 @@ namespace Assets.Scripts.Internals
             UICamera.orthographic = true;
             UICamera.cullingMask = 1 << 5;
             UICamera.orthographicSize = ApplicationManager.Instance.TargetHeight * 0.5f;
+            var additionalCamData = UICamera.GetUniversalAdditionalCameraData();
+            additionalCamData.renderType = CameraRenderType.Overlay;
+            UICamera.allowMSAA = false;
 
             _uiCanvas = new GameObject("UICanvas")
             {
@@ -43,6 +48,7 @@ namespace Assets.Scripts.Internals
             var uiCanvasComp = _uiCanvas.AddComponent<Canvas>();
             uiCanvasComp.sortingOrder = 10;
             uiCanvasComp.renderMode = RenderMode.ScreenSpaceCamera;
+
             uiCanvasComp.worldCamera = UICamera;
             _uiCanvas.AddComponent<GraphicRaycaster>();
             var canvasScaler = _uiCanvas.AddComponent<CanvasScaler>();
@@ -75,7 +81,7 @@ namespace Assets.Scripts.Internals
 
             var eventSystem = gameObject.AddComponent<EventSystem>();
             eventSystem.firstSelectedGameObject = _uiCanvas;
-            gameObject.AddComponent<StandaloneInputModule>();
+            gameObject.AddComponent<InputSystemUIInputModule>();
 
             ApplicationManager.Instance.AdjustCameraViewportToAspectRatio(UICamera);
         }

@@ -3,12 +3,14 @@ using Assets.Scripts.GameContents.Share;
 using Assets.Scripts.GameContents.WallGo;
 using Dignus.Collections;
 using Dignus.Unity.Extensions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Scene.WallGo
 {
     public class BoardGo : MonoBehaviour
     {
+        private Dictionary<string, ArrayQueue<PieceGo>> _playerPiecesByAccountId = new();
         private readonly ArrayQueue<TileGo> _tiles = new();
         private void Awake()
         {
@@ -28,22 +30,41 @@ namespace Assets.Scripts.Scene.WallGo
             }
         }
 
-        public void GameStart()
+        public void SpawnPiece(string accountId,
+            Color color,
+            Piece spawnPiece,
+            bool isPlayerPiece
+            )
         {
+            if (_playerPiecesByAccountId.TryGetValue(accountId, out ArrayQueue<PieceGo> pieces) == false)
+            {
+                pieces = new ArrayQueue<PieceGo>();
+                _playerPiecesByAccountId.Add(accountId, pieces);
+            }
 
+            var pieceGo = this.InstantiateWithPool<PieceGo>();
+            pieceGo.Init(spawnPiece, color, isPlayerPiece);
+            _playerPiecesByAccountId[accountId].Add(pieceGo);
+            pieceGo.transform.position = new Vector3(spawnPiece.GridPosition.X, spawnPiece.GridPosition.Y);
         }
-        public void SpawnPiece(SpawnPiece spawnPiece)
-        {
 
-        }
-
-        public void MovePiece(MovePiece movePiece)
+        public void MovePiece(Piece movePiece)
         {
 
         }
 
         public void Dispose()
         {
+            foreach (var kv in _playerPiecesByAccountId)
+            {
+                foreach (var value in kv.Value)
+                {
+                    value.Recycle();
+                }
+                kv.Value.Clear();
+            }
+            _playerPiecesByAccountId.Clear();
+
             foreach (var item in _tiles)
             {
                 item.Recycle();

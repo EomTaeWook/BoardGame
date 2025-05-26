@@ -31,7 +31,7 @@ namespace Assets.Scripts.Scene.Title
 
         public void CreateRoomUI(int roomNumber)
         {
-            if(_roomUI != null)
+            if (_roomUI != null)
             {
                 return;
             }
@@ -80,6 +80,7 @@ namespace Assets.Scripts.Scene.Title
 
             CloseCreateRoomUI();
             CloseJoinRoomUI();
+            CloseRoomUI();
         }
     }
 }

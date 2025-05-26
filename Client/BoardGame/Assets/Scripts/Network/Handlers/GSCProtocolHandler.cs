@@ -51,13 +51,21 @@ namespace Assets.Scripts.Network.Handlers
                 controller.CreateRoom(createRoomResponse);
             });
         }
-        public void JoinRoomResponse(JoinRoomResponse joinRoom)
+        public void JoinRoomResponse(JoinRoomResponse joinRoomResponse)
         {
             UnityMainThread.Run(() =>
             {
                 var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
 
-                controller.JoinRoom(joinRoom);
+                controller.JoinRoom(joinRoomResponse);
+            });
+        }
+        public void StartGameRoomResponse(StartGameRoomResponse startGameRoomResponse)
+        {
+            UnityMainThread.Run(() =>
+            {
+                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                controller.StartGameRoom(startGameRoomResponse);
             });
         }
     }

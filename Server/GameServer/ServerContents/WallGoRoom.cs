@@ -10,7 +10,7 @@ namespace BG.GameServer.ServerContents
     {
         private readonly WallGoBoard _wallGoBoard;
         private readonly WallGoEventHandler _wallGoEventHandler;
-        public WallGoRoom(int roomNumber, IServiceProvider serviceProvider) : base(roomNumber, 2, 4)
+        public WallGoRoom(int roomNumber) : base(roomNumber, GameType.WallGo, 1, 4)
         {
             _wallGoEventHandler = new WallGoEventHandler();
             _wallGoBoard = new WallGoBoard(_wallGoEventHandler);
@@ -20,7 +20,7 @@ namespace BG.GameServer.ServerContents
 
         public override bool StartGame()
         {
-            if(MinUserCount > GetMembers().Count)
+            if (MinUserCount > GetMembers().Count)
             {
                 return false;
             }

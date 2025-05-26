@@ -1,7 +1,9 @@
-﻿using Assets.Scripts.GameContents.WallGo;
+﻿using Assets.Scripts.GameContents.Share;
+using Assets.Scripts.GameContents.WallGo;
 using BG.GameServer.ServerContents;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Sockets.Interfaces;
+using Protocol.GSAndClient;
 using System.Text.Json;
 
 namespace BG.GameServer.Network.Handlers
@@ -78,7 +80,7 @@ namespace BG.GameServer.Network.Handlers
 
             wallGoRoom.MovePieceReqeust(_player, movePiece);
         }
-        public void SpawnPiece(SpawnPiece spawnPiece)
+        public void SpawnPiece(SpawnPeiceReqeust reqeust)
         {
             if (_player == null)
             {
@@ -92,7 +94,12 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            wallGoRoom.SpawnPieceReqeust(_player, spawnPiece);
+            wallGoRoom.SpawnPieceReqeust(_player, new Assets.Scripts.GameContents.WallGo.SpawnPiece()
+            {
+                AccountId = _player.AccountId,
+                PieceId = reqeust.PieceId,
+                SpawnedPoint = new Point(reqeust.SpawnedPointX, reqeust.SpawnedPointY)
+            });
         }
     }
 }

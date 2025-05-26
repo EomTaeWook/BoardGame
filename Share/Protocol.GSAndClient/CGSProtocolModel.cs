@@ -24,4 +24,11 @@
     public class StartGameRoom
     {
     }
+
+    public class SpawnPeiceReqeust
+    {
+        public int PieceId { get; set; }
+        public int SpawnedPointX { get; set; }
+        public int SpawnedPointY { get; set; }
+    }
 }

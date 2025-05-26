@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Scene.WallGo.UI
 {
     [PrefabPath(Consts.Path.WallGoUI)]
-    public class PlayerInfoGo : MonoBehaviour
+    public class PlayerInfoGo : UiItem
     {
         [SerializeField]
         private Image _imageTurn;
@@ -22,29 +22,27 @@ namespace Assets.Scripts.Scene.WallGo.UI
 
         private WallGoSceneController _wallGoSceneController;
 
-        private WallGoPlayer _player;
+        public WallGoPlayer WallGoPlayer { get; private set; }
 
-        private readonly Color[] _colors = new Color[]
-        {
-            new Color32(43, 218, 207, 255),// ¹ÎÆ®
-            new Color32(245, 166, 35, 255),// ÁÖÈ²
-            new Color32(155, 89, 182, 255),// º¸¶ó
-            new Color32(255, 229, 143, 255)// ³ë¶û
-        };
+        public Color PlayerColor { get; private set; }
 
-        public void Init(WallGoSceneController wallGoSceneController, int index, WallGoPlayer player)
+        public void Init(WallGoSceneController wallGoSceneController,
+            Color color,
+            WallGoPlayer player)
         {
-            _player = player;
+            PlayerColor = color;
+            WallGoPlayer = player;
             _wallGoSceneController = wallGoSceneController;
-            _profileBackground.color = _colors[index];
+            _profileBackground.color = color;
 
-            _nicknameText.text = _player.Nickname;
+            _nicknameText.text = WallGoPlayer.Nickname;
 
+            RefreshUI();
         }
 
         public void RefreshUI()
         {
-            
+            ChangeState(WallGoPlayer.State);
         }
         public void SetTurnIndicator(bool isActive)
         {
@@ -68,7 +66,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
             }
             else if (stateType == StateType.MovePeice)
             {
-                _stateText.text = $"move piece : {_player.MovePieceCount}";
+                _stateText.text = $"move piece : {WallGoPlayer.MovePieceCount}";
             }
             else if (stateType == StateType.PlaceWall)
             {
