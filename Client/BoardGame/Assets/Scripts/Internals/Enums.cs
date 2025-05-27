@@ -10,6 +10,9 @@ namespace Assets.Scripts.Internals
 
     public enum BuildTaretType
     {
-        Dev
+        Local,
+        Dev,
+        Live,
+
     }
 }

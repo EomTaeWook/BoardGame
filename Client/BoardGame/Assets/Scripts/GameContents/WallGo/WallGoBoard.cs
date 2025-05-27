@@ -31,9 +31,6 @@ namespace Assets.Scripts.GameContents.WallGo
 
         private bool _isRunning = false;
 
-        private int MaxPiece = 4;
-
-
         public WallGoBoard(IWallGoEventHandler wallGoEventHandler)
         {
             _wallGoEventHandler = wallGoEventHandler;

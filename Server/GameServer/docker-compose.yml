@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  webapp:
+    image: trim0917/boardgameserver:latest
+    volumes:
+      - type: bind
+        source: ./logs
+        target: /App/boardgameserver/logs
+    ports:
+      - "40000:40000"
+    restart: always
+    stdin_open : true
+    tty: true

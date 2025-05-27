@@ -29,7 +29,7 @@ namespace BG.GameServer
             var config = serviceProvider.GetService<Config>();
             gameServer.Start(config.ServerPort);
             LogHelper.Info($"BG.Server Start. port : {config.ServerPort}");
-            Console.ReadKey();
+            Console.ReadLine();
         }
 
         private static IServiceProvider RegisterDependencies()
