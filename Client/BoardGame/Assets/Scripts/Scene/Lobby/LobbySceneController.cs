@@ -95,12 +95,19 @@ namespace Assets.Scripts.Scene.Title
             {
                 var wallGoPlayers = new Dictionary<string, WallGoPlayer>();
 
-                foreach (var item in Model.RoomMembers)
+                var maxPieceCount = 4;
+
+                if (Model.RoomMembers.Count > 2)
                 {
-                    wallGoPlayers[item.AccountId] = new WallGoPlayer(item.AccountId, item.Nickname);
+                    maxPieceCount = 2;
                 }
 
-                var currentPlayer = new WallGoPlayer(Model.CurrentPlayer.AccountId, Model.CurrentPlayer.Nickname);
+                foreach (var item in Model.RoomMembers)
+                {
+                    wallGoPlayers[item.AccountId] = new WallGoPlayer(item.AccountId, item.Nickname, maxPieceCount);
+                }
+
+                var currentPlayer = new WallGoPlayer(Model.CurrentPlayer.AccountId, Model.CurrentPlayer.Nickname, maxPieceCount);
 
                 DignusUnitySceneManager.Instance.LoadScene<WallGoScene>(SceneType.WallGoScene, (scene) =>
                 {

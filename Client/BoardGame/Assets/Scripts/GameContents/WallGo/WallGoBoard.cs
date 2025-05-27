@@ -30,6 +30,10 @@ namespace Assets.Scripts.GameContents.WallGo
         private readonly CoroutineHandler _coroutineHandler = new();
 
         private bool _isRunning = false;
+
+        private int MaxPiece = 4;
+
+
         public WallGoBoard(IWallGoEventHandler wallGoEventHandler)
         {
             _wallGoEventHandler = wallGoEventHandler;
@@ -46,9 +50,9 @@ namespace Assets.Scripts.GameContents.WallGo
         }
         public IPlayer GetPlayer(string accountId)
         {
-            foreach(var player in _players)
+            foreach (var player in _players)
             {
-                if(accountId == player.AccountId)
+                if (accountId == player.AccountId)
                 {
                     return player;
                 }
@@ -58,21 +62,58 @@ namespace Assets.Scripts.GameContents.WallGo
         public void SetPlayers(ICollection<IPlayer> players)
         {
             _players.Clear();
+
+            var maxPieceCount = 4;
+
+            if (players.Count > 2)
+            {
+                maxPieceCount = 2;
+            }
+
             foreach (var item in players)
             {
-                _players.Add(new WallGoPlayer(item.AccountId, item.Nickname));
+                _players.Add(new WallGoPlayer(item.AccountId, item.Nickname, maxPieceCount));
             }
         }
         public void StartGame()
         {
-            for (int i = 0; i < _players.Count; ++i)
+            if (_players.Count <= 2)
             {
-                _turnQueue.Add(_players[i]);
+                //spawn1
+                for (int i = 0; i < _players.Count; ++i)
+                {
+                    _turnQueue.Add(_players[i]);
+                }
+                //spawn2
+                for (int i = _players.Count - 1; i >= 0; --i)
+                {
+                    _turnQueue.Add(_players[i]);
+                }
+                //spawn3
+                for (int i = 0; i < _players.Count; ++i)
+                {
+                    _turnQueue.Add(_players[i]);
+                }
+                //spawn4
+                for (int i = _players.Count - 1; i >= 0; --i)
+                {
+                    _turnQueue.Add(_players[i]);
+                }
             }
-            for (int i = _players.Count - 1; i >= 0; --i)
-            {
-                _turnQueue.Add(_players[i]);
+            else
+            {                //spawn1
+                for (int i = 0; i < _players.Count; ++i)
+                {
+                    _turnQueue.Add(_players[i]);
+                }
+                //spawn2
+                for (int i = _players.Count - 1; i >= 0; --i)
+                {
+                    _turnQueue.Add(_players[i]);
+                }
             }
+
+            //cycle
             for (int i = 0; i < _players.Count; ++i)
             {
                 _turnQueue.Add(_players[i]);
@@ -163,7 +204,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
                 foreach (var item in piecePositions)
                 {
-                    if(connectedPoints.Contains(item))
+                    if (connectedPoints.Contains(item))
                     {
                         piecesInRegion++;
                     }
@@ -191,14 +232,14 @@ namespace Assets.Scripts.GameContents.WallGo
                     pieces.Add(piece);
                 }
             }
-            
-            foreach(var piece in pieces)
+
+            foreach (var piece in pieces)
             {
                 var connectedPoints = FloodFill(piece.GridPosition, visited);
                 scores[piece.Owner] += connectedPoints.Count;
             }
 
-            return scores.OrderByDescending(r=>r.Value);
+            return scores.OrderByDescending(r => r.Value);
         }
         public void Stop()
         {
@@ -258,13 +299,15 @@ namespace Assets.Scripts.GameContents.WallGo
             {
                 if (IsTurnTimeout(_currentPlayer) == true)
                 {
-                    if (_currentPlayer.State == StateType.SpawnPiece ||
-                        _currentPlayer.State == StateType.SpawnPiece1)
+                    if (_currentPlayer.State == StateType.SpawnPiece)
                     {
                         TryForceSpawn();
-                        var currentState = _currentPlayer.State;
-                        currentState++;
-                        ChangeState(_currentPlayer, currentState);
+                        if (_currentPlayer.AreAllPiecesSpawned())
+                        {
+                            var currentState = _currentPlayer.State;
+                            currentState++;
+                            ChangeState(_currentPlayer, currentState);
+                        }
 
                         _ = _turnQueue.Read();
                         _currentPlayer = _turnQueue.Peek();
@@ -420,10 +463,10 @@ namespace Assets.Scripts.GameContents.WallGo
                 SpawnedPoint = point,
             });
 
-
-            var currentState = _currentPlayer.State;
-            currentState++;
-            ChangeState(_currentPlayer, currentState);
+            if (_currentPlayer.AreAllPiecesSpawned())
+            {
+                ChangeState(_currentPlayer, StateType.MovePeice);
+            }
 
             _ = _turnQueue.Read();
             _currentPlayer = _turnQueue.Peek();
@@ -512,7 +555,6 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
             else if (_currentPlayer.State == StateType.SpawnPiece ||
-                _currentPlayer.State == StateType.SpawnPiece1 ||
                 _currentPlayer.State == StateType.Max)
             {
                 LogHelper.Error("cannot place wall. current state: " + _currentPlayer.State);
@@ -541,10 +583,10 @@ namespace Assets.Scripts.GameContents.WallGo
                 Point = fromTile.GridPosition,
                 Direction = direction,
             });
-            
+
             ChangeState(_currentPlayer, StateType.MovePeice);
 
-            if(IsEndGame() == true)
+            if (IsEndGame() == true)
             {
                 EndGame();
             }

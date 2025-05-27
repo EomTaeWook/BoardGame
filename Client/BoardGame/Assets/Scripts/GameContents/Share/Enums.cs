@@ -7,6 +7,6 @@ namespace Assets.Scripts.GameContents.Share
         Left,
         Right
     }
-    public enum StateType { SpawnPiece, SpawnPiece1, MovePeice, PlaceWall, RemoveWall, Max }
+    public enum StateType { SpawnPiece, MovePeice, PlaceWall, RemoveWall, Max }
 
 }

@@ -2,6 +2,7 @@
 using Assets.Scripts.GameContents.WallGo;
 using BG.GameServer.ServerContents;
 using Dignus.DependencyInjection.Attributes;
+using Dignus.Log;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using System.Text.Json;
@@ -46,7 +47,7 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            wallGoRoom.RemoveWallReqeust(new RemoveWall() 
+            wallGoRoom.RemoveWallReqeust(new RemoveWall()
             {
                 AccountId = _player.AccountId,
                 Point = new Point(reqeust.TilePointX, reqeust.TilePointY),
@@ -83,6 +84,7 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
+            LogHelper.Info("[MovePiece]");
             wallGoRoom.MovePieceReqeust(new MovePiece()
             {
                 AccountId = _player.AccountId,

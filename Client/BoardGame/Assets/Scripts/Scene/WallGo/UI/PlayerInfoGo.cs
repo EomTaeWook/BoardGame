@@ -2,7 +2,6 @@ using Assets.Scripts.GameContents.Share;
 using Assets.Scripts.GameContents.WallGo;
 using Assets.Scripts.Internals;
 using Dignus.Coroutine;
-using Dignus.Coroutine.Interfaces;
 using Dignus.Unity.Attributes;
 using System;
 using System.Collections;
@@ -68,7 +67,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
 
         private IEnumerator RefreshTurnTime()
         {
-            while(true)
+            while (true)
             {
                 _turnTimeoutText.text = $"{GetRemainTurnTime()}";
                 yield return null;
@@ -78,7 +77,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
         private void Update()
         {
             _coroutineHandler.UpdateCoroutines(Time.deltaTime);
-            
+
         }
 
         public void RefreshUI()
@@ -104,8 +103,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
         }
         public void ChangeState(StateType stateType)
         {
-            if (stateType == StateType.SpawnPiece1 ||
-                stateType == StateType.SpawnPiece)
+            if (stateType == StateType.SpawnPiece)
             {
                 _stateText.text = "spawn piece";
             }

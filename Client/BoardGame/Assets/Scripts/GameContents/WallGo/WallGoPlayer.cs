@@ -21,14 +21,27 @@ namespace Assets.Scripts.GameContents.WallGo
         public StateType State { get; private set; }
         public DateTime TurnStartTime { get; private set; }
 
-        public WallGoPlayer(string accountId, string nickname)
+        public WallGoPlayer(string accountId, string nickname, int pieceCount)
         {
             AccountId = accountId;
             Nickname = nickname;
-            for (int i = 0; i < 2; ++i)
+            for (int i = 0; i < pieceCount; ++i)
             {
                 PlayerPieces.Add(new Piece(i, this));
             }
+        }
+
+        public bool AreAllPiecesSpawned()
+        {
+            foreach (var item in PlayerPieces)
+            {
+                if (item.Spawned == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void ChangeState(StateType state)
