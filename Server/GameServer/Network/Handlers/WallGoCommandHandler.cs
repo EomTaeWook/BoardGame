@@ -32,7 +32,7 @@ namespace BG.GameServer.Network.Handlers
         {
             _player = null;
         }
-        public void RemoveWall(RemoveWall removeWall)
+        public void RemoveWall(RemoveWallReqeust reqeust)
         {
             if (_player == null)
             {
@@ -46,7 +46,12 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            wallGoRoom.RemoveWallReqeust(_player, removeWall);
+            wallGoRoom.RemoveWallReqeust(new RemoveWall() 
+            {
+                AccountId = _player.AccountId,
+                Point = new Point(reqeust.TilePointX, reqeust.TilePointY),
+                Direction = (Direction)reqeust.Direction
+            });
         }
         public void PlaceWall(PlaceWall placeWall)
         {
@@ -62,9 +67,9 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            wallGoRoom.PlaceWallReqeust(_player, placeWall);
+            wallGoRoom.PlaceWallReqeust(placeWall);
         }
-        public void MovePiece(MovePiece movePiece)
+        public void MovePiece(MovePieceReqeust request)
         {
             if (_player == null)
             {
@@ -78,27 +83,53 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            wallGoRoom.MovePieceReqeust(_player, movePiece);
-        }
-        public void SpawnPiece(SpawnPeiceReqeust reqeust)
-        {
-            if (_player == null)
-            {
-                _session.Dispose();
-                return;
-            }
-
-            if (_player.Room is not WallGoRoom wallGoRoom)
-            {
-                _session.Dispose();
-                return;
-            }
-
-            wallGoRoom.SpawnPieceReqeust(_player, new Assets.Scripts.GameContents.WallGo.SpawnPiece()
+            wallGoRoom.MovePieceReqeust(new MovePiece()
             {
                 AccountId = _player.AccountId,
-                PieceId = reqeust.PieceId,
-                SpawnedPoint = new Point(reqeust.SpawnedPointX, reqeust.SpawnedPointY)
+                Dest = new Point(request.MovePointX, request.MovePointY),
+                PieceId = request.PieceId
+            });
+        }
+        public void SpawnPiece(SpawnPieceReqeust request)
+        {
+            if (_player == null)
+            {
+                _session.Dispose();
+                return;
+            }
+
+            if (_player.Room is not WallGoRoom wallGoRoom)
+            {
+                _session.Dispose();
+                return;
+            }
+
+            wallGoRoom.SpawnPieceReqeust(new SpawnPiece()
+            {
+                AccountId = _player.AccountId,
+                PieceId = request.PieceId,
+                SpawnedPoint = new Point(request.SpawnedPointX, request.SpawnedPointY)
+            });
+        }
+        public void PlaceWall(PlaceWallReqeust request)
+        {
+            if (_player == null)
+            {
+                _session.Dispose();
+                return;
+            }
+
+            if (_player.Room is not WallGoRoom wallGoRoom)
+            {
+                _session.Dispose();
+                return;
+            }
+
+            wallGoRoom.PlaceWallReqeust(new PlaceWall()
+            {
+                AccountId = _player.AccountId,
+                Point = new Point(request.TilePointX, request.TilePointY),
+                Direction = (Direction)request.Direction
             });
         }
     }

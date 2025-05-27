@@ -20,6 +20,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
         private readonly ArrayQueue<WallGoPlayer> _players = new();
 
+
         private WallGoPlayer _currentPlayer;
 
         private readonly IWallGoEventHandler _wallGoEventHandler;
@@ -38,12 +39,22 @@ namespace Assets.Scripts.GameContents.WallGo
                 {
                     _tiles[i, ii] = new Tile()
                     {
-                        GridPos = new Point(i, ii)
+                        GridPosition = new Point(i, ii)
                     };
                 }
             }
         }
-
+        public IPlayer GetPlayer(string accountId)
+        {
+            foreach(var player in _players)
+            {
+                if(accountId == player.AccountId)
+                {
+                    return player;
+                }
+            }
+            return null;
+        }
         public void SetPlayers(ICollection<IPlayer> players)
         {
             _players.Clear();
@@ -189,6 +200,10 @@ namespace Assets.Scripts.GameContents.WallGo
 
             return scores.OrderByDescending(r=>r.Value);
         }
+        public void Stop()
+        {
+            _isRunning = false;
+        }
         public void EndGame()
         {
             _isRunning = false;
@@ -259,7 +274,6 @@ namespace Assets.Scripts.GameContents.WallGo
                         _currentPlayer.State == StateType.PlaceWall)
                     {
                         _currentPlayer.ChangeState(StateType.PlaceWall);
-
                         //EndTurn 까지 호출실패
                         if (TryForcePlaceWall() == false)
                         {
@@ -323,6 +337,8 @@ namespace Assets.Scripts.GameContents.WallGo
                         Direction.Up,
                         Direction.Down
                     };
+
+            _currentPlayer.MovePieceCount = 1;
 
             if (_currentPlayer.LastMovePiece == null)
             {
@@ -490,12 +506,18 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
-            if (_currentPlayer.State != StateType.PlaceWall)
+            if (_currentPlayer.MovePieceCount == 0 && _currentPlayer.State == StateType.MovePeice)
+            {
+                LogHelper.Error($"wall placement requires at least one move.");
+                return false;
+            }
+            else if (_currentPlayer.State == StateType.SpawnPiece ||
+                _currentPlayer.State == StateType.SpawnPiece1 ||
+                _currentPlayer.State == StateType.Max)
             {
                 LogHelper.Error("cannot place wall. current state: " + _currentPlayer.State);
                 return false;
             }
-
             var lastMovePiece = _currentPlayer.LastMovePiece;
 
             var point = lastMovePiece.GridPosition;
@@ -507,7 +529,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
             if (IsWallAlreadyExists(fromTile, toTile, direction) == true)
             {
-                LogHelper.Error($"wall already exists. from: {point}, dir: {direction}");
+                LogHelper.Error($"wall already exists. from: {point.X}, {point.Y}, dir: {direction}");
                 return false;
             }
 
@@ -516,10 +538,10 @@ namespace Assets.Scripts.GameContents.WallGo
             _wallGoEventHandler.Process(new PlaceWall()
             {
                 AccountId = player.AccountId,
-                Point = point,
+                Point = fromTile.GridPosition,
                 Direction = direction,
             });
-
+            
             ChangeState(_currentPlayer, StateType.MovePeice);
 
             if(IsEndGame() == true)
@@ -658,6 +680,12 @@ namespace Assets.Scripts.GameContents.WallGo
                 return false;
             }
 
+            if (_currentPlayer.MovePieceCount > 2)
+            {
+                LogHelper.Error($"Invalid move count: {_currentPlayer.MovePieceCount}, pieceId: {pieceId}");
+                return false;
+            }
+
             var piece = _currentPlayer.PlayerPieces[pieceId];
 
             Point diff = piece.GridPosition - dest;
@@ -692,9 +720,9 @@ namespace Assets.Scripts.GameContents.WallGo
                 Dest = dest
             });
 
-            _currentPlayer.MovePieceCount--;
+            _currentPlayer.MovePieceCount++;
 
-            if (_currentPlayer.MovePieceCount == 0)
+            if (_currentPlayer.MovePieceCount == 2)
             {
                 ChangeState(_currentPlayer, StateType.PlaceWall);
             }

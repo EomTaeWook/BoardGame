@@ -1,6 +1,8 @@
 ﻿using Dignus.Log;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BG.GameServer.Network
 {

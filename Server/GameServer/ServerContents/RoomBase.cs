@@ -1,11 +1,14 @@
 ﻿using BG.GameServer.Network;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BG.GameServer.ServerContents
 {
-    internal abstract class RoomBase
+    internal abstract class RoomBase : IDisposable
     {
         public GameType GameType { get; private set; }
         public int MinUserCount { get; private set; }
@@ -17,6 +20,7 @@ namespace BG.GameServer.ServerContents
         private Player _hostPlayer;
 
         public abstract bool StartGame();
+        public abstract void Dispose();
         public RoomBase(int roomNumber, GameType gameType, int minUserCount, int maxUserCount)
         {
             MinUserCount = minUserCount;

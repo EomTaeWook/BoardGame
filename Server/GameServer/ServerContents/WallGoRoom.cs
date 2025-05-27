@@ -3,6 +3,7 @@ using Assets.Scripts.GameContents.WallGo;
 using BG.GameServer.Network;
 using BG.GameServer.ServerContents.EventHandler;
 using Protocol.GSAndClient;
+using System.Collections.Generic;
 
 namespace BG.GameServer.ServerContents
 {
@@ -32,7 +33,7 @@ namespace BG.GameServer.ServerContents
 
             return true;
         }
-        public void Dispose()
+        public override void Dispose()
         {
             _wallGoEventHandler.StartTurn -= WallGoEventHandler_StartTurn;
             _wallGoEventHandler.EndGame -= WallGoEventHandler_EndGame;
@@ -55,20 +56,28 @@ namespace BG.GameServer.ServerContents
             _wallGoEventHandler.RemoveWall += WallGoEventHandler_RemoveWall;
         }
 
-        public void MovePieceReqeust(IPlayer wallGoPlayer, MovePiece movePiece)
+        public void MovePieceReqeust(MovePiece movePiece)
         {
+            var wallGoPlayer = _wallGoBoard.GetPlayer(movePiece.AccountId);
+
             _wallGoBoard.MovePiece(wallGoPlayer, movePiece.PieceId, movePiece.Dest);
         }
-        public bool PlaceWallReqeust(IPlayer wallGoPlayer, PlaceWall placeWall)
+        public bool PlaceWallReqeust(PlaceWall placeWall)
         {
+            var wallGoPlayer = _wallGoBoard.GetPlayer(placeWall.AccountId);
+
             return _wallGoBoard.TryPlaceWall(wallGoPlayer, placeWall.Direction);
         }
-        public bool RemoveWallReqeust(IPlayer wallGoPlayer, RemoveWall removeWall)
+        public bool RemoveWallReqeust(RemoveWall removeWall)
         {
+            var wallGoPlayer = _wallGoBoard.GetPlayer(removeWall.AccountId);
+
             return _wallGoBoard.TryRemoveWall(wallGoPlayer, removeWall.Point, removeWall.Direction);
         }
-        public void SpawnPieceReqeust(IPlayer wallGoPlayer, SpawnPiece spawnPiece)
+        public void SpawnPieceReqeust(SpawnPiece spawnPiece)
         {
+            var wallGoPlayer = _wallGoBoard.GetPlayer(spawnPiece.AccountId);
+
             _wallGoBoard.TrySpawnPiece(wallGoPlayer, spawnPiece.PieceId, spawnPiece.SpawnedPoint);
         }
 
@@ -103,9 +112,6 @@ namespace BG.GameServer.ServerContents
         private void WallGoEventHandler_EndGame(EndGame obj)
         {
             Broadcast(Packet.MakePacket(WallGoServerEvent.EndGame, obj));
-
-
-
         }
 
         private void WallGoEventHandler_StartTurn(StartTurn obj)

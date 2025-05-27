@@ -4,6 +4,7 @@ using Assets.Scripts.Service;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Unity.Framework;
 using Protocol.GSAndClient;
+using UnityEngine;
 
 namespace Assets.Scripts.Scene.Title
 {
@@ -21,6 +22,8 @@ namespace Assets.Scripts.Scene.Title
 
         public void Init()
         {
+            ApplicationManager.Instance.OnSceneLoadCompleted(SceneType.TitleScene.ToString());
+
             if (_userService.Load() == false)
             {
                 Scene.ShowCreateAccountUI();
@@ -30,7 +33,7 @@ namespace Assets.Scripts.Scene.Title
             ProcessLogin();
         }
 
-        private void ProcessLogin()
+        public void ProcessLogin()
         {
             if (Scene.GetBuildTargetType() == Internals.BuildTaretType.Dev)
             {

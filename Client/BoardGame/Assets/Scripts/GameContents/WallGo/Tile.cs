@@ -4,7 +4,7 @@ namespace Assets.Scripts.GameContents.WallGo
 {
     public class Tile
     {
-        public Point GridPos { get; set; }
+        public Point GridPosition { get; set; }
 
         public bool WallRight { get; set; }
         public bool WallLeft { get; set; }
@@ -13,7 +13,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
         public bool CanMove(Tile from, Tile to)
         {
-            Point diff = to.GridPos - from.GridPos;
+            Point diff = to.GridPosition - from.GridPosition;
 
             if (diff == Point.Right)
             {
@@ -30,6 +30,26 @@ namespace Assets.Scripts.GameContents.WallGo
             else if (diff == Point.Down)
             {
                 return !from.WallBottom && !to.WallTop;
+            }
+            return false;
+        }
+        public bool HasWall(Direction direction)
+        {
+            if(direction == Direction.Down)
+            {
+                return WallBottom;
+            }
+            else if(direction == Direction.Left)
+            {
+                return WallLeft;
+            }
+            else if(direction == Direction.Right)
+            {
+                return WallRight;
+            }
+            else if(direction == Direction.Up)
+            {
+                return WallTop;
             }
             return false;
         }

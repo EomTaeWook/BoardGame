@@ -4,6 +4,7 @@ using Dignus.Log;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace BG.GameServer.Network.Handlers
@@ -199,6 +200,7 @@ namespace BG.GameServer.Network.Handlers
             if (room.IsEmpty())
             {
                 _robbyManager.RemoveRoom(room.RoomNumber);
+                room.Dispose();
             }
         }
 

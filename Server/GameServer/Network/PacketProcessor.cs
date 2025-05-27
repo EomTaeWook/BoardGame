@@ -6,6 +6,8 @@ using Dignus.Sockets;
 using Dignus.Sockets.Interfaces;
 using Dignus.Sockets.Processing;
 using Protocol.GSAndClient;
+using System;
+using System.Linq;
 using System.Text;
 
 namespace BG.GameServer.Network

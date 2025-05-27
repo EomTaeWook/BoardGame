@@ -7,6 +7,8 @@ using Dignus.Log;
 using Dignus.Sockets;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
+using System;
+using System.Collections.Generic;
 
 namespace BG.GameServer.Internals
 {

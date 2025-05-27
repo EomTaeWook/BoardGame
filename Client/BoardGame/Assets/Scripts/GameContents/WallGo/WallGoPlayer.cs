@@ -14,7 +14,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
         public ArrayQueue<Piece> PlayerPieces { get; set; } = new ArrayQueue<Piece>();
 
-        public int MovePieceCount { get; set; }
+        public int MovePieceCount { get; set; } = 0;
 
         public Piece LastMovePiece { get; set; }
 
@@ -41,7 +41,7 @@ namespace Assets.Scripts.GameContents.WallGo
         }
         public void EndTurn()
         {
-            MovePieceCount = 2;
+            MovePieceCount = 0;
             LastMovePiece = null;
         }
     }

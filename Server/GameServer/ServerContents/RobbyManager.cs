@@ -2,12 +2,14 @@
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace BG.GameServer.ServerContents
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Singleton)]
-    internal class RobbyManager(IServiceProvider serviceProvider) : ISessionComponent
+    internal class RobbyManager() : ISessionComponent
     {
         private readonly ConcurrentDictionary<string, Player> _players = new();
         private readonly ConcurrentDictionary<long, RoomBase> _rooms = new();

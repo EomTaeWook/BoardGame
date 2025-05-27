@@ -27,7 +27,7 @@ namespace Assets.Scripts.Scene.WallGo
             _activeSpriteRenderer.gameObject.SetActive(false);
             _piece = piece;
         }
-        public void Active(bool isActive)
+        public void SetActive(bool isActive)
         {
             _activeSpriteRenderer.gameObject.SetActive(isActive);
         }

@@ -1,5 +1,6 @@
 using Assets.Scripts.GameContents.WallGo;
 using Assets.Scripts.Internals;
+using Dignus.Log;
 using Dignus.Unity.Attributes;
 using UnityEngine;
 
@@ -32,28 +33,27 @@ namespace Assets.Scripts.Scene.WallGo
         private void OnMouseDown()
         {
             _originalPosition = transform.position;
-            _isDragging = true;
             _circleCollider2D.enabled = false;
+            _isDragging = true;
         }
         private void OnMouseDrag()
         {
             if (_isDragging)
             {
-                Vector3 pos = _camera.ScreenToWorldPoint(Input.mousePosition);
-                pos.z = 0;
+                Vector2 pos = _camera.ScreenToWorldPoint(Input.mousePosition);
                 transform.position = pos;
 
-                RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero);
+                Collider2D hitCollider = Physics2D.OverlapPoint(pos);
 
-                if (hit.collider != null && hit.collider.TryGetComponent(out TileGo tileGo))
+                if (hitCollider != null && hitCollider.TryGetComponent(out TileGo tileGo))
                 {
                     if (_currentHoveredTile != null)
                     {
-                        _currentHoveredTile.SetAvailable(false);
+                        _currentHoveredTile.SetMoveAvailable(false);
                     }
                     _currentHoveredTile = tileGo;
                     transform.position = tileGo.transform.position;
-                    tileGo.SetAvailable(true);
+                    tileGo.SetMoveAvailable(true);
                 }
             }
         }
@@ -72,15 +72,19 @@ namespace Assets.Scripts.Scene.WallGo
 
                 if (_currentHoveredTile != null)
                 {
-                    _currentHoveredTile.SetAvailable(false);
+                    _currentHoveredTile.SetMoveAvailable(false);
                     _currentHoveredTile = null;
                 }
 
-                _wallGoSceneController.SpawnPieceRequest(this, tileGo.Tile.GridPos);
+                _wallGoSceneController.SpawnPieceRequest(this, tileGo.Tile.GridPosition);
                 return;
             }
-
-            // 실패 → 원위치
+            if (_currentHoveredTile != null)
+            {
+                _currentHoveredTile.SetMoveAvailable(false);
+                _currentHoveredTile = null;
+            }
+            
             transform.position = _originalPosition;
         }
     }

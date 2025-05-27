@@ -32,6 +32,8 @@ namespace Assets.Scripts.Scene.Title
             popup.SetCreateAccountCallback((nickname) =>
             {
                 _titleSceneController.CreateAccount(nickname);
+
+                _titleSceneController.ProcessLogin();
             });
         }
         protected override void OnDestroyScene()

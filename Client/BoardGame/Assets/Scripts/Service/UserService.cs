@@ -22,6 +22,14 @@ namespace Assets.Scripts.Service
 
         private UserModel _userModel;
 
+        public UserService()
+        {
+
+#if UNITY_EDITOR
+            _savePath = "./UserData.dat";
+#endif
+        }
+
         public string CreateAccountId()
         {
             return $"{SystemInfo.deviceUniqueIdentifier}-{DateTime.Now.Ticks}";

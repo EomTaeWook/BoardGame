@@ -132,7 +132,7 @@ namespace Assets.Scripts.Internals
             LogBuilder.Build();
             LogHelper.SetLogger(LogManager.GetLogger("unity logger"));
         }
-        private void OnSceneLoadCompleted(string sceneName)
+        public void OnSceneLoadCompleted(string sceneName)
         {
             AdjustCameraViewportToAspectRatio(Camera.main);
             var mainCamData = Camera.main.GetUniversalAdditionalCameraData();

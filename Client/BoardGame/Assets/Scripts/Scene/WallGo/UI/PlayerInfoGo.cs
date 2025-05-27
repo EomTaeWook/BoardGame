@@ -1,7 +1,11 @@
 using Assets.Scripts.GameContents.Share;
 using Assets.Scripts.GameContents.WallGo;
 using Assets.Scripts.Internals;
+using Dignus.Coroutine;
+using Dignus.Coroutine.Interfaces;
 using Dignus.Unity.Attributes;
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +23,8 @@ namespace Assets.Scripts.Scene.WallGo.UI
         private TextMeshProUGUI _nicknameText;
         [SerializeField]
         private TextMeshProUGUI _stateText;
+        [SerializeField]
+        private TextMeshProUGUI _turnTimeoutText;
 
         private WallGoSceneController _wallGoSceneController;
 
@@ -26,6 +32,9 @@ namespace Assets.Scripts.Scene.WallGo.UI
 
         public Color PlayerColor { get; private set; }
 
+        private CoroutineHandler _coroutineHandler = new();
+
+        public bool IsRemoveWallMode { get; private set; }
         public void Init(WallGoSceneController wallGoSceneController,
             Color color,
             WallGoPlayer player)
@@ -39,10 +48,46 @@ namespace Assets.Scripts.Scene.WallGo.UI
 
             RefreshUI();
         }
+        public void UseRemoveWallState(bool isRemoveWallMode)
+        {
+            IsRemoveWallMode = isRemoveWallMode;
+        }
+        public void SetTurnActive(bool isActive)
+        {
+            if (isActive)
+            {
+                _imageTurn.gameObject.SetActive(true);
+                _coroutineHandler.Start(RefreshTurnTime());
+            }
+            else
+            {
+                _imageTurn.gameObject.SetActive(false);
+                _coroutineHandler.StopAll();
+            }
+        }
+
+        private IEnumerator RefreshTurnTime()
+        {
+            while(true)
+            {
+                _turnTimeoutText.text = $"{GetRemainTurnTime()}";
+                yield return null;
+            }
+        }
+
+        private void Update()
+        {
+            _coroutineHandler.UpdateCoroutines(Time.deltaTime);
+            
+        }
 
         public void RefreshUI()
         {
             ChangeState(WallGoPlayer.State);
+        }
+        private int GetRemainTurnTime()
+        {
+            return 90 - (DateTime.UtcNow - WallGoPlayer.TurnStartTime).Seconds;
         }
         public void SetTurnIndicator(bool isActive)
         {
@@ -66,7 +111,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
             }
             else if (stateType == StateType.MovePeice)
             {
-                _stateText.text = $"move piece : {WallGoPlayer.MovePieceCount}";
+                _stateText.text = $"move count : {2 - WallGoPlayer.MovePieceCount}";
             }
             else if (stateType == StateType.PlaceWall)
             {

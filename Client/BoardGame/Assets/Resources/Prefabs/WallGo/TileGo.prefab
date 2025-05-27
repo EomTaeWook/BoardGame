@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1770712939390037332}
   - component: {fileID: 3664646477977741472}
-  m_Layer: 0
-  m_Name: ActiveTileWall
+  m_Layer: 7
+  m_Name: AvailableTileWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,8 +97,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7673665190909941277}
   - component: {fileID: 6699614835981743609}
-  m_Layer: 0
-  m_Name: ActiveTileWall
+  m_Layer: 7
+  m_Name: AvailableTileWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,8 +184,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3901405208629676874}
   - component: {fileID: 4944322351941798064}
-  m_Layer: 0
-  m_Name: TileWall
+  m_Layer: 7
+  m_Name: TileWallRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,7 +199,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3148533187721423394}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -271,8 +271,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3657047805245625310}
   - component: {fileID: 7753896405713453000}
-  m_Layer: 0
-  m_Name: TileWall
+  m_Layer: 7
+  m_Name: TileWallBottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,8 +286,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3288481521685059737}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -358,8 +358,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1293905221324942264}
   - component: {fileID: 7193576944650182828}
-  m_Layer: 0
-  m_Name: ActiveTileWall
+  m_Layer: 7
+  m_Name: AvailableTileWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -445,7 +445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7145419495811781724}
   - component: {fileID: 552938015348877597}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ColiderBottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -461,12 +461,12 @@ Transform:
   m_GameObject: {fileID: 6189676191785894488}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0.45, z: 0}
+  m_LocalPosition: {x: 0, y: -0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3657047805245625310}
   - {fileID: 7673665190909941277}
+  - {fileID: 3657047805245625310}
   m_Father: {fileID: 2902272309737374218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!70 &552938015348877597
@@ -499,12 +499,12 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.2, y: 0.8}
+  m_Offset: {x: -0.1, y: 0}
+  m_Size: {x: 0.3, y: 0.9}
   m_Direction: 0
 --- !u!1 &6289109000909564133
 GameObject:
@@ -517,7 +517,7 @@ GameObject:
   - component: {fileID: 2902272309737374218}
   - component: {fileID: 5001248957616374488}
   - component: {fileID: 2674249727062710194}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TileGo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +561,16 @@ MonoBehaviour:
   _rightWall: {fileID: 4944322351941798064}
   _bottomWall: {fileID: 7753896405713453000}
   _leftWall: {fileID: 4986218262064430572}
-  _active: {fileID: 8109924779414421972}
+  _topWallCollider: {fileID: 1449180148736873691}
+  _rightWallCollider: {fileID: 4200774632485682486}
+  _bottomWallCollider: {fileID: 552938015348877597}
+  _leftWallCollider: {fileID: 4397149401105728619}
+  _availableTopWall: {fileID: 7193576944650182828}
+  _availableRightWall: {fileID: 2102932237183634787}
+  _availableBottomWall: {fileID: 6699614835981743609}
+  _availableLeftWall: {fileID: 3664646477977741472}
+  _tileCollider: {fileID: 2674249727062710194}
+  _available: {fileID: 5541928746886424253}
 --- !u!61 &2674249727062710194
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -575,7 +584,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -618,8 +627,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7537472614862332876}
   - component: {fileID: 4986218262064430572}
-  m_Layer: 0
-  m_Name: TileWall
+  m_Layer: 7
+  m_Name: TileWallLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -633,8 +642,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7046649980153268596}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -705,7 +714,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3597077934802337745}
   - component: {fileID: 1049670754705243574}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -792,7 +801,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8445684077765222398}
   - component: {fileID: 4200774632485682486}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ColiderRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -808,12 +817,12 @@ Transform:
   m_GameObject: {fileID: 7418285144383825670}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.45, y: 0, z: 0}
+  m_LocalPosition: {x: 0.4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3901405208629676874}
   - {fileID: 5962724660422377883}
+  - {fileID: 3901405208629676874}
   m_Father: {fileID: 2902272309737374218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &4200774632485682486
@@ -846,12 +855,12 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.2, y: 0.8}
+  m_Offset: {x: 0.1, y: 0}
+  m_Size: {x: 0.3, y: 0.9}
   m_Direction: 0
 --- !u!1 &7898654380990688729
 GameObject:
@@ -863,8 +872,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5962724660422377883}
   - component: {fileID: 2102932237183634787}
-  m_Layer: 0
-  m_Name: ActiveTileWall
+  m_Layer: 7
+  m_Name: AvailableTileWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -950,8 +959,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7401671009970504757}
   - component: {fileID: 5541928746886424253}
-  m_Layer: 0
-  m_Name: Active
+  m_Layer: 7
+  m_Name: Available
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -966,7 +975,7 @@ Transform:
   m_GameObject: {fileID: 8109924779414421972}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1017,7 +1026,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -6740921209918838652, guid: f4430a0f472011f4a8c79eb0270d23cf, type: 3}
-  m_Color: {r: 0.3019608, g: 0.8156863, b: 0.88235295, a: 1}
+  m_Color: {r: 0.001285464, g: 0.36352503, b: 0.408805, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1037,7 +1046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3946072418157822972}
   - component: {fileID: 4397149401105728619}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ColiderLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1053,12 +1062,12 @@ Transform:
   m_GameObject: {fileID: 8451522087959206994}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0, z: 0}
+  m_LocalPosition: {x: -0.4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7537472614862332876}
   - {fileID: 1770712939390037332}
+  - {fileID: 7537472614862332876}
   m_Father: {fileID: 2902272309737374218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &4397149401105728619
@@ -1091,12 +1100,12 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.2, y: 0.8}
+  m_Offset: {x: -0.1, y: 0}
+  m_Size: {x: 0.3, y: 0.9}
   m_Direction: 0
 --- !u!1 &8467221016138781053
 GameObject:
@@ -1108,8 +1117,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6019129432869514611}
   - component: {fileID: 3893979295161505154}
-  m_Layer: 0
-  m_Name: TileWall
+  m_Layer: 7
+  m_Name: TileWallTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1123,8 +1132,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8467221016138781053}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1195,7 +1204,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8589249528008117056}
   - component: {fileID: 1449180148736873691}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ColiderTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1211,12 +1220,12 @@ Transform:
   m_GameObject: {fileID: 9218565991953609846}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.45, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6019129432869514611}
   - {fileID: 1293905221324942264}
+  - {fileID: 6019129432869514611}
   m_Father: {fileID: 2902272309737374218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!70 &1449180148736873691
@@ -1249,10 +1258,10 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.2, y: 0.8}
+  m_Offset: {x: 0.1, y: 0}
+  m_Size: {x: 0.3, y: 0.9}
   m_Direction: 0

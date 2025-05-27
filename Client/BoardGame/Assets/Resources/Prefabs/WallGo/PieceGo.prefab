@@ -10,13 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 6276007586359055159}
   - component: {fileID: 4998191521923195943}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TurnImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6276007586359055159
 Transform:
   m_ObjectHideFlags: 0
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5100904015657070863}
   - component: {fileID: 8519626977749677508}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +162,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -852495541512626098, guid: 97d1afc1e361d8949a15b0d13d408518, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 586297156273242799}
   - component: {fileID: 5661689933040022456}
   - component: {fileID: 6407912856916419330}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PieceGo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _circleCollider2D: {fileID: 6407912856916419330}
   _spriteRenderer: {fileID: 8519626977749677508}
-  _turnSpriteRenderer: {fileID: 4998191521923195943}
+  _activeSpriteRenderer: {fileID: 4998191521923195943}
 --- !u!58 &6407912856916419330
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -237,7 +237,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
