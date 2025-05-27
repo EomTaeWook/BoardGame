@@ -42,6 +42,14 @@ namespace Assets.Scripts.Network.Handlers
                 DignusUnitySceneManager.Instance.LoadScene<LobbyScene>(SceneType.LobbyScene);
             });
         }
+        public void LeaveRoomResponse(LeaveRoomResponse leaveRoomResponse)
+        {
+            UnityMainThread.Run(() =>
+            {
+                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                controller.LeaveRoom(leaveRoomResponse);
+            });
+        }
         public void CreateRoomResponse(CreateRoomResponse createRoomResponse)
         {
             UnityMainThread.Run(() =>
