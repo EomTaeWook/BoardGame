@@ -1,6 +1,0 @@
-D:\Source\BoardGame\Share\Protocol.GSAndClient\bin\Release\Protocol.GSAndClient.dll
-D:\Source\BoardGame\Share\Protocol.GSAndClient\bin\Release\Protocol.GSAndClient.pdb
-D:\Source\BoardGame\Share\Protocol.GSAndClient\obj\Release\Protocol.GSAndClient.csproj.AssemblyReference.cache
-D:\Source\BoardGame\Share\Protocol.GSAndClient\obj\Release\Protocol.GSAndClient.csproj.CoreCompileInputs.cache
-D:\Source\BoardGame\Share\Protocol.GSAndClient\obj\Release\Protocol.GSAndClient.dll
-D:\Source\BoardGame\Share\Protocol.GSAndClient\obj\Release\Protocol.GSAndClient.pdb

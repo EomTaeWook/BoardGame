@@ -9,3 +9,5 @@ Client/BoardGame/Logs/
 **/Properties/*
 **/Layouts/*
 **/UserSettings/*
+Client/BoardGame/.utmp/
+Share/Protocol.GSAndClient/obj/
