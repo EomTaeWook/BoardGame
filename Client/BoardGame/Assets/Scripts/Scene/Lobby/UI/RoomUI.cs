@@ -22,7 +22,7 @@ namespace Assets.Scripts.Scene.Lobby.UI
 
         private LobbySceneController _lobbySceneController;
         private Action _onCloseCallback;
-        public void Init(LobbySceneController lobbySceneController,int roomNumber, Action onCloseCallback)
+        public void Init(LobbySceneController lobbySceneController, int roomNumber, Action onCloseCallback)
         {
             _lobbySceneController = lobbySceneController;
             _onCloseCallback = onCloseCallback;
@@ -64,6 +64,7 @@ namespace Assets.Scripts.Scene.Lobby.UI
         }
         public void OnCloseButtonClick()
         {
+            _lobbySceneController.LeaveRoomReqeust();
             _onCloseCallback?.Invoke();
         }
     }

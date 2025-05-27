@@ -35,6 +35,10 @@ namespace Assets.Scripts.Scene.Title
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.CreateRoom, createRoom));
         }
+        public void LeaveRoomReqeust()
+        {
+            _gameClientService.Send(Packet.MakePacket(CGSProtocol.LeaveRoom, new LeaveRoom()));
+        }
         public void JoinRoomRequest(int roomNumber)
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.JoinRoom, new JoinRoom()
