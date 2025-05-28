@@ -11,7 +11,7 @@ namespace BG.GameServer.ServerContents
     {
         private readonly WallGoBoard _wallGoBoard;
         private readonly WallGoEventHandler _wallGoEventHandler;
-        public WallGoRoom(int roomNumber) : base(roomNumber, GameType.WallGo, 1, 4)
+        public WallGoRoom(int roomNumber) : base(roomNumber, GameType.WallGo, 2, 4)
         {
             _wallGoEventHandler = new WallGoEventHandler();
             _wallGoBoard = new WallGoBoard(_wallGoEventHandler);
