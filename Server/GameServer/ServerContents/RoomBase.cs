@@ -17,6 +17,7 @@ namespace BG.GameServer.ServerContents
         public int RoomNumber { get; private set; }
         public Player Host { get => _hostPlayer; }
         protected readonly ConcurrentDictionary<string, Player> _accountIdToPlayerMap = new();
+        private List<Player> _members = new List<Player>();
         private Player _hostPlayer;
 
         public abstract bool StartGame();
@@ -30,7 +31,7 @@ namespace BG.GameServer.ServerContents
         }
         public ICollection<Player> GetMembers()
         {
-            return _accountIdToPlayerMap.Values;
+            return _members;
         }
         public string GetHostAccountId()
         {
@@ -69,6 +70,7 @@ namespace BG.GameServer.ServerContents
                     _hostPlayer = player;
                 }
 
+                _members.Add(player);
                 player.SetRoom(this);
             }
             return added;
@@ -79,7 +81,10 @@ namespace BG.GameServer.ServerContents
             {
                 return;
             }
-            _accountIdToPlayerMap.Remove(player.AccountId, out _);
+            if(_accountIdToPlayerMap.Remove(player.AccountId, out player))
+            {
+                _members.Remove(player);
+            }
 
             if (_hostPlayer.AccountId == player.AccountId)
             {

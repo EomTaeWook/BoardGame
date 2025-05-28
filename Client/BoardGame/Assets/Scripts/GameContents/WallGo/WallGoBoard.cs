@@ -98,7 +98,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 }
             }
             else
-            {                //spawn1
+            {   //spawn1
                 for (int i = 0; i < _players.Count; ++i)
                 {
                     _turnQueue.Add(_players[i]);
@@ -351,7 +351,7 @@ namespace Assets.Scripts.GameContents.WallGo
             _currentPlayer.StartTurn();
             _wallGoEventHandler.Process(new StartTurn()
             {
-                AccountId = finishedPlayer.AccountId,
+                AccountId = _currentPlayer.AccountId,
             });
         }
         public void Shuffle<T>(List<T> values)
@@ -393,7 +393,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
                     foreach (var direction in directions)
                     {
-                        if (TryPlaceWall(_currentPlayer, direction) == true)
+                        if (TryPlaceWall(_currentPlayer, _currentPlayer.LastMovePiece.GridPosition, direction) == true)
                         {
                             return true;
                         }
@@ -405,7 +405,7 @@ namespace Assets.Scripts.GameContents.WallGo
                 Shuffle(directions);
                 foreach (var direction in directions)
                 {
-                    if (TryPlaceWall(_currentPlayer, direction) == true)
+                    if (TryPlaceWall(_currentPlayer, _currentPlayer.LastMovePiece.GridPosition, direction) == true)
                     {
                         return true;
                     }
@@ -538,7 +538,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
             return true;
         }
-        public bool TryPlaceWall(IPlayer player, Direction direction)
+        public bool TryPlaceWall(IPlayer player, Point placeWallPoint, Direction direction)
         {
             if (_currentPlayer.AccountId != player.AccountId)
             {
@@ -557,18 +557,34 @@ namespace Assets.Scripts.GameContents.WallGo
                 LogHelper.Error("cannot place wall. current state: " + _currentPlayer.State);
                 return false;
             }
+
             var lastMovePiece = _currentPlayer.LastMovePiece;
 
-            var point = lastMovePiece.GridPosition;
+            List<Point> validateWallPoint =
+            new()
+            {
+                lastMovePiece.GridPosition,
+                lastMovePiece.GridPosition + Point.Down,
+                lastMovePiece.GridPosition + Point.Left,
+                lastMovePiece.GridPosition + Point.Right,
+                lastMovePiece.GridPosition + Point.Up,
+            };            
 
-            Point neighbor = GetNeighborPoint(point, direction);
+            if(validateWallPoint.Contains(placeWallPoint) == false)
+            {
+                LogHelper.Error($"cannot place wall. invalid wall point. x : {placeWallPoint.X} y: {placeWallPoint.Y}");
+                return false;
+            }
 
-            Tile fromTile = IsInsideBoard(point) ? GetTile(point) : null;
+            Point neighbor = GetNeighborPoint(placeWallPoint, direction);
+            
+
+            Tile fromTile = IsInsideBoard(placeWallPoint) ? GetTile(placeWallPoint) : null;
             Tile toTile = IsInsideBoard(neighbor) ? GetTile(neighbor) : null;
 
             if (IsWallAlreadyExists(fromTile, toTile, direction) == true)
             {
-                LogHelper.Error($"wall already exists. from: {point.X}, {point.Y}, dir: {direction}");
+                LogHelper.Error($"wall already exists. from: {placeWallPoint.X}, {placeWallPoint.Y}, dir: {direction}");
                 return false;
             }
 

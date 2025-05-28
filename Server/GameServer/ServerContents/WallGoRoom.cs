@@ -11,7 +11,7 @@ namespace BG.GameServer.ServerContents
     {
         private readonly WallGoBoard _wallGoBoard;
         private readonly WallGoEventHandler _wallGoEventHandler;
-        public WallGoRoom(int roomNumber) : base(roomNumber, GameType.WallGo, 2, 4)
+        public WallGoRoom(int roomNumber) : base(roomNumber, GameType.WallGo, 1, 4)
         {
             _wallGoEventHandler = new WallGoEventHandler();
             _wallGoBoard = new WallGoBoard(_wallGoEventHandler);
@@ -66,7 +66,7 @@ namespace BG.GameServer.ServerContents
         {
             var wallGoPlayer = _wallGoBoard.GetPlayer(placeWall.AccountId);
 
-            return _wallGoBoard.TryPlaceWall(wallGoPlayer, placeWall.Direction);
+            return _wallGoBoard.TryPlaceWall(wallGoPlayer, placeWall.Point, placeWall.Direction);
         }
         public bool RemoveWallReqeust(RemoveWall removeWall)
         {

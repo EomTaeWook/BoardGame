@@ -8,6 +8,7 @@ using Assets.Scripts.Scene.WallGo.UI;
 using Assets.Scripts.Service;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
+using Dignus.Unity;
 using Dignus.Unity.Extensions;
 using Dignus.Unity.Framework;
 using Protocol.GSAndClient;
@@ -102,7 +103,10 @@ namespace Assets.Scripts.Scene.WallGo
                         rank++;
                     }
 
-                    UIManager.Instance.ShowAlert("게임 종료", $"Score : {sb}");
+                    UIManager.Instance.ShowAlert("게임 종료", $"Score : {sb}", () => 
+                    {
+                        DignusUnitySceneManager.Instance.LoadScene(SceneType.LobbyScene);
+                    });
                 }
                 else if (evt is StartTurn startTurn)
                 {
@@ -393,8 +397,7 @@ namespace Assets.Scripts.Scene.WallGo
                     {
                         continue;
                     }
-                    var playerInfo = _playerInfos[Model.CurrentPlayer.AccountId];
-                    playerInfo.WallGoPlayer.HasUsedBreakWall = true;
+
                     var packet = Packet.MakePacket(WallGoCommandProtocol.RemoveWall, new RemoveWallReqeust()
                     {
                         TilePointX = selectTileGo.Tile.GridPosition.X,
@@ -516,6 +519,11 @@ namespace Assets.Scripts.Scene.WallGo
 
         public void SpawnPieceRequest(DraggablePieceGo piece, Point tilePoint)
         {
+            if (IsPlayerTurn() == false)
+            {
+                return;
+            }
+
             var packet = Packet.MakePacket(WallGoCommandProtocol.SpawnPiece, new SpawnPieceReqeust()
             {
                 PieceId = piece.Piece.Id,

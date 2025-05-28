@@ -88,7 +88,7 @@ namespace Assets.Scripts.Internals
         {
             return new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
         }
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = e.ExceptionObject as Exception;
             LogHelper.Fatal(exception);
@@ -99,7 +99,7 @@ namespace Assets.Scripts.Internals
         }
         private void InitLog()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             Application.logMessageReceivedThreaded += Application_logMessageReceived;
             Application.logMessageReceived += Application_logMessageReceived;
 

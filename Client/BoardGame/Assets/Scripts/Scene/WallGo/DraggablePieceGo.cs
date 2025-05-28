@@ -66,6 +66,19 @@ namespace Assets.Scripts.Scene.WallGo
 
             _circleCollider2D.enabled = true;
 
+
+            if(_wallGoSceneController.IsPlayerTurn() == false)
+            {
+                if (_currentHoveredTile != null)
+                {
+                    _currentHoveredTile.SetMoveAvailable(false);
+                    _currentHoveredTile = null;
+                }
+
+                transform.position = _originalPosition;
+                return;
+            }
+
             if (hit.collider != null && hit.collider.TryGetComponent(out TileGo tileGo))
             {
                 transform.position = tileGo.transform.position;

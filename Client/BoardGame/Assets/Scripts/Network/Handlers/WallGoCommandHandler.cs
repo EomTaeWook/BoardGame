@@ -59,5 +59,9 @@ namespace Assets.Scripts.Network.Handlers
         {
             _eventHandler.Process(evt);
         }
+        public void RemoveWall(RemoveWall evt)
+        {
+            _eventHandler.Process(evt);
+        }
     }
 }

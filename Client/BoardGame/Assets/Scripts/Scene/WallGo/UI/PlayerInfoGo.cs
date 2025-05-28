@@ -44,7 +44,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
             _profileBackground.color = color;
 
             _nicknameText.text = WallGoPlayer.Nickname;
-
+            SetTurnActive(false);
             RefreshUI();
         }
         public void UseRemoveWallState(bool isRemoveWallMode)
@@ -60,6 +60,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
             }
             else
             {
+                _turnTimeoutText.gameObject.SetActive(false);
                 _imageTurn.gameObject.SetActive(false);
                 _coroutineHandler.StopAll();
             }
@@ -67,6 +68,7 @@ namespace Assets.Scripts.Scene.WallGo.UI
 
         private IEnumerator RefreshTurnTime()
         {
+            _turnTimeoutText.gameObject.SetActive(true);
             while (true)
             {
                 _turnTimeoutText.text = $"{GetRemainTurnTime()}";

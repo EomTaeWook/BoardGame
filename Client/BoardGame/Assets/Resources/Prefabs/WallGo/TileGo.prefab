@@ -562,7 +562,7 @@ MonoBehaviour:
   _bottomWall: {fileID: 7753896405713453000}
   _leftWall: {fileID: 4986218262064430572}
   _topWallCollider: {fileID: 1449180148736873691}
-  _rightWallCollider: {fileID: 0}
+  _rightWallCollider: {fileID: 5603575838553343998}
   _bottomWallCollider: {fileID: 552938015348877597}
   _leftWallCollider: {fileID: 4397149401105728619}
   _availableTopWall: {fileID: 7193576944650182828}
