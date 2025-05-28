@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.GSAndClient", "Protocol.GSAndClient\Protocol.GSAndClient.csproj", "{794634B8-67ED-4B04-94A2-F57DAF44AB97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataContainer", "DataContainer\DataContainer.csproj", "{98363C18-AD03-42D9-B4E5-16D952155660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{794634B8-67ED-4B04-94A2-F57DAF44AB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{794634B8-67ED-4B04-94A2-F57DAF44AB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{794634B8-67ED-4B04-94A2-F57DAF44AB97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98363C18-AD03-42D9-B4E5-16D952155660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98363C18-AD03-42D9-B4E5-16D952155660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98363C18-AD03-42D9-B4E5-16D952155660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98363C18-AD03-42D9-B4E5-16D952155660}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

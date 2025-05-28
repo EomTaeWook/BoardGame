@@ -1,0 +1,9 @@
+{
+  "ReadAssemblyPath": "..\\..\\Share\\DataContainer\\bin\\Release\\net481\\DataContainer.dll",
+  "ReadPath": "..\\..\\ExcelTable\\",
+  "OutputRefPath": "..\\Exported\\",
+  "OutputTemplatePath": [
+    "..\\..\\Datas",
+    "..\\..\\Client\\BoardGame\\Assets\\StreamingAssets\\Datas"
+  ]
+}
