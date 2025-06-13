@@ -7,6 +7,8 @@ using Dignus.Unity;
 using Dignus.Unity.DependencyInjection;
 using Newtonsoft.Json;
 using Protocol.GSAndClient;
+using Protocol.GSAndClient.Models;
+using System.Linq;
 
 namespace Assets.Scripts.Network.Handlers
 {
@@ -31,11 +33,11 @@ namespace Assets.Scripts.Network.Handlers
 
         public void LoginResponse(LoginResponse loginResponse)
         {
-            UnityMainThread.Run(() =>
+            UnityMainThread.Add(() =>
             {
-                if (loginResponse.Ok == false)
+                if (loginResponse.LoginReason == LoginReason.AlreadyLogin)
                 {
-                    UIManager.Instance.ShowAlert("Alert", "failed to login");
+                    UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1000));
                     DignusUnitySceneManager.Instance.LoadScene<TitleScene>(SceneType.TitleScene);
                     return;
                 }
@@ -44,16 +46,31 @@ namespace Assets.Scripts.Network.Handlers
         }
         public void LeaveRoomResponse(LeaveRoomResponse leaveRoomResponse)
         {
-            UnityMainThread.Run(() =>
+            UnityMainThread.Add(() =>
             {
                 var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
                 controller.LeaveRoom(leaveRoomResponse);
             });
         }
+        public void GetRoomListResponse(GetRoomListResponse getRoomListResponse)
+        {
+            UnityMainThread.Add(() =>
+            {
+                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                controller.RoomList(getRoomListResponse);
+            });
+        }
         public void CreateRoomResponse(CreateRoomResponse createRoomResponse)
         {
-            UnityMainThread.Run(() =>
+            UnityMainThread.Add(() =>
             {
+                if (createRoomResponse.Ok == false)
+                {
+                    UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1002));
+                    return;
+                }
+
+
                 var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
 
                 controller.CreateRoom(createRoomResponse);
@@ -61,17 +78,37 @@ namespace Assets.Scripts.Network.Handlers
         }
         public void JoinRoomResponse(JoinRoomResponse joinRoomResponse)
         {
-            UnityMainThread.Run(() =>
+            UnityMainThread.Add(() =>
             {
                 var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
 
+                if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.NotFound)
+                {
+                    UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1003));
+
+
+                    
+
+                    return;
+                }
+                else if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.IsFull)
+                {
+                    UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1004));
+                    return;
+                }
                 controller.JoinRoom(joinRoomResponse);
             });
         }
         public void StartGameRoomResponse(StartGameRoomResponse startGameRoomResponse)
         {
-            UnityMainThread.Run(() =>
+            UnityMainThread.Add(() =>
             {
+                if (startGameRoomResponse.StartGameRoomReason == StartGameRoomReason.NotEnoughUser)
+                {
+                    UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1005));
+                    return;
+                }
+
                 var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
                 controller.StartGameRoom(startGameRoomResponse);
             });

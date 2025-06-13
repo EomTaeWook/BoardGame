@@ -1,6 +1,9 @@
 ﻿using Assets.Scripts.Internals;
 using Assets.Scripts.Scene.Lobby.UI;
 using Dignus.Unity.Framework;
+using NUnit.Framework;
+using Protocol.GSAndClient.Models;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Scene.Title
 {
@@ -46,6 +49,13 @@ namespace Assets.Scripts.Scene.Title
                 _roomUI.RefreshUI();
             }
         }
+        public void LobbyGameRoomUIRefresh(int pageIndex, List<RoomInfo> roomInfos)
+        {
+            if(_lobbyUI != null)
+            {
+                _lobbyUI.RefreshRoomUI(pageIndex, roomInfos);
+            }
+        }
         public void CloseRoomUI()
         {
             if (_roomUI != null)
@@ -70,7 +80,7 @@ namespace Assets.Scripts.Scene.Title
                 _createRoomUI = null;
             }
         }
-        protected override void OnDestroyScene()
+        public override void OnDestroyScene()
         {
             if (_lobbyUI != null)
             {
@@ -81,6 +91,8 @@ namespace Assets.Scripts.Scene.Title
             CloseCreateRoomUI();
             CloseJoinRoomUI();
             CloseRoomUI();
+
+            SceneController.Dispose();
         }
     }
 }

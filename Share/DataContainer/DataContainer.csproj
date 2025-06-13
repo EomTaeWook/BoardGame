@@ -4,4 +4,12 @@
     <TargetFramework>net481</TargetFramework>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="IF $(ConfigurationName) == Release (&#xD;&#xA;xcopy /S/Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\..\Client\BoardGame\Assets\Plugins\Debug\DataContainer.*&quot;&#xD;&#xA;xcopy /S/Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\..\Client\BoardGame\Assets\Plugins\Release\DataContainer.*&quot;&#xD;&#xA;)" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
 </Project>

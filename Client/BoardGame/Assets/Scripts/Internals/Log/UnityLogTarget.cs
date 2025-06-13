@@ -12,7 +12,7 @@ namespace Assets.Scripts.Internals.Log
         public UnityLogTarget()
         {
             _renderer = new LogFormatRenderer();
-            //_renderer.SetLogFormat("${datetime} | ${message} | ${callerFileName} : ${callerLineNumber}");
+            _renderer.SetLogFormat("${datetime} | ${message} | ${callerFileName} : ${callerLineNumber}");
         }
         public void Dispose()
         {

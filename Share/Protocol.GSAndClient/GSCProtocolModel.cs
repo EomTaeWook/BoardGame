@@ -9,7 +9,12 @@ namespace Protocol.GSAndClient
 
     public class LoginResponse
     {
-        public bool Ok { get; set; }
+        public LoginReason LoginReason { get; set; }
+    }
+    public class GetRoomListResponse
+    {
+        public int Page { get; set; }
+        public List<RoomInfo> RoomList { get; set; }
     }
 
     public class LeaveRoomResponse
@@ -18,7 +23,7 @@ namespace Protocol.GSAndClient
     }
     public class JoinRoomResponse
     {
-        public bool Ok { get; set; }
+        public JoinRoomReason FailedJoinRoomReason { get; set; }
 
         public List<PlayerModel> Members { get; set; }
     }
@@ -31,8 +36,7 @@ namespace Protocol.GSAndClient
 
     public class StartGameRoomResponse
     {
-        public bool Ok { get; set; }
-
+        public StartGameRoomReason StartGameRoomReason { get; set; }
         public GameType GameType { get; set; }
     }
 }

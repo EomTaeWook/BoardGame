@@ -36,7 +36,7 @@ namespace Assets.Scripts.Scene.Title
                 _titleSceneController.ProcessLogin();
             });
         }
-        protected override void OnDestroyScene()
+        public override void OnDestroyScene()
         {
             _titleSceneController.Dispose();
         }

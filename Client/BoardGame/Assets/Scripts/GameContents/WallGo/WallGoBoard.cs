@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Assets.Scripts.GameContents.WallGo
@@ -31,6 +32,7 @@ namespace Assets.Scripts.GameContents.WallGo
 
         private bool _isRunning = false;
 
+        private int _turnEndFlag = 0;
         public WallGoBoard(IWallGoEventHandler wallGoEventHandler)
         {
             _wallGoEventHandler = wallGoEventHandler;
@@ -142,9 +144,9 @@ namespace Assets.Scripts.GameContents.WallGo
                 AccountId = wallGoPlayer.AccountId
             });
         }
-        private List<Point> FloodFill(Point start, bool[,] visited)
+        private HashSet<Point> FloodFill(Point start, bool[,] visited)
         {
-            var result = new List<Point>();
+            var result = new HashSet<Point>();
             var queue = new Queue<Point>();
             queue.Enqueue(start);
             visited[start.X, start.Y] = true;
@@ -180,16 +182,20 @@ namespace Assets.Scripts.GameContents.WallGo
         {
             var visited = new bool[_tiles.GetLength(0), _tiles.GetLength(1)];
 
-            var piecePositions = new List<Point>();
+            var pieces = new List<Piece>();
+
             foreach (var player in _players)
             {
                 foreach (var piece in player.PlayerPieces)
                 {
-                    piecePositions.Add(piece.GridPosition);
+                    pieces.Add(piece);
                 }
             }
-            foreach (var point in piecePositions)
+
+
+            foreach (var piece in pieces)
             {
+                var point = piece.GridPosition;
                 if (visited[point.X, point.Y])
                 {
                     continue;
@@ -197,19 +203,20 @@ namespace Assets.Scripts.GameContents.WallGo
 
                 var connectedPoints = FloodFill(point, visited);
 
-                var piecesInRegion = 0;
-
-                foreach (var item in piecePositions)
+                foreach (var item in pieces)
                 {
-                    if (connectedPoints.Contains(item))
+                    if (piece == item)
                     {
-                        piecesInRegion++;
+                        continue;
                     }
-                }
 
-                if (piecesInRegion != 1)
-                {
-                    return false;
+                    if (connectedPoints.Contains(item.GridPosition))
+                    {
+                        if (piece.Owner != item.Owner)
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
             return true;
@@ -343,16 +350,27 @@ namespace Assets.Scripts.GameContents.WallGo
         }
         private void EndTurn()
         {
-            var finishedPlayer = _turnQueue.Read();
-            finishedPlayer.EndTurn();
-            _turnQueue.Add(finishedPlayer);
-
-            _currentPlayer = _turnQueue.Peek();
-            _currentPlayer.StartTurn();
-            _wallGoEventHandler.Process(new StartTurn()
+            if (Interlocked.CompareExchange(ref _turnEndFlag, 1, 0) == 1)
             {
-                AccountId = _currentPlayer.AccountId,
-            });
+                return;
+            }
+            try
+            {
+                var finishedPlayer = _turnQueue.Read();
+                finishedPlayer.EndTurn();
+                _turnQueue.Add(finishedPlayer);
+
+                _currentPlayer = _turnQueue.Peek();
+                _currentPlayer.StartTurn();
+                _wallGoEventHandler.Process(new StartTurn()
+                {
+                    AccountId = _currentPlayer.AccountId,
+                });
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _turnEndFlag, 0);
+            }
         }
         public void Shuffle<T>(List<T> values)
         {
@@ -568,16 +586,16 @@ namespace Assets.Scripts.GameContents.WallGo
                 lastMovePiece.GridPosition + Point.Left,
                 lastMovePiece.GridPosition + Point.Right,
                 lastMovePiece.GridPosition + Point.Up,
-            };            
+            };
 
-            if(validateWallPoint.Contains(placeWallPoint) == false)
+            if (validateWallPoint.Contains(placeWallPoint) == false)
             {
                 LogHelper.Error($"cannot place wall. invalid wall point. x : {placeWallPoint.X} y: {placeWallPoint.Y}");
                 return false;
             }
 
             Point neighbor = GetNeighborPoint(placeWallPoint, direction);
-            
+
 
             Tile fromTile = IsInsideBoard(placeWallPoint) ? GetTile(placeWallPoint) : null;
             Tile toTile = IsInsideBoard(neighbor) ? GetTile(neighbor) : null;

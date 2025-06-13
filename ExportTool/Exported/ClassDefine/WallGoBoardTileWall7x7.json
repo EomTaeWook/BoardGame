@@ -1,0 +1,57 @@
+[
+  {
+    "Name": "Id",
+    "Count": 1,
+    "Required": true,
+    "DataType": "Int32",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "Name",
+    "Count": 1,
+    "Required": true,
+    "DataType": "String",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "X",
+    "Count": 1,
+    "Required": true,
+    "DataType": "Float",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "Y",
+    "Count": 7,
+    "Required": true,
+    "DataType": "Float",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "TileWallDirectionType",
+    "Count": 1,
+    "Required": true,
+    "DataType": "Enum",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  }
+]

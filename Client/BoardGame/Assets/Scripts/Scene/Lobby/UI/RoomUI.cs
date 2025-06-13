@@ -1,3 +1,4 @@
+using Assets.Scripts.Extensions;
 using Assets.Scripts.Internals;
 using Assets.Scripts.Scene.Title;
 using Dignus.Unity.Attributes;
@@ -10,10 +11,20 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Scene.Lobby.UI
 {
     [PrefabPath(Consts.Path.Lobby)]
-    public class RoomUI : UiItem
+    public class RoomUI : UIItem
     {
         [SerializeField]
         private TextMeshProUGUI _roomNumber;
+
+        [SerializeField]
+        private TextMeshProUGUI _titleText;
+        [SerializeField]
+        private TextMeshProUGUI _roomNumberText;
+        [SerializeField]
+        private TextMeshProUGUI _startButtonText;
+        [SerializeField]
+        private TextMeshProUGUI _closeButtonText;
+
         [SerializeField]
         private Button _startButton;
 
@@ -33,6 +44,14 @@ namespace Assets.Scripts.Scene.Lobby.UI
             _startButton.interactable = false;
 
             _roomNumber.text = roomNumber.ToString();
+
+            _titleText.text = StringHelper.GetString(1021);
+
+            _roomNumberText.text = StringHelper.GetString(1020);
+
+            _startButtonText.text = StringHelper.GetString(1022);
+
+            _closeButtonText.text = StringHelper.GetString(1015);
         }
 
         public void RefreshUI()

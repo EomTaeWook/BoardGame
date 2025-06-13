@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts.Internals
 {
-    public class UiItem : MonoBehaviour
+    public class UIItem : MonoBehaviour
     {
         public virtual void DisposeUI()
         {

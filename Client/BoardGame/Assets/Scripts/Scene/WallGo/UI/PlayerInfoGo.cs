@@ -12,7 +12,7 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Scene.WallGo.UI
 {
     [PrefabPath(Consts.Path.WallGoUI)]
-    public class PlayerInfoGo : UiItem
+    public class PlayerInfoGo : UIItem
     {
         [SerializeField]
         private Image _imageTurn;

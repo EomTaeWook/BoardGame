@@ -221,6 +221,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomNumber: {fileID: 5223533500071111101}
+  _titleText: {fileID: 7438724313953159140}
+  _roomNumberText: {fileID: 4781158718386017230}
+  _startButtonText: {fileID: 1415872270494407216}
+  _closeButtonText: {fileID: 6847098058758525839}
   _startButton: {fileID: 481851532985334828}
   _playerNicknames:
   - {fileID: 5411144302988810462}

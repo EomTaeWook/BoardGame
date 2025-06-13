@@ -88,6 +88,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputField: {fileID: 3248655897524340110}
+  _titleText: {fileID: 6724779745619179600}
+  _roomNumberText: {fileID: 3512810200090712199}
+  _joinButtonText: {fileID: 1376012814174175905}
+  _closeButtonText: {fileID: 4485808266351151822}
 --- !u!1 &427812025363206812
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,4 +15,14 @@ namespace Assets.Scripts.Internals
         Live,
 
     }
+
+
+    public enum LanguageType
+    {
+        Kor,
+        Eng,
+
+        Max,
+    }
+
 }

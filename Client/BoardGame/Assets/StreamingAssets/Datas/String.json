@@ -1,0 +1,182 @@
+[
+  {
+    "Id": 1000,
+    "Name": "1000",
+    "Korean": "\uC774\uBBF8 \uB85C\uADF8\uC778 \uC911\uC785\uB2C8\uB2E4.",
+    "English": "Already logged in"
+  },
+  {
+    "Id": 1001,
+    "Name": "1001",
+    "Korean": "\uC54C\uB9BC",
+    "English": "Alert"
+  },
+  {
+    "Id": 1002,
+    "Name": "1002",
+    "Korean": "\uBC29 \uC0DD\uC131\uC5D0 \uC2E4\uD328\uD558\uC600\uC2B5\uB2C8\uB2E4.",
+    "English": "Failed to create room"
+  },
+  {
+    "Id": 1003,
+    "Name": "1003",
+    "Korean": "\uBC29\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.",
+    "English": "Room not found"
+  },
+  {
+    "Id": 1004,
+    "Name": "1004",
+    "Korean": "\uBC29\uC774 \uAC00\uB4DD \uCC3C\uC2B5\uB2C8\uB2E4.",
+    "English": "Room is full"
+  },
+  {
+    "Id": 1005,
+    "Name": "1005",
+    "Korean": "\uC778\uC6D0\uC774 \uBD80\uC871\uD574 \uC2DC\uC791\uC774 \uBD88\uAC00\uB2A5\uD569\uB2C8\uB2E4.",
+    "English": "Not enough players to start"
+  },
+  {
+    "Id": 1006,
+    "Name": "1006",
+    "Korean": "\uC11C\uBC84 \uC811\uC18D\uC5D0 \uC2E4\uD328\uD558\uC600\uC2B5\uB2C8\uB2E4.",
+    "English": "Failed to connect to server"
+  },
+  {
+    "Id": 1007,
+    "Name": "1007",
+    "Korean": "\uAC8C\uC784 \uC885\uB8CC",
+    "English": "Game over"
+  },
+  {
+    "Id": 1008,
+    "Name": "1008",
+    "Korean": "\uD134",
+    "English": "Turn"
+  },
+  {
+    "Id": 1009,
+    "Name": "1009",
+    "Korean": "\uAC8C\uC784 \uC2DC\uC791",
+    "English": "Game start"
+  },
+  {
+    "Id": 1010,
+    "Name": "1010",
+    "Korean": "\uD604\uC7AC \uD134\uC774 \uC544\uB2D9\uB2C8\uB2E4.",
+    "English": "It\u2019s not your turn"
+  },
+  {
+    "Id": 1011,
+    "Name": "1011",
+    "Korean": "\uC774\uB3D9\uC744 \uD558\uC600\uAE30\uC5D0 \uC544\uC774\uD15C\uC744 \uC0AC\uC6A9\uD558\uC9C0 \uBABB\uD569\uB2C8\uB2E4.",
+    "English": "You cannot use an item after moving"
+  },
+  {
+    "Id": 1012,
+    "Name": "1012",
+    "Korean": "\uC774\uB3D9 \uC804\uC5D0\uB9CC \uC0AC\uC6A9 \uAC00\uB2A5\uD569\uB2C8\uB2E4.",
+    "English": "Can only be used before moving"
+  },
+  {
+    "Id": 1013,
+    "Name": "1013",
+    "Korean": "\uBCBD\uC744 \uC120\uD0DD\uD558\uC138\uC694",
+    "English": "Please select a wall"
+  },
+  {
+    "Id": 1014,
+    "Name": "1014",
+    "Korean": "\uD655\uC778",
+    "English": "Confirm"
+  },
+  {
+    "Id": 1015,
+    "Name": "1015",
+    "Korean": "\uB2EB\uAE30",
+    "English": "Close"
+  },
+  {
+    "Id": 1016,
+    "Name": "1016",
+    "Korean": "\uBC29 \uC0DD\uC131",
+    "English": "Create Room"
+  },
+  {
+    "Id": 1017,
+    "Name": "1017",
+    "Korean": "\uBE44\uBC00\uBC29 \uCC38\uAC00",
+    "English": "Join Private Room"
+  },
+  {
+    "Id": 1018,
+    "Name": "1018",
+    "Korean": "\uC0DD\uC131",
+    "English": "Create"
+  },
+  {
+    "Id": 1019,
+    "Name": "1019",
+    "Korean": "\uCC38\uAC00",
+    "English": "Join"
+  },
+  {
+    "Id": 1020,
+    "Name": "1020",
+    "Korean": "\uBC29 \uBC88\uD638",
+    "English": "Number"
+  },
+  {
+    "Id": 1021,
+    "Name": "1021",
+    "Korean": "\uBC29",
+    "English": "Room"
+  },
+  {
+    "Id": 1022,
+    "Name": "1022",
+    "Korean": "\uAC8C\uC784 \uC2DC\uC791",
+    "English": "StartGame"
+  },
+  {
+    "Id": 1023,
+    "Name": "1023",
+    "Korean": "\uB9D0\uC744 \uC6C0\uC9C1\uC774\uC138\uC694.",
+    "English": "Please move your piece"
+  },
+  {
+    "Id": 1024,
+    "Name": "1024",
+    "Korean": "\uACF5\uAC1C\uBC29",
+    "English": "Public Room"
+  },
+  {
+    "Id": 1025,
+    "Name": "1025",
+    "Korean": "\uBE44\uACF5\uAC1C \uBC29",
+    "English": "Private Room"
+  },
+  {
+    "Id": 1026,
+    "Name": "1026",
+    "Korean": "\uBCBD\uBC14\uB451",
+    "English": "Wall Go"
+  },
+  {
+    "Id": 1027,
+    "Name": "1027",
+    "Korean": "\uCC38\uAC00",
+    "English": "Join"
+  },
+  {
+    "Id": 1028,
+    "Name": "1028",
+    "Korean": "\uBC29 \uB9AC\uC2A4\uD2B8",
+    "English": "RoomList"
+  },
+  {
+    "Id": 1029,
+    "Name": "1029",
+    "Korean": "\uC0C8\uB85C\uACE0\uCE68",
+    "English": "Refresh"
+  }
+]

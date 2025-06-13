@@ -1,17 +1,19 @@
 using Assets.Scripts.Extensions;
 using Assets.Scripts.Internals.Log;
+using Assets.Scripts.Service;
+using DataContainer.Generated;
 using Dignus.Log;
 using Dignus.Log.LogFormat;
 using Dignus.Log.LogTarget;
 using Dignus.Log.Model;
 using Dignus.Log.Rule;
 using Dignus.Unity;
-using Dignus.Unity.Coroutine;
 using Dignus.Unity.DependencyInjection;
 using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Rendering.Universal;
 
 namespace Assets.Scripts.Internals
@@ -48,21 +50,51 @@ namespace Assets.Scripts.Internals
                 Application.runInBackground = true;
                 InitResolution();
                 InitLog();
+                InitTemplate();
                 conatiner.Build();
 
                 DignusUnitySceneManager.Instance.OnSceneLoadCompleted += OnSceneLoadCompleted;
 
                 var _ = UIManager.Instance;
 
-                DignusUnityCoroutineManager.Start(UnityMainThread.ExecutePending());
+                UnityMainThread.Start();
             }
+        }
+        private void OnApplicationQuit()
+        {
+            UnityMainThread.Stop();
+            var gameClientService = DignusUnityServiceContainer.Resolve<GameClientService>();
+            gameClientService.Dispose();
+        }
+        private void InitTemplate()
+        {
+            if (Application.platform == RuntimePlatform.WindowsEditor ||
+                Application.platform == RuntimePlatform.WindowsPlayer)
+            {
+                TemplateLoader.Load(Path.Combine(Application.streamingAssetsPath, "Datas"));
+            }
+            else if (Application.platform == RuntimePlatform.Android ||
+                Application.platform == RuntimePlatform.IPhonePlayer ||
+                Application.platform == RuntimePlatform.OSXEditor)
+            {
+                TemplateLoader.Load(LoadAssetFile);
+            }
+            TemplateLoader.MakeRefTemplate();
+        }
+        private string LoadAssetFile(string fileName)
+        {
+            var uri = new System.Uri(Path.Combine(Application.streamingAssetsPath, "Datas", fileName));
+            var requester = UnityWebRequest.Get(uri);
+            var op = requester.SendWebRequest();
+            while (!op.isDone)
+            {
+            }
+            return requester.downloadHandler.text;
         }
         private void InitResolution()
         {
             DeviceWidth = Screen.width;
             DeviceHeight = Screen.height;
-            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
-            Screen.fullScreen = true;
         }
         private void Application_logMessageReceived(string condition, string stackTrace, LogType type)
         {

@@ -7,6 +7,7 @@ namespace Protocol.GSAndClient
         JoinRoomResponse,
         CreateRoomResponse,
         StartGameRoomResponse,
+        GetRoomListResponse,
 
         Ping,
 

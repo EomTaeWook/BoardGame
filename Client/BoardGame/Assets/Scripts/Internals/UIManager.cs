@@ -17,8 +17,8 @@ namespace Assets.Scripts.Internals
     {
         public Camera UICamera { get; private set; }
 
-        private readonly List<UiItem> _uiContainer = new();
-        private readonly List<UiItem> _popupContainer = new();
+        private readonly List<UIItem> _uiContainer = new();
+        private readonly List<UIItem> _popupContainer = new();
 
         private GameObject _uiCanvas;
         private GameObject _uiPopupCanvas;
@@ -96,24 +96,24 @@ namespace Assets.Scripts.Internals
             toastMessage.Init(body, duration);
             toastMessage.Show();
         }
-        public T AddUI<T>() where T : UiItem
+        public T AddUI<T>() where T : UIItem
         {
             var prefab = DignusUnityResourceManager.Instance.LoadAsset<T>();
-            var item = DignusUnityObjectPool.Instance.Pop<UiItem>(prefab);
+            var item = DignusUnityObjectPool.Instance.Pop<UIItem>(prefab);
             _uiContainer.Add(item);
             item.transform.SetParent(_uiCanvas.transform, false);
             item.gameObject.SetActive(true);
             return item.GetComponent<T>();
         }
-        public UiItem AddUI(UiItem prefab)
+        public UIItem AddUI(UIItem prefab)
         {
-            var item = DignusUnityObjectPool.Instance.Pop<UiItem>(prefab);
+            var item = DignusUnityObjectPool.Instance.Pop<UIItem>(prefab);
             _uiContainer.Add(item);
             item.transform.SetParent(_uiCanvas.transform, false);
             item.gameObject.SetActive(true);
             return item;
         }
-        public T AddPopupUI<T>() where T : UiItem
+        public T AddPopupUI<T>() where T : UIItem
         {
             if (_popupContainer.Count > 0)
             {
@@ -122,16 +122,16 @@ namespace Assets.Scripts.Internals
             _popupDim.transform.SetAsLastSibling();
             _popupDim.SetActive(true);
             var prefab = DignusUnityResourceManager.Instance.LoadAsset<T>();
-            var item = DignusUnityObjectPool.Instance.Pop<UiItem>(prefab);
+            var item = DignusUnityObjectPool.Instance.Pop<UIItem>(prefab);
             _popupContainer.Add(item);
             item.transform.SetParent(this._uiPopupCanvas.transform, false);
             item.gameObject.SetActive(true);
 
             return item.GetComponent<T>();
         }
-        public void RemoveUI(UiItem item)
+        public void RemoveUI(UIItem item)
         {
-            var removed = new List<UiItem>();
+            var removed = new List<UIItem>();
             for (int i = 0; i < _uiContainer.Count; ++i)
             {
                 if (_uiContainer[i] == item)
@@ -140,7 +140,7 @@ namespace Assets.Scripts.Internals
                 }
             }
 
-            var removedPopup = new List<UiItem>();
+            var removedPopup = new List<UIItem>();
             for (int i = 0; i < _popupContainer.Count; ++i)
             {
                 if (_popupContainer[i] == item)

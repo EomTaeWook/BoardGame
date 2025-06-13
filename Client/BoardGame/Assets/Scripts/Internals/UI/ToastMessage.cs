@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Assets.Scripts.Internals.UI
 {
     [PrefabPath(Consts.Path.Common)]
-    internal class ToastMessage : UiItem
+    internal class ToastMessage : UIItem
     {
         [SerializeField]
         private TextMeshProUGUI _bodyText;

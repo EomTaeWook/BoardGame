@@ -40,6 +40,32 @@ namespace BG.GameServer.Network.Handlers
 
             _player = null;
         }
+        public void GetRoomList(GetRoomList getRoomList)
+        {
+            if (_player == null)
+            {
+                _session.Dispose();
+                return;
+            }
+            var roomList = _robbyManager.GetRooms(getRoomList.Page, getRoomList.ItemSize);
+
+            var roomInfos = new List<RoomInfo>();
+
+            foreach (var item in roomList)
+            {
+                roomInfos.Add(new RoomInfo()
+                {
+                    GameType = item.GameType,
+                    MemberCount = item.GetMembers().Count,
+                    RoomId = item.RoomNumber
+                });
+            }
+            _player.Send(Packet.MakePacket(GSCProtocol.GetRoomListResponse, new GetRoomListResponse()
+            {
+                Page = getRoomList.Page,
+                RoomList = roomInfos
+            }));
+        }
         public void StartGameRoom(StartGameRoom _)
         {
             if (_player == null)
@@ -60,11 +86,12 @@ namespace BG.GameServer.Network.Handlers
             {
                 return;
             }
-            var isStart = room.StartGame();
+
+            var startRoomReason = room.StartGame();
 
             room.Broadcast(Packet.MakePacket(GSCProtocol.StartGameRoomResponse, new StartGameRoomResponse()
             {
-                Ok = isStart,
+                StartGameRoomReason = startRoomReason,
                 GameType = room.GameType,
             }));
         }
@@ -89,30 +116,47 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-
             var gameType = (GameType)createRoom.GameType;
-            if (_robbyManager.TryCreateGameRoom(gameType, out room) == false)
+
+
+            if (createRoom.RoomMode == RoomMode.Public)
+            {
+                _robbyManager.TryCreateGameRoom(gameType, out room);
+            }
+            else if(createRoom.RoomMode == RoomMode.Private)
+            {
+                _robbyManager.TryCreatePrivateGameRoom(gameType, out room);
+            }
+            else
+            {
+                LogHelper.Error($"Invalid create room request. unsupported RoomMode : {createRoom.RoomMode}");
+                _session.Dispose();
+                return;
+            }
+
+            if(room == null)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
                     new CreateRoomResponse()
                     {
                         Ok = false,
                     }));
+
+                return;
             }
-            else
-            {
-                _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
+
+            _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
                     new CreateRoomResponse()
                     {
                         Ok = true,
                         RoomNumber = room.RoomNumber
                     }));
 
-                JoinRoom(new Protocol.GSAndClient.JoinRoom()
-                {
-                    RoomNumber = room.RoomNumber
-                });
-            }
+            JoinRoom(new Protocol.GSAndClient.JoinRoom()
+            {
+                RoomMode = createRoom.RoomMode,
+                RoomNumber = room.RoomNumber
+            });
         }
         public void JoinRoom(JoinRoom joinRoom)
         {
@@ -122,12 +166,12 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            if (_robbyManager.TryGetGameRoom(joinRoom.RoomNumber, out var room) == false)
+            if (_robbyManager.TryGetGameRoom(joinRoom.RoomNumber, joinRoom.RoomMode, out var room) == false)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.JoinRoomResponse,
                     new JoinRoomResponse()
                     {
-                        Ok = false,
+                        FailedJoinRoomReason = JoinRoomReason.NotFound,
                     }));
 
                 return;
@@ -150,7 +194,7 @@ namespace BG.GameServer.Network.Handlers
 
                 room.Broadcast(Packet.MakePacket(GSCProtocol.JoinRoomResponse, new JoinRoomResponse()
                 {
-                    Ok = true,
+                    FailedJoinRoomReason = JoinRoomReason.Success,
                     Members = roomMembers
                 }));
             }
@@ -158,11 +202,11 @@ namespace BG.GameServer.Network.Handlers
             {
                 room.Broadcast(Packet.MakePacket(GSCProtocol.JoinRoomResponse, new JoinRoomResponse()
                 {
-                    Ok = false,
+                    FailedJoinRoomReason = JoinRoomReason.IsFull,
                 }));
             }
         }
-        public void LeaveRoom(LeaveRoom _)
+        public void LeaveRoom(LeaveRoom leaveRoom)
         {
             if (_player == null)
             {
@@ -199,7 +243,7 @@ namespace BG.GameServer.Network.Handlers
 
             if (room.IsEmpty())
             {
-                _robbyManager.RemoveRoom(room.RoomNumber);
+                _robbyManager.RemoveRoom(leaveRoom.RoomMode, room.RoomNumber);
                 room.Dispose();
             }
         }
@@ -222,6 +266,11 @@ namespace BG.GameServer.Network.Handlers
 
             if (_robbyManager.TryAddPlayer(_player) == false)
             {
+                _player.Send(Packet.MakePacket(GSCProtocol.LoginResponse, new LoginResponse()
+                {
+                    LoginReason = LoginReason.AlreadyLogin,
+                }));
+
                 _session.Dispose();
                 return;
             }
@@ -236,7 +285,7 @@ namespace BG.GameServer.Network.Handlers
 
             _player.Send(Packet.MakePacket(GSCProtocol.LoginResponse, new LoginResponse()
             {
-                Ok = true,
+                LoginReason = LoginReason.Success,
             }));
         }
 

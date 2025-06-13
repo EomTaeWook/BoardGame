@@ -10,7 +10,7 @@ namespace Assets.Scripts.Network.Handlers
     public class WallGoCommandHandler : IProtocolHandler<string>, ISessionComponent
     {
         private ISession _session;
-        private WallGoEventHandler _eventHandler;
+        private readonly WallGoEventHandler _eventHandler;
         public WallGoCommandHandler(WallGoEventHandler wallGoEventHandler)
         {
             _eventHandler = wallGoEventHandler;

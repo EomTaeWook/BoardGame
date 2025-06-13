@@ -1,3 +1,4 @@
+using Assets.Scripts.Extensions;
 using Assets.Scripts.Internals;
 using Assets.Scripts.Network;
 using Assets.Scripts.Service;
@@ -36,19 +37,22 @@ namespace Assets.Scripts.Scene.Title
         {
             if (Scene.GetBuildTargetType() == Internals.BuildTaretType.Dev)
             {
-                _gameClientService.Connect("20.196.65.193", 40000);
+                _gameClientService.SetIpStringAndPort("20.196.65.193", 40000);
             }
             else if (Scene.GetBuildTargetType() == BuildTaretType.Live)
             {
-                _gameClientService.Connect("20.196.65.193", 40000);
+                _gameClientService.SetIpStringAndPort("20.196.65.193", 40000);
             }
             else if (Scene.GetBuildTargetType() == BuildTaretType.Local)
             {
-                _gameClientService.Connect("127.0.0.1", 20000);
+                _gameClientService.SetIpStringAndPort("127.0.0.1", 20000);
             }
+
+            _gameClientService.Connect();
             if (_gameClientService.IsConnect() == false)
             {
-                UIManager.Instance.ShowAlert("Alert", "failed to connect game server");
+                UIManager.Instance.ShowAlert(StringHelper.GetString(1001),
+                    StringHelper.GetString(1006));
                 return;
             }
 
@@ -71,6 +75,7 @@ namespace Assets.Scripts.Scene.Title
             });
             _userService.SaveData();
         }
+
         public override void Dispose()
         {
         }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Scene.Title.UI
 {
     [PrefabPath(Consts.Path.Title)]
-    public class CreateAccountUI : UiItem
+    public class CreateAccountUI : UIItem
     {
         [SerializeField]
         private TMP_InputField _nicknameInput;

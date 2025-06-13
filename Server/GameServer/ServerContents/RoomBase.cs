@@ -1,6 +1,7 @@
 ﻿using BG.GameServer.Network;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
+using Protocol.GSAndClient.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace BG.GameServer.ServerContents
         private List<Player> _members = new List<Player>();
         private Player _hostPlayer;
 
-        public abstract bool StartGame();
+        public abstract StartGameRoomReason StartGame();
         public abstract void Dispose();
         public RoomBase(int roomNumber, GameType gameType, int minUserCount, int maxUserCount)
         {
@@ -81,7 +82,7 @@ namespace BG.GameServer.ServerContents
             {
                 return;
             }
-            if(_accountIdToPlayerMap.Remove(player.AccountId, out player))
+            if (_accountIdToPlayerMap.Remove(player.AccountId, out player))
             {
                 _members.Remove(player);
             }

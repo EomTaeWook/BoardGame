@@ -3,6 +3,7 @@ using Assets.Scripts.GameContents.WallGo;
 using BG.GameServer.Network;
 using BG.GameServer.ServerContents.EventHandler;
 using Protocol.GSAndClient;
+using Protocol.GSAndClient.Models;
 using System.Collections.Generic;
 
 namespace BG.GameServer.ServerContents
@@ -19,11 +20,11 @@ namespace BG.GameServer.ServerContents
             RegisterEventHandlers();
         }
 
-        public override bool StartGame()
+        public override StartGameRoomReason StartGame()
         {
             if (MinUserCount > GetMembers().Count)
             {
-                return false;
+                return StartGameRoomReason.NotEnoughUser;
             }
 
             var players = new List<IPlayer>();
@@ -31,10 +32,11 @@ namespace BG.GameServer.ServerContents
             _wallGoBoard.SetPlayers(players);
             _wallGoBoard.StartGame();
 
-            return true;
+            return StartGameRoomReason.Success;
         }
         public override void Dispose()
         {
+            _wallGoBoard.Stop();
             _wallGoEventHandler.StartTurn -= WallGoEventHandler_StartTurn;
             _wallGoEventHandler.EndGame -= WallGoEventHandler_EndGame;
             _wallGoEventHandler.StartGame -= WallGoEventHandler_StartGame;

@@ -11,3 +11,5 @@ Client/BoardGame/Logs/
 **/UserSettings/*
 **/.utmp/*
 **/obj/*
+Client/Ios/*
+Client/BoardGame/Assets/Resources/PerformanceTestRun*

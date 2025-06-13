@@ -1,5 +1,5 @@
+using Assets.Scripts.Extensions;
 using Assets.Scripts.Internals;
-using Assets.Scripts.Scene.WallGo.UI;
 using Dignus.Unity.Framework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,38 +22,38 @@ namespace Assets.Scripts.Scene.WallGo
             _uiCanvas.worldCamera = UIManager.Instance.UICamera;
         }
 
-        protected override void OnDestroyScene()
+        public override void OnDestroyScene()
         {
-            this.SceneController.Dispose();
+            SceneController.Dispose();
         }
 
         public void OnRemoveWallButtonClick()
         {
             var playerInfo = SceneController.GetCurrentPlayer();
-            if(playerInfo.WallGoPlayer.HasUsedBreakWall == true)
+            if (playerInfo.WallGoPlayer.HasUsedBreakWall == true)
             {
                 return;
             }
 
-            if(!SceneController.IsPlayerTurn())
+            if (!SceneController.IsPlayerTurn())
             {
-                UIManager.Instance.ShowToastAlert($"현재 턴이 아닙니다.", 1.5F);
+                UIManager.Instance.ShowToastAlert(StringHelper.GetString(1010), 1.5F);
                 return;
             }
 
-            if(playerInfo.WallGoPlayer.MovePieceCount != 0)
+            if (playerInfo.WallGoPlayer.MovePieceCount != 0)
             {
-                UIManager.Instance.ShowToastAlert($"이동을 하였기에 아이템을 사용하지 못합니다.", 1.5F);
+                UIManager.Instance.ShowToastAlert(StringHelper.GetString(1011), 1.5F);
                 return;
             }
 
             if (playerInfo.WallGoPlayer.State != GameContents.Share.StateType.MovePeice)
             {
-                UIManager.Instance.ShowToastAlert($"이동 전에만 사용 가능합니다.", 1.5F);
+                UIManager.Instance.ShowToastAlert(StringHelper.GetString(1012), 1.5F);
                 return;
             }
             playerInfo.WallGoPlayer.ChangeState(GameContents.Share.StateType.RemoveWall);
-            UIManager.Instance.ShowToastAlert($"부술 벽을 선택하세요", 1.5F);
+            UIManager.Instance.ShowToastAlert(StringHelper.GetString(1013), 1.5F);
             _removeWallButton.gameObject.SetActive(false);
             _movePieceButton.gameObject.SetActive(true);
         }

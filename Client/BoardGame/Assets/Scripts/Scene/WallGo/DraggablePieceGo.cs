@@ -1,6 +1,5 @@
 using Assets.Scripts.GameContents.WallGo;
 using Assets.Scripts.Internals;
-using Dignus.Log;
 using Dignus.Unity.Attributes;
 using UnityEngine;
 
@@ -22,6 +21,7 @@ namespace Assets.Scripts.Scene.WallGo
         public Piece Piece { get; private set; }
 
         protected WallGoSceneController _wallGoSceneController;
+
 
         public void Init(WallGoSceneController wallGoSceneController, Piece piece, Color color)
         {
@@ -67,7 +67,7 @@ namespace Assets.Scripts.Scene.WallGo
             _circleCollider2D.enabled = true;
 
 
-            if(_wallGoSceneController.IsPlayerTurn() == false)
+            if (_wallGoSceneController.IsPlayerTurn() == false)
             {
                 if (_currentHoveredTile != null)
                 {
@@ -97,7 +97,7 @@ namespace Assets.Scripts.Scene.WallGo
                 _currentHoveredTile.SetMoveAvailable(false);
                 _currentHoveredTile = null;
             }
-            
+
             transform.position = _originalPosition;
         }
     }

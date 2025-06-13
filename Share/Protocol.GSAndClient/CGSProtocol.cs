@@ -7,6 +7,7 @@ namespace Protocol.GSAndClient
         JoinRoom,
         CreateRoom,
         StartGameRoom,
+        GetRoomList,
 
         Pong,
 

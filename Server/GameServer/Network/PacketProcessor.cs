@@ -63,7 +63,15 @@ namespace BG.GameServer.Network
                 }
 
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
-                ProtocolHandlerMapper.DispatchToHandler(cgProtocolHandler, protocol, body);
+                try
+                {
+                    ProtocolHandlerMapper.DispatchToHandler(cgProtocolHandler, protocol, body);
+                }
+                catch(Exception ex)
+                {
+                    LogHelper.Fatal(ex);
+                }
+                
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
@@ -76,11 +84,20 @@ namespace BG.GameServer.Network
                 }
 
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
-                ProtocolHandlerMapper.DispatchToHandler(wallGoCommandHandler, protocol, body);
+
+                try
+                {
+                    ProtocolHandlerMapper.DispatchToHandler(wallGoCommandHandler, protocol, body);
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Fatal(ex);
+                }                
             }
             else
             {
                 LogHelper.Error($"not found category : {packetCategory}");
+                _session.Dispose();
                 return;
             }
         }

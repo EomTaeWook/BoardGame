@@ -89,7 +89,7 @@ namespace Assets.Scripts.Scene.WallGo
 
                 if (evt is StartGame startGame)
                 {
-                    UIManager.Instance.ShowToastAlert("게임 시작", 1.5F);
+                    UIManager.Instance.ShowToastAlert(StringHelper.GetString(1009), 1.5F);
                 }
                 else if (evt is EndGame endGame)
                 {
@@ -103,8 +103,9 @@ namespace Assets.Scripts.Scene.WallGo
                         rank++;
                     }
 
-                    UIManager.Instance.ShowAlert("게임 종료", $"Score : {sb}", () => 
+                    UIManager.Instance.ShowAlert(StringHelper.GetString(1007), $"Score : {sb}", () =>
                     {
+                        _gameClientService.Send(Packet.MakePacket(CGSProtocol.LeaveRoom, new LeaveRoom()));
                         DignusUnitySceneManager.Instance.LoadScene(SceneType.LobbyScene);
                     });
                 }
@@ -112,7 +113,7 @@ namespace Assets.Scripts.Scene.WallGo
                 {
                     if (startTurn.AccountId.Equals(Model.CurrentPlayer.AccountId))
                     {
-                        UIManager.Instance.ShowToastAlert("턴", 1.5F);
+                        UIManager.Instance.ShowToastAlert(StringHelper.GetString(1008), 1.5F);
                     }
                     _previousPlayer = _currentrTurnPlayer;
                     _currentrTurnPlayer = _playerInfos[startTurn.AccountId];
@@ -166,10 +167,11 @@ namespace Assets.Scripts.Scene.WallGo
 
                     if (IsPlayer(movePiece.AccountId))
                     {
-                        ShowPlaceableWalls(false);
+                        HidePlaceableWalls();
                     }
 
                     _boardGo.MovePiece(movePiece);
+                    playerInfo.WallGoPlayer.MovePieceCount++;
 
                     foreach (var tileGo in Model.MoveAvailableTiles)
                     {
@@ -177,16 +179,13 @@ namespace Assets.Scripts.Scene.WallGo
                     }
                     Model.MoveAvailableTiles.Clear();
 
-                    playerInfo.WallGoPlayer.MovePieceCount++;
-
                     playerInfo.RefreshUI();
-
 
                     if (IsPlayer(movePiece.AccountId))
                     {
                         if (playerInfo.WallGoPlayer.MovePieceCount < 2)
                         {
-                            ShowPlaceableWalls(true);
+                            ShowPlaceableWalls();
                             ShowMoveAvailableTiles();
                         }
                         else
@@ -197,7 +196,7 @@ namespace Assets.Scripts.Scene.WallGo
                             }
                             Model.MoveAvailableTiles.Clear();
 
-                            ShowPlaceableWalls(true);
+                            ShowPlaceableWalls();
                         }
                     }
                 }
@@ -212,6 +211,7 @@ namespace Assets.Scripts.Scene.WallGo
                         {
                             tileGo.SetMoveAvailable(false);
                         }
+                        HidePlaceableWalls();
                         Model.MoveAvailableTiles.Clear();
                         Model.SelectedPiece.SetActive(false);
                         Model.SelectedPiece = null;
@@ -221,11 +221,17 @@ namespace Assets.Scripts.Scene.WallGo
                 }
                 else if (evt is RemoveWall removeWall)
                 {
+                    _boardGo.RemoveWall(removeWall.Point, removeWall.Direction);
+
                     if (IsPlayer(removeWall.AccountId))
                     {
                         Scene.InactiveRemoveWall();
+                        Scene.OnMovePieceButtonClick();
+                        UIManager.Instance.ShowToastAlert(StringHelper.GetString(1023), 1.0F);
                     }
-                    _boardGo.RemoveWall(removeWall.Point, removeWall.Direction);
+
+                    var playerInfo = _playerInfos[removeWall.AccountId];
+                    playerInfo.WallGoPlayer.ChangeState(GameContents.Share.StateType.MovePeice);
                 }
                 else
                 {
@@ -244,27 +250,99 @@ namespace Assets.Scripts.Scene.WallGo
             return Model.CurrentPlayer.AccountId == accountId;
         }
 
-        private void ShowPlaceableWalls(bool value)
+        private void HidePlaceableWalls()
         {
             var pos = Model.SelectedPiece.GetPiece().GridPosition;
 
             var tileGo = _boardGo.GetTileObject(pos);
 
-            if (tileGo.Tile.WallBottom == false)
+            if (tileGo == null)
             {
-                tileGo.SetWallAvailable(value, Direction.Down);
+                LogHelper.Error($"not found tile. x: {pos.X} y: {pos.Y}");
+                return;
             }
-            if (tileGo.Tile.WallLeft == false)
+
+            foreach (var item in _boardGo.GetTileWallObjects(tileGo))
             {
-                tileGo.SetWallAvailable(value, Direction.Left);
+                item.SetWallAvailable(false);
             }
-            if (tileGo.Tile.WallRight == false)
+
+            var leftPos = _boardGo.GetNeighborPoint(pos, Direction.Left);
+
+            var leftTileGo = _boardGo.GetTileObject(leftPos);
+
+            if (leftTileGo != null)
             {
-                tileGo.SetWallAvailable(value, Direction.Right);
+                foreach (var item in _boardGo.GetTileWallObjects(leftTileGo))
+                {
+                    item.SetWallAvailable(false);
+                }
             }
-            if (tileGo.Tile.WallTop == false)
+
+            var downPos = _boardGo.GetNeighborPoint(pos, Direction.Down);
+
+            var downTileGo = _boardGo.GetTileObject(downPos);
+
+            if (downTileGo != null)
             {
-                tileGo.SetWallAvailable(value, Direction.Up);
+                foreach (var item in _boardGo.GetTileWallObjects(downTileGo))
+                {
+                    item.SetWallAvailable(false);
+                }
+            }
+        }
+        private void ShowPlaceableWalls()
+        {
+            var pos = Model.SelectedPiece.GetPiece().GridPosition;
+
+            var tileGo = _boardGo.GetTileObject(pos);
+
+            if (tileGo == null)
+            {
+                LogHelper.Error($"not found tile. x: {pos.X} y: {pos.Y}");
+                return;
+            }
+
+            foreach (var item in _boardGo.GetTileWallObjects(tileGo))
+            {
+                if (tileGo.Tile.WallRight == false && item.GetDirection() == Direction.Right)
+                {
+                    item.SetWallAvailable(true);
+                }
+                if (tileGo.Tile.WallTop == false && item.GetDirection() == Direction.Up)
+                {
+                    item.SetWallAvailable(true);
+                }
+            }
+
+            var leftPos = _boardGo.GetNeighborPoint(pos, Direction.Left);
+
+            var leftTileGo = _boardGo.GetTileObject(leftPos);
+
+            if (leftTileGo != null)
+            {
+                foreach (var item in _boardGo.GetTileWallObjects(leftTileGo))
+                {
+                    if (tileGo.Tile.WallLeft == false && item.GetDirection() == Direction.Right)
+                    {
+                        item.SetWallAvailable(true);
+                    }
+                }
+            }
+
+            var downPos = _boardGo.GetNeighborPoint(pos, Direction.Down);
+
+            var downTileGo = _boardGo.GetTileObject(downPos);
+
+            if (downTileGo != null)
+            {
+                foreach (var item in _boardGo.GetTileWallObjects(downTileGo))
+                {
+                    if (tileGo.Tile.WallBottom == false && item.GetDirection() == Direction.Up)
+                    {
+                        item.SetWallAvailable(true);
+                    }
+                }
             }
         }
         private void ProcessPieceClick()
@@ -324,6 +402,45 @@ namespace Assets.Scripts.Scene.WallGo
                 }
             }
         }
+        private void ProcessTileWallClick()
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                Vector2 screenPos = Mouse.current.position.ReadValue();
+                if (EventSystem.current.IsPointerOverGameObject(Mouse.current.deviceId))
+                {
+                    return;
+                }
+
+                if (IsPlayer(_currentrTurnPlayer.WallGoPlayer.AccountId) == false)
+                {
+                    return;
+                }
+
+                Vector3 worldPos = _mainCamera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0f));
+
+                int layerMask = LayerMask.GetMask("TileWallLayer");
+
+                var hit = Physics2D.Raycast(worldPos, Vector2.zero, 0f, layerMask);
+
+                if (hit.collider != null)
+                {
+                    if (_currentrTurnPlayer.WallGoPlayer.State != StateType.RemoveWall)
+                    {
+                        var tileWallGo = hit.collider.GetComponent<TileWallGo>();
+                        PlaceWallRequest(tileWallGo.GetTile().GridPosition,
+                            tileWallGo.GetDirection());
+                    }
+                    else if (_currentrTurnPlayer.WallGoPlayer.State == StateType.RemoveWall)
+                    {
+                        var tileWallGo = hit.collider.GetComponent<TileWallGo>();
+
+                        RemoveTileWallRequest(tileWallGo.GetTile().GridPosition,
+                            tileWallGo.GetDirection());
+                    }
+                }
+            }
+        }
         private void ProcessTileClick()
         {
             if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -347,67 +464,31 @@ namespace Assets.Scripts.Scene.WallGo
 
                 if (hit.collider != null)
                 {
-                    var selectTileGos = hit.collider.GetComponentsInParent<TileGo>();
-
-                    if (_currentrTurnPlayer.WallGoPlayer.State == StateType.RemoveWall)
-                    {
-                        ProcessSelectRemoveWall(selectTileGos, hit.collider);
-                        return;
-                    }
+                    var selectTileGo = hit.collider.GetComponent<TileGo>();
 
                     if (Model.SelectedPiece == null)
                     {
                         return;
                     }
-
-                    foreach (var selectTileGo in selectTileGos)
+                    if (selectTileGo.IsAvailable())
                     {
-                        if (selectTileGo.IsAvailable())
-                        {
-                            if (selectTileGo.TryGetWallDirection(hit.collider, out var direction) == true)
-                            {
-                                PlaceWallRequest(selectTileGo.Tile.GridPosition, direction);
-                                ShowPlaceableWalls(false);
-                            }
-                            else
-                            {
-                                MovePieceRequest(selectTileGo.Tile.GridPosition, Model.SelectedPiece.GetPiece());
-                            }
-                        }
-                        else if (selectTileGo.Tile.GridPosition == Model.SelectedPiece.GetPiece().GridPosition)
-                        {
-                            if (selectTileGo.TryGetWallDirection(hit.collider, out var direction) == true)
-                            {
-                                PlaceWallRequest(selectTileGo.Tile.GridPosition, direction);
-                                ShowPlaceableWalls(false);
-                            }
-                        }
+                        MovePieceRequest(selectTileGo.Tile.GridPosition,
+                            Model.SelectedPiece.GetPiece());
                     }
                 }
             }
         }
-
-        public void ProcessSelectRemoveWall(TileGo[] tileGos, Collider2D collider)
+        public void RemoveTileWallRequest(Point point, Direction direction)
         {
-            foreach (var selectTileGo in tileGos)
-            {
-                if (selectTileGo.TryGetWallDirection(collider, out var direction) == true)
+            var packet = Packet.MakePacket(WallGoCommandProtocol.RemoveWall,
+                new RemoveWallReqeust()
                 {
-                    if (selectTileGo.Tile.HasWall(direction) == false)
-                    {
-                        continue;
-                    }
+                    TilePointX = point.X,
+                    TilePointY = point.Y,
+                    Direction = (int)direction
+                });
 
-                    var packet = Packet.MakePacket(WallGoCommandProtocol.RemoveWall, new RemoveWallReqeust()
-                    {
-                        TilePointX = selectTileGo.Tile.GridPosition.X,
-                        TilePointY = selectTileGo.Tile.GridPosition.Y,
-                        Direction = (int)direction
-                    });
-                    _gameClientService.Send(packet);
-                    return;
-                }
-            }
+            _gameClientService.Send(packet);
         }
 
         public PlayerInfoGo GetCurrentPlayer()
@@ -499,6 +580,7 @@ namespace Assets.Scripts.Scene.WallGo
         {
             ProcessPieceClick();
             ProcessTileClick();
+            ProcessTileWallClick();
             ProcessGameEvent();
         }
         public override void Dispose()
@@ -531,8 +613,6 @@ namespace Assets.Scripts.Scene.WallGo
                 SpawnedPointY = tilePoint.Y,
             });
             _gameClientService.Send(packet);
-
-            piece.gameObject.SetActive(false);
         }
     }
 }

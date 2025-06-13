@@ -1,3 +1,4 @@
+using Assets.Scripts.Extensions;
 using Dignus.Unity.Attributes;
 using System;
 using TMPro;
@@ -14,7 +15,7 @@ namespace Assets.Scripts.Internals.UI
     }
 
     [PrefabPath(Consts.Path.Common)]
-    internal class AlertPopup : UiItem
+    internal class AlertPopup : UIItem
     {
         [SerializeField]
         private TextMeshProUGUI _titleText;
@@ -39,6 +40,8 @@ namespace Assets.Scripts.Internals.UI
             Action onConfrimCallback = null,
             Action onCancelCallback = null)
         {
+            _confirmButtonText.text = StringHelper.GetString(1014);
+            _cancelButtonText.text = StringHelper.GetString(1015);
             InitPopup(alertPopupType, title, body, onConfrimCallback, onCancelCallback);
         }
 

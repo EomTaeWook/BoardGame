@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Share", "Share", "{72091F7C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.GSAndClient", "..\..\Share\Protocol.GSAndClient\Protocol.GSAndClient.csproj", "{6EBFEFD8-2A04-4B99-B9D1-86EEC62DA7A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataContainer", "..\..\Share\DataContainer\DataContainer.csproj", "{A79E0E7E-3C13-40D4-80A0-CF147A4ED5B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,11 +25,16 @@ Global
 		{6EBFEFD8-2A04-4B99-B9D1-86EEC62DA7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EBFEFD8-2A04-4B99-B9D1-86EEC62DA7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EBFEFD8-2A04-4B99-B9D1-86EEC62DA7A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A79E0E7E-3C13-40D4-80A0-CF147A4ED5B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A79E0E7E-3C13-40D4-80A0-CF147A4ED5B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A79E0E7E-3C13-40D4-80A0-CF147A4ED5B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A79E0E7E-3C13-40D4-80A0-CF147A4ED5B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6EBFEFD8-2A04-4B99-B9D1-86EEC62DA7A7} = {72091F7C-1273-43DC-9CBB-49FFE324EC50}
+		{A79E0E7E-3C13-40D4-80A0-CF147A4ED5B6} = {72091F7C-1273-43DC-9CBB-49FFE324EC50}
 	EndGlobalSection
 EndGlobal

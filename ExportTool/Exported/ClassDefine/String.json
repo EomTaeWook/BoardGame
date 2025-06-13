@@ -1,0 +1,46 @@
+[
+  {
+    "Name": "Id",
+    "Count": 1,
+    "Required": true,
+    "DataType": "Int32",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "Name",
+    "Count": 1,
+    "Required": true,
+    "DataType": "String",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "Korean",
+    "Count": 1,
+    "Required": false,
+    "DataType": "String",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  },
+  {
+    "Name": "English",
+    "Count": 1,
+    "Required": false,
+    "DataType": "String",
+    "Members": [],
+    "RefTemplate": null,
+    "RefTemplateField": null,
+    "ConditionField": null,
+    "Conditions": []
+  }
+]

@@ -6,9 +6,12 @@ using Assets.Scripts.Scene.WallGo;
 using Assets.Scripts.Service;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Unity;
+using Dignus.Unity.Extensions;
 using Dignus.Unity.Framework;
 using Protocol.GSAndClient;
+using Protocol.GSAndClient.Models;
 using System.Collections.Generic;
+using UnityEngine.Analytics;
 
 namespace Assets.Scripts.Scene.Title
 {
@@ -29,8 +32,18 @@ namespace Assets.Scripts.Scene.Title
             {
                 AccountId = _userService.GetUserModel().AccountId,
                 Nickname = _userService.GetUserModel().Nickname
-            };
+            }; 
         }
+
+        public void RoomListRequest(int pageIndex, int itemSize)
+        {
+            _gameClientService.Send(Packet.MakePacket(CGSProtocol.GetRoomList, new GetRoomList()
+            {
+                Page = pageIndex,
+                ItemSize = itemSize
+            }));
+        }
+
         public void CreateRoomReqeust(CreateRoom createRoom)
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.CreateRoom, createRoom));
@@ -57,16 +70,18 @@ namespace Assets.Scripts.Scene.Title
         {
             if (createRoomResponse.Ok == false)
             {
-                UIManager.Instance.ShowAlert("alert", "failed to create room");
+                UIManager.Instance.ShowAlert(StringHelper.GetString(1001),
+                    StringHelper.GetString(1002));
                 return;
             }
             Model.JoinRoomNumber = createRoomResponse.RoomNumber;
         }
         public void JoinRoom(JoinRoomResponse joinRoomResponse)
         {
-            if (joinRoomResponse.Ok == false)
+            if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.IsFull)
             {
-                UIManager.Instance.ShowAlert("alert", "failed to join room");
+                UIManager.Instance.ShowAlert(StringHelper.GetString(1001),
+                    StringHelper.GetString(1004));
                 return;
             }
 
@@ -87,11 +102,17 @@ namespace Assets.Scripts.Scene.Title
             Scene.RoomUIRefresh();
         }
 
+        public void RoomList(GetRoomListResponse getRoomListResponse)
+        {
+            Scene.LobbyGameRoomUIRefresh(getRoomListResponse.Page, getRoomListResponse.RoomList);
+        }
+
         public void StartGameRoom(StartGameRoomResponse startGameRoomResponse)
         {
-            if (startGameRoomResponse.Ok == false)
+            if (startGameRoomResponse.StartGameRoomReason == StartGameRoomReason.NotEnoughUser)
             {
-                UIManager.Instance.ShowAlert("alert", "failed to game start");
+                UIManager.Instance.ShowAlert(StringHelper.GetString(1001),
+                    StringHelper.GetString(1005));
                 return;
             }
 
@@ -124,6 +145,15 @@ namespace Assets.Scripts.Scene.Title
 
         public override void Dispose()
         {
+            foreach(var kv in Model.LobbyRoomInfos)
+            {
+                foreach(var item in kv.Value)
+                {
+                    item.Recycle();
+                }
+                kv.Value.Clear();
+            }
+            Model.LobbyRoomInfos.Clear();
         }
     }
 }

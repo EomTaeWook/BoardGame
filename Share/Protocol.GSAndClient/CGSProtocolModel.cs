@@ -1,4 +1,6 @@
-﻿namespace Protocol.GSAndClient
+﻿using Protocol.GSAndClient.Models;
+
+namespace Protocol.GSAndClient
 {
     public class Pong
     {
@@ -9,17 +11,28 @@
         public string AccountId { get; set; }
         public string Nickname { get; set; }
     }
+    public class GetRoomList
+    {
+        public int Page { get; set; }
+
+        public int ItemSize { get; set; }
+    }
 
     public class LeaveRoom
     {
+        public RoomMode RoomMode { get; set; }
     }
     public class CreateRoom
     {
         public int GameType { get; set; }
+
+        public RoomMode RoomMode { get; set; }
     }
     public class JoinRoom
     {
-        public long RoomNumber { get; set; }
+        public int RoomNumber { get; set; }
+
+        public RoomMode RoomMode { get; set; }
     }
     public class StartGameRoom
     {

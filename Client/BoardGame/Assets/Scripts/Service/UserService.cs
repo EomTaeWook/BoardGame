@@ -1,3 +1,4 @@
+using Assets.Scripts.Internals;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
 using Newtonsoft.Json;
@@ -13,6 +14,8 @@ namespace Assets.Scripts.Service
         public string AccountId { get; set; }
 
         public string Nickname { get; set; }
+
+        public LanguageType LanguageType { get; set; }
     }
 
     [Injectable(Dignus.DependencyInjection.LifeScope.Singleton)]

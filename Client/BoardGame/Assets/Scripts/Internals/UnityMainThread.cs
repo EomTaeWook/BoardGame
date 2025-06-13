@@ -1,5 +1,6 @@
 using Dignus.Collections;
 using Dignus.DependencyInjection.Attributes;
+using Dignus.Unity.Coroutine;
 using System;
 using System.Collections;
 
@@ -9,15 +10,23 @@ namespace Assets.Scripts.Internals
     public class UnityMainThread
     {
         private readonly static SynchronizedArrayQueue<Action> _actions = new();
-
-        public static void Run(Action action)
+        private static bool _running = true;
+        public static void Add(Action action)
         {
             _actions.Add(action);
         }
-
-        public static IEnumerator ExecutePending()
+        public static void Stop()
         {
-            while (true)
+            _running = false;
+        }
+        public static void Start()
+        {
+            _running = true;
+            DignusUnityCoroutineManager.Start(ExecutePending());
+        }
+        private static IEnumerator ExecutePending()
+        {
+            while (_running)
             {
                 while (_actions.Count > 0)
                 {

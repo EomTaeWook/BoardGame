@@ -8,6 +8,7 @@ using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Assets.Scripts.Service
 {
@@ -17,6 +18,8 @@ namespace Assets.Scripts.Service
         private bool _isConnected;
         private readonly ClientModule _clientModule;
         private readonly IServiceProvider _serviceProvider;
+        private string _ipString;
+        private int _port;
         public GameClientService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -24,7 +27,36 @@ namespace Assets.Scripts.Service
             ProtocolHandlerMapper<WallGoCommandHandler, string>.BindProtocol<WallGoServerEvent>();
 
             _clientModule = new ClientModule(new SessionConfiguration(MakeSerializersFunc));
+
+            _clientModule.Disconnected += ClientModule_Disconnected;
         }
+
+        public void SetIpStringAndPort(string ipString, int port)
+        {
+            _ipString = ipString;
+            _port = port;
+        }
+
+        private void ClientModule_Disconnected(ISession session)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(2000);
+                _ = ReconnectAsync();
+            });
+            
+        }
+
+        private Task ReconnectAsync()
+        {
+            if (Connect() == false)
+            {
+                _= ReconnectAsync();
+            }
+
+            return Task.CompletedTask;
+        }
+
         private Tuple<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>> MakeSerializersFunc()
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
@@ -39,11 +71,11 @@ namespace Assets.Scripts.Service
                 packetProcessor,
                 components);
         }
-        public bool Connect(string ipString, int port)
+        public bool Connect()
         {
             try
             {
-                _clientModule.Connect(ipString, port);
+                _clientModule.Connect(_ipString, _port);
                 _isConnected = true;
             }
             catch (Exception ex)
@@ -57,7 +89,12 @@ namespace Assets.Scripts.Service
         {
             return _isConnected;
         }
-
+        public void Dispose()
+        {
+            _clientModule.Disconnected -= ClientModule_Disconnected;
+            _clientModule.Close();
+            _isConnected = false;
+        }
         public void Send(IPacket packet)
         {
             _clientModule.TrySend(packet);

@@ -1,40 +1,86 @@
 ﻿using Assets.Scripts.Extensions;
 using Assets.Scripts.GameContents.Share;
 using Assets.Scripts.GameContents.WallGo;
+using DataContainer.Generated;
 using Dignus.Collections;
+using Dignus.Log;
 using Dignus.Unity.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.Scene.WallGo
 {
     public class BoardGo : MonoBehaviour
     {
-        private Dictionary<string, ArrayQueue<PieceGo>> _playerPiecesByAccountId = new();
+        private readonly Dictionary<string, ArrayQueue<PieceGo>> _playerPiecesByAccountId = new();
         private readonly ArrayQueue<TileGo> _tiles = new();
+
+        private readonly Dictionary<TileGo, ArrayQueue<TileWallGo>> _tileWallMap = new Dictionary<TileGo, ArrayQueue<TileWallGo>>();
         private void Awake()
         {
-            for (int i = 0; i < 7; ++i)
+            var x = 0;
+            var y = 0;
+            foreach (var template in TemplateContainer<WallGoBoardTile7x7Template>.Values)
             {
-                for (int ii = 0; ii < 7; ++ii)
+                foreach (var yPoint in template.Y)
                 {
                     var tileGo = this.InstantiateWithPool<TileGo>();
-
                     tileGo.Tile = new Tile()
                     {
-                        GridPosition = new Point(i, ii)
+                        GridPosition = new Point(x, y)
                     };
-                    tileGo.transform.position = new Vector3(i, ii, 0);
+                    tileGo.transform.position = new Vector3(template.X, yPoint, 0);
                     _tiles.Add(tileGo);
+                    y++;
                 }
+                x++;
+                y = 0;
+            }
+            x = y = 0;
+
+            var templateGroup = TemplateContainer<WallGoBoardTileWall7x7Template>.Values.GroupBy(r => r.TileWallDirectionType);
+
+            foreach (var group in templateGroup)
+            {
+                var templates = group.OrderBy(r => r.Id);
+
+                foreach (var template in templates)
+                {
+                    foreach (var yPoint in template.Y)
+                    {
+                        if (yPoint == -1)
+                        {
+                            continue;
+                        }
+                        var tileWallGo = this.InstantiateWithPool<TileWallGo>();
+                        var tileGo = GetTileObject(x, y);
+                        tileWallGo.Init(tileGo.Tile, template.TileWallDirectionType);
+                        tileWallGo.transform.position = new Vector3(template.X, yPoint, 0);
+
+
+                        if (_tileWallMap.TryGetValue(tileGo, out var tileWallGos) == false)
+                        {
+                            tileWallGos = new ArrayQueue<TileWallGo>();
+                            _tileWallMap.Add(tileGo, tileWallGos);
+                        }
+
+                        tileWallGos.Add(tileWallGo);
+                        y++;
+                    }
+                    x++;
+                    y = 0;
+                }
+
+                x = y = 0;
             }
         }
         public List<PieceGo> GetPieces()
         {
             var list = new List<PieceGo>();
 
-            foreach(var pieces in _playerPiecesByAccountId)
+            foreach (var pieces in _playerPiecesByAccountId)
             {
                 list.AddRange(pieces.Value);
             }
@@ -56,7 +102,10 @@ namespace Assets.Scripts.Scene.WallGo
             var pieceGo = this.InstantiateWithPool<PieceGo>();
             pieceGo.Init(spawnPiece, color, isPlayerPiece);
             _playerPiecesByAccountId[accountId][spawnPiece.Id] = pieceGo;
-            pieceGo.transform.position = new Vector3(spawnPiece.GridPosition.X, spawnPiece.GridPosition.Y, -1);
+
+            var tileGo = GetTileObject(spawnPiece.GridPosition);
+
+            pieceGo.transform.position = new Vector3(tileGo.transform.position.x, tileGo.transform.position.y, -1);
         }
         public void PlaceWall(Color playerColor,
             Point point,
@@ -64,36 +113,44 @@ namespace Assets.Scripts.Scene.WallGo
             )
         {
             var tileGo = GetTileObject(point);
-            tileGo.PlaceWall(direction, playerColor);
 
-            var neighborPoint = GetNeighborPoint(point, direction);
+            var tileWalls = GetTileWallObjects(tileGo);
 
-            if(IsInsideBoard(neighborPoint)==false)
+            if (direction == Direction.Right)
             {
-                return;
+                tileGo.Tile.WallRight = true;
+
+                var rightPos = GetNeighborPoint(point, Direction.Right);
+
+                var rightTileGo = GetTileObject(rightPos);
+
+                if (rightTileGo != null)
+                {
+                    rightTileGo.Tile.WallLeft = true;
+                }
+            }
+            else if (direction == Direction.Up)
+            {
+                tileGo.Tile.WallTop = true;
+
+                var upPos = GetNeighborPoint(point, Direction.Up);
+
+                var upTileGo = GetTileObject(upPos);
+
+                if (upTileGo != null)
+                {
+                    upTileGo.Tile.WallBottom = true;
+                }
             }
 
-            Direction neighborDirection = Direction.Up;
-
-            if(direction == Direction.Up)
+            foreach (var tileWall in tileWalls)
             {
-                neighborDirection = Direction.Down;
+                if (tileWall.GetDirection() == direction)
+                {
+                    tileWall.PlaceWall(playerColor);
+                    break;
+                }
             }
-            else if (direction == Direction.Left)
-            {
-                neighborDirection = Direction.Right;
-            }
-            else if (direction == Direction.Right)
-            {
-                neighborDirection = Direction.Left;
-            }
-            else if (direction == Direction.Down)
-            {
-                neighborDirection = Direction.Up;
-            }
-
-            var neighborTileGo = GetTileObject(neighborPoint);
-            neighborTileGo.PlaceWall(neighborDirection, playerColor);
         }
 
         public void RemoveWall(Point point,
@@ -101,36 +158,45 @@ namespace Assets.Scripts.Scene.WallGo
             )
         {
             var tileGo = GetTileObject(point);
-            tileGo.RemoveWall(direction);
 
-            var neighborPoint = GetNeighborPoint(point, direction);
+            var tileWalls = GetTileWallObjects(tileGo);
 
-            if (IsInsideBoard(neighborPoint) == false)
+            if (direction == Direction.Right)
             {
-                return;
+                tileGo.Tile.WallRight = false;
+
+                var rightPos = GetNeighborPoint(point, Direction.Right);
+
+                var rightTileGo = GetTileObject(rightPos);
+
+                if (rightTileGo != null)
+                {
+                    rightTileGo.Tile.WallLeft = false;
+                }
+            }
+            else if (direction == Direction.Up)
+            {
+                tileGo.Tile.WallTop = false;
+
+                var upPos = GetNeighborPoint(point, Direction.Up);
+
+                var upTileGo = GetTileObject(upPos);
+
+                if (upTileGo != null)
+                {
+                    upTileGo.Tile.WallBottom = false;
+                }
             }
 
-            Direction neighborDirection = Direction.Up;
-
-            if (direction == Direction.Up)
+            foreach (var tileWall in tileWalls)
             {
-                neighborDirection = Direction.Down;
-            }
-            else if (direction == Direction.Left)
-            {
-                neighborDirection = Direction.Right;
-            }
-            else if (direction == Direction.Right)
-            {
-                neighborDirection = Direction.Left;
-            }
-            else if (direction == Direction.Down)
-            {
-                neighborDirection = Direction.Up;
+                if (tileWall.GetDirection() == direction)
+                {
+                    tileWall.RemoveWall();
+                    break;
+                }
             }
 
-            var neighborTileGo = GetTileObject(neighborPoint);
-            neighborTileGo.RemoveWall(neighborDirection);
         }
 
         private bool IsInsideBoard(Point p)
@@ -139,7 +205,7 @@ namespace Assets.Scripts.Scene.WallGo
                    p.Y >= 0 && p.Y < 7;
         }
 
-        private Point GetNeighborPoint(Point point, Direction direction)
+        public Point GetNeighborPoint(Point point, Direction direction)
         {
             if (direction == Direction.Up)
             {
@@ -168,16 +234,28 @@ namespace Assets.Scripts.Scene.WallGo
 
             pieceGo.GetPiece().GridPosition = movePiece.Dest;
 
-            pieceGo.transform.position = new Vector3(movePiece.Dest.X, movePiece.Dest.Y, -1);
+            var tileGo = GetTileObject(movePiece.Dest);
+
+            pieceGo.transform.position = new Vector3(tileGo.transform.position.x, tileGo.transform.position.y, -1);
         }
 
         public TileGo GetTileObject(Point point)
         {
-            if (point.X < 0 || point.X >= 7 || point.Y < 0 || point.Y >= 7)
+            return GetTileObject(point.X, point.Y);
+        }
+        public ArrayQueue<TileWallGo> GetTileWallObjects(TileGo tileGo)
+        {
+            _tileWallMap.TryGetValue(tileGo, out ArrayQueue<TileWallGo> result);
+            return result;
+        }
+        public TileGo GetTileObject(int x, int y)
+        {
+            if (x < 0 || x >= 7 || y < 0 || y >= 7)
             {
+                LogHelper.Error($"invalid point. x: {x} y : {y}");
                 return null;
             }
-            int index = point.X * 7 + point.Y;
+            int index = x * 7 + y;
             return _tiles[index];
         }
 
@@ -198,6 +276,16 @@ namespace Assets.Scripts.Scene.WallGo
                 item.Recycle();
             }
             _tiles.Clear();
+
+            foreach (var array in _tileWallMap.Values)
+            {
+                foreach (var item in array)
+                {
+                    item.Recycle();
+                }
+                array.Clear();
+            }
+            _tileWallMap.Clear();
         }
     }
 }
