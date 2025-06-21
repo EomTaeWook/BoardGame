@@ -12,10 +12,10 @@ namespace BG.GameServer.Network.Handlers
     [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
     internal class CGProtocolHandler : IProtocolHandler<string>, ISessionComponent
     {
+        private HeartBeat _heartBeat;
         private RobbyManager _robbyManager;
         private Player _player;
         private ISession _session;
-        private HeartBeat _heartBeat;
         public T DeserializeBody<T>(string body)
         {
             return JsonSerializer.Deserialize<T>(body);
@@ -31,13 +31,6 @@ namespace BG.GameServer.Network.Handlers
                 }
                 _robbyManager.TryRemovePlayer(_player);
             }
-
-            if (_heartBeat != null)
-            {
-                _heartBeat.Dispose();
-                _heartBeat = null;
-            }
-
             _player = null;
         }
         public void GetRoomList(GetRoomList getRoomList)
@@ -123,7 +116,7 @@ namespace BG.GameServer.Network.Handlers
             {
                 _robbyManager.TryCreateGameRoom(gameType, out room);
             }
-            else if(createRoom.RoomMode == RoomMode.Private)
+            else if (createRoom.RoomMode == RoomMode.Private)
             {
                 _robbyManager.TryCreatePrivateGameRoom(gameType, out room);
             }
@@ -134,7 +127,7 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            if(room == null)
+            if (room == null)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
                     new CreateRoomResponse()
@@ -288,6 +281,10 @@ namespace BG.GameServer.Network.Handlers
                 LoginReason = LoginReason.Success,
             }));
         }
+        public void Pong(Pong pong)
+        {
+            _heartBeat.Pong();
+        }
 
         void ISessionComponent.SetSession(ISession session)
         {
@@ -303,12 +300,6 @@ namespace BG.GameServer.Network.Handlers
                 {
                     _heartBeat = heartBeat;
                 }
-            }
-
-
-            if (_heartBeat != null)
-            {
-                _ = _heartBeat.SendPingAsync((ushort)GSCProtocol.Ping);
             }
         }
     }

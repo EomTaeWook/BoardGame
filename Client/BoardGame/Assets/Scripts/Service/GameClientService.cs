@@ -44,14 +44,14 @@ namespace Assets.Scripts.Service
                 await Task.Delay(2000);
                 _ = ReconnectAsync();
             });
-            
+
         }
 
         private Task ReconnectAsync()
         {
             if (Connect() == false)
             {
-                _= ReconnectAsync();
+                _ = ReconnectAsync();
             }
 
             return Task.CompletedTask;
@@ -97,6 +97,10 @@ namespace Assets.Scripts.Service
         }
         public void Send(IPacket packet)
         {
+            if (_clientModule == null)
+            {
+                return;
+            }
             _clientModule.TrySend(packet);
         }
     }

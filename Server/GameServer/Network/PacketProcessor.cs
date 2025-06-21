@@ -67,11 +67,11 @@ namespace BG.GameServer.Network
                 {
                     ProtocolHandlerMapper.DispatchToHandler(cgProtocolHandler, protocol, body);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogHelper.Fatal(ex);
                 }
-                
+
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
@@ -92,7 +92,7 @@ namespace BG.GameServer.Network
                 catch (Exception ex)
                 {
                     LogHelper.Fatal(ex);
-                }                
+                }
             }
             else
             {
@@ -125,7 +125,7 @@ namespace BG.GameServer.Network
 
             if (packetSize >= MaxBodySize)
             {
-                LogHelper.Error($"Invalid packetSize: {packetSize}");
+                LogHelper.Error($"invalid packet size: {packetSize}");
                 _session.Dispose();
                 return false;
             }

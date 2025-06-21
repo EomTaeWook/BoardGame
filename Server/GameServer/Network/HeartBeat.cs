@@ -82,6 +82,8 @@ namespace BG.GameServer.Network
         public void SetSession(ISession session)
         {
             _session = session;
+
+            _ = SendPingAsync((ushort)GSCProtocol.Ping);
         }
     }
 }

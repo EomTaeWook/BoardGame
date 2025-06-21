@@ -8,7 +8,6 @@ using Dignus.Unity.DependencyInjection;
 using Newtonsoft.Json;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;
-using System.Linq;
 
 namespace Assets.Scripts.Network.Handlers
 {
@@ -29,6 +28,11 @@ namespace Assets.Scripts.Network.Handlers
         public void SetSession(ISession session)
         {
             _session = session;
+        }
+
+        public void Ping(Ping ping)
+        {
+            _session.TrySend(Packet.MakePacket(CGSProtocol.Pong, new Pong()));
         }
 
         public void LoginResponse(LoginResponse loginResponse)
@@ -85,10 +89,6 @@ namespace Assets.Scripts.Network.Handlers
                 if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.NotFound)
                 {
                     UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1003));
-
-
-                    
-
                     return;
                 }
                 else if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.IsFull)

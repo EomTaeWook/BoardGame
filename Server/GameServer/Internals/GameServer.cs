@@ -42,11 +42,11 @@ namespace BG.GameServer.Internals
                 packetProcessor,
                 packetProcessor,
                 [
+                    heartBeat,
                     packetProcessor,
                     packetProcessor.CGProtocolHandler,
                     packetProcessor.WallGoCommandHandler,
                     robbyManager,
-                    heartBeat
                 ]);
         }
     }
