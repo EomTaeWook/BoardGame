@@ -60,6 +60,8 @@ namespace BG.GameServer.Network
                 }
             }
 
+            Interlocked.Exchange(ref _pinging, 0);
+
             _ = SendPingAsync(protocol);
         }
         public void Pong()
