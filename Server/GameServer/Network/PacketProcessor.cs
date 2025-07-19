@@ -14,7 +14,7 @@ namespace BG.GameServer.Network
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
     internal class PacketProcessor(CGProtocolHandler cgProtocolHandler,
-        WallGoCommandHandler wallGoCommandHandler) : SessionPacketProcessorBase, IPacketSerializer, ISessionComponent
+        WallGoCommandHandler wallGoCommandHandler) : PacketHandlerBase, IPacketSerializer, ISessionComponent
     {
         protected const int SizeToInt = sizeof(int);
         protected const int ProtocolSize = sizeof(ushort);

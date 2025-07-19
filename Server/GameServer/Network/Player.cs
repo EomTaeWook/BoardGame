@@ -26,7 +26,7 @@ namespace BG.GameServer.Network
         }
         public void Send(IPacket packet)
         {
-            _session.TrySend(packet);
+            _session.Send(packet);
         }
     }
 }

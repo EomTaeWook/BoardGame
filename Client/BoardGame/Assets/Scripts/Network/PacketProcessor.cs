@@ -13,7 +13,7 @@ using System.Text;
 namespace Assets.Scripts.Network
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
-    internal class PacketProcessor : SessionPacketProcessorBase, IPacketSerializer, ISessionComponent
+    internal class PacketProcessor : PacketHandlerBase, IPacketSerializer, ISessionComponent
     {
         protected const int SizeToInt = sizeof(int);
         protected const int ProtocolSize = sizeof(ushort);

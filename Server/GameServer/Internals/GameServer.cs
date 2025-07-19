@@ -32,13 +32,13 @@ namespace BG.GameServer.Internals
             _gameServerMoudle.Start(port);
         }
 
-        private Tuple<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>> MakeSerializersFunc()
+        private Tuple<IPacketSerializer, IPacketHandler, ICollection<ISessionComponent>> MakeSerializersFunc()
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
             RobbyManager robbyManager = _serviceProvider.GetService<RobbyManager>();
             HeartBeat heartBeat = _serviceProvider.GetService<HeartBeat>();
 
-            return Tuple.Create<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>>(
+            return Tuple.Create<IPacketSerializer, IPacketHandler, ICollection<ISessionComponent>>(
                 packetProcessor,
                 packetProcessor,
                 [

@@ -32,7 +32,7 @@ namespace Assets.Scripts.Network.Handlers
 
         public void Ping(Ping ping)
         {
-            _session.TrySend(Packet.MakePacket(CGSProtocol.Pong, new Pong()));
+            _session.Send(Packet.MakePacket(CGSProtocol.Pong, new Pong()));
         }
 
         public void LoginResponse(LoginResponse loginResponse)

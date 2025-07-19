@@ -57,7 +57,7 @@ namespace Assets.Scripts.Service
             return Task.CompletedTask;
         }
 
-        private Tuple<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>> MakeSerializersFunc()
+        private Tuple<IPacketSerializer, IPacketHandler, ICollection<ISessionComponent>> MakeSerializersFunc()
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
 
@@ -66,7 +66,7 @@ namespace Assets.Scripts.Service
             components.Add(packetProcessor.GsCProtocolHandler);
             components.Add(packetProcessor.WallGoCommandHandler);
 
-            return Tuple.Create<IPacketSerializer, ISessionPacketProcessor, ICollection<ISessionComponent>>(
+            return Tuple.Create<IPacketSerializer, IPacketHandler, ICollection<ISessionComponent>>(
                 packetProcessor,
                 packetProcessor,
                 components);
@@ -101,7 +101,7 @@ namespace Assets.Scripts.Service
             {
                 return;
             }
-            _clientModule.TrySend(packet);
+            _clientModule.Send(packet);
         }
     }
 }

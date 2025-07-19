@@ -34,7 +34,7 @@ namespace BG.GameServer.Network
                 return;
             }
             var packet = Packet.MakePacket((ushort)PacketCategory.Lobby, protocol, new Ping());
-            _session.TrySend(packet);
+            _session.Send(packet);
 
             await CheckPongDelayAsync(protocol, _currentPingPongIndex);
         }
