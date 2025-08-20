@@ -1,5 +1,5 @@
 using Dignus.Log;
-using Dignus.Log.LogFormat;
+using Dignus.Log.Formatting;
 using Dignus.Log.LogTarget.Interfaces;
 using Dignus.Log.Model;
 using UnityEngine;
@@ -16,10 +16,9 @@ namespace Assets.Scripts.Internals.Log
         }
         public void Dispose()
         {
-
         }
 
-        public void Write(LogMessageModel logMessage)
+        public void Write(LogEvent logMessage)
         {
             if (logMessage.LogLevel == LogLevel.Fatal)
             {

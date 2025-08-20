@@ -3,7 +3,7 @@ using Assets.Scripts.Internals.Log;
 using Assets.Scripts.Service;
 using DataContainer.Generated;
 using Dignus.Log;
-using Dignus.Log.LogFormat;
+using Dignus.Log.Formatting;
 using Dignus.Log.LogTarget;
 using Dignus.Log.Model;
 using Dignus.Log.Rule;
