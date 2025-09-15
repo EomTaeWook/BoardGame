@@ -1,4 +1,6 @@
-﻿namespace BG.GameServer.Network.Handlers
+﻿using BG.GameServer.ServerContents;
+
+namespace BG.GameServer.Network.Handlers
 {
     internal interface IPlayerComponent
     {

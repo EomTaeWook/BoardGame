@@ -1,5 +1,4 @@
-﻿using BG.GameServer.Network;
-using Dignus.Collections;
+﻿using Dignus.Collections;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
@@ -33,11 +32,11 @@ namespace BG.GameServer.ServerContents
         {
             return _players.Remove(player.AccountId, out Player _);
         }
-        
+
 
         private int GeneratorRoomNumber()
         {
-            lock(_roomNumbers.SyncRoot)
+            lock (_roomNumbers.SyncRoot)
             {
                 for (int i = 0; i < 10; ++i)
                 {
@@ -45,7 +44,7 @@ namespace BG.GameServer.ServerContents
 
                     if (_roomNumbers.Contains(roomNumber) == false)
                     {
-                        if(_roomNumbers.Add(roomNumber) == true)
+                        if (_roomNumbers.Add(roomNumber) == true)
                         {
                             return roomNumber;
                         }
@@ -64,7 +63,7 @@ namespace BG.GameServer.ServerContents
 
             var roomNumber = GeneratorRoomNumber();
 
-            if(roomNumber == -1)
+            if (roomNumber == -1)
             {
                 return false;
             }
@@ -115,11 +114,11 @@ namespace BG.GameServer.ServerContents
 
         public bool TryGetGameRoom(int roomNumber, RoomMode roomMode, out RoomBase room)
         {
-            if(roomMode == RoomMode.Public)
+            if (roomMode == RoomMode.Public)
             {
                 return _rooms.TryGetValue(roomNumber, out room);
             }
-            else if(roomMode == RoomMode.Private)
+            else if (roomMode == RoomMode.Private)
             {
                 return _privateRooms.TryGetValue(roomNumber, out room);
             }

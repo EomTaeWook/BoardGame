@@ -1,8 +1,7 @@
 ﻿using Assets.Scripts.GameContents;
-using BG.GameServer.ServerContents;
 using Dignus.Sockets.Interfaces;
 
-namespace BG.GameServer.Network
+namespace BG.GameServer.ServerContents
 {
     internal class Player : IPlayer
     {

@@ -1,5 +1,4 @@
-﻿using BG.GameServer.Network;
-using Dignus.Sockets.Interfaces;
+﻿using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;
 using System;
