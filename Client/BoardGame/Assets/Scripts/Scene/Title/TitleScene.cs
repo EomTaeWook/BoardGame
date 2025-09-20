@@ -16,7 +16,7 @@ namespace Assets.Scripts.Scene.Title
         {
             ApplicationManager.Instance.Init(_buildTaretType);
 
-            _titleSceneController = DignusUnityServiceContainer.Resolve<TitleSceneController>();
+            _titleSceneController = DignusUnityServiceContainer.GetService<TitleSceneController>();
             _titleSceneController.BindScene(this);
 
             _titleSceneController.Init();

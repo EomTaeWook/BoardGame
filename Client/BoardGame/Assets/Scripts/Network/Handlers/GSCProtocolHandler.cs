@@ -52,7 +52,7 @@ namespace Assets.Scripts.Network.Handlers
         {
             UnityMainThread.Add(() =>
             {
-                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
                 controller.LeaveRoom(leaveRoomResponse);
             });
         }
@@ -60,7 +60,7 @@ namespace Assets.Scripts.Network.Handlers
         {
             UnityMainThread.Add(() =>
             {
-                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
                 controller.RoomList(getRoomListResponse);
             });
         }
@@ -75,7 +75,7 @@ namespace Assets.Scripts.Network.Handlers
                 }
 
 
-                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
 
                 controller.CreateRoom(createRoomResponse);
             });
@@ -84,7 +84,7 @@ namespace Assets.Scripts.Network.Handlers
         {
             UnityMainThread.Add(() =>
             {
-                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
 
                 if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.NotFound)
                 {
@@ -109,7 +109,7 @@ namespace Assets.Scripts.Network.Handlers
                     return;
                 }
 
-                var controller = DignusUnityServiceContainer.Resolve<LobbySceneController>();
+                var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
                 controller.StartGameRoom(startGameRoomResponse);
             });
         }

@@ -16,7 +16,7 @@ namespace Assets.Scripts.Extensions
                 LogHelper.Error($"invalid template id : {id}");
                 return null;
             }
-            var userService = DignusUnityServiceContainer.Resolve<UserService>();
+            var userService = DignusUnityServiceContainer.GetService<UserService>();
 
             var userModel = userService.GetUserModel();
 

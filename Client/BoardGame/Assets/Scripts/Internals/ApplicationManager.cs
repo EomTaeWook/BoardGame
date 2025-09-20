@@ -63,7 +63,7 @@ namespace Assets.Scripts.Internals
         private void OnApplicationQuit()
         {
             UnityMainThread.Stop();
-            var gameClientService = DignusUnityServiceContainer.Resolve<GameClientService>();
+            var gameClientService = DignusUnityServiceContainer.GetService<GameClientService>();
             gameClientService.Dispose();
         }
         private void InitTemplate()
