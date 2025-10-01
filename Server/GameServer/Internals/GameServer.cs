@@ -8,7 +8,6 @@ using Dignus.Sockets;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using System;
-using System.Collections.Generic;
 
 namespace BG.GameServer.Internals
 {
@@ -32,13 +31,13 @@ namespace BG.GameServer.Internals
             _gameServerMoudle.Start(port);
         }
 
-        private Tuple<IPacketSerializer, IPacketHandler, ICollection<ISessionComponent>> MakeSerializersFunc()
+        private SessionSetup MakeSerializersFunc()
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
             RobbyManager robbyManager = _serviceProvider.GetService<RobbyManager>();
             HeartBeat heartBeat = _serviceProvider.GetService<HeartBeat>();
 
-            return Tuple.Create<IPacketSerializer, IPacketHandler, ICollection<ISessionComponent>>(
+            return new SessionSetup(
                 packetProcessor,
                 packetProcessor,
                 [
