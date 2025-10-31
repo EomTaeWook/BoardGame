@@ -11,7 +11,6 @@ using Dignus.Unity.Framework;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;
 using System.Collections.Generic;
-using UnityEngine.Analytics;
 
 namespace Assets.Scripts.Scene.Title
 {
@@ -32,7 +31,7 @@ namespace Assets.Scripts.Scene.Title
             {
                 AccountId = _userService.GetUserModel().AccountId,
                 Nickname = _userService.GetUserModel().Nickname
-            }; 
+            };
         }
 
         public void RoomListRequest(int pageIndex, int itemSize)
@@ -145,9 +144,9 @@ namespace Assets.Scripts.Scene.Title
 
         public override void Dispose()
         {
-            foreach(var kv in Model.LobbyRoomInfos)
+            foreach (var kv in Model.LobbyRoomInfos)
             {
-                foreach(var item in kv.Value)
+                foreach (var item in kv.Value)
                 {
                     item.Recycle();
                 }

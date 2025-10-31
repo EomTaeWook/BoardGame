@@ -21,20 +21,18 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Dignus" Version="1.0.3" />
+    <PackageReference Include="Dignus.Log" Version="1.0.3" />
+    <PackageReference Include="Dignus.Sockets" Version="1.0.4" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Share\Protocol.GSAndClient\Protocol.GSAndClient.csproj" />
   </ItemGroup>
   
 
   <ItemGroup>
-    <Reference Include="Dignus">
-      <HintPath>..\Dll\Dignus.dll</HintPath>
-    </Reference>
-    <Reference Include="Dignus.Log">
-      <HintPath>..\Dll\Dignus.Log.dll</HintPath>
-    </Reference>
-    <Reference Include="Dignus.Sockets">
-      <HintPath>..\Dll\Dignus.Sockets.dll</HintPath>
-    </Reference>
     <Reference Include="Dignus.Utils">
       <HintPath>..\Dll\Dignus.Utils.dll</HintPath>
     </Reference>

@@ -1,7 +1,6 @@
 ﻿using Assets.Scripts.Internals;
 using Assets.Scripts.Scene.Lobby.UI;
 using Dignus.Unity.Framework;
-using NUnit.Framework;
 using Protocol.GSAndClient.Models;
 using System.Collections.Generic;
 
@@ -51,7 +50,7 @@ namespace Assets.Scripts.Scene.Title
         }
         public void LobbyGameRoomUIRefresh(int pageIndex, List<RoomInfo> roomInfos)
         {
-            if(_lobbyUI != null)
+            if (_lobbyUI != null)
             {
                 _lobbyUI.RefreshRoomUI(pageIndex, roomInfos);
             }
