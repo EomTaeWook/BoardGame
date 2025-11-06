@@ -614,8 +614,20 @@
       <HintPath>Assets\Plugins\Debug\DataContainer.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Dignus">
+      <HintPath>Assets\Packages\Dignus.1.0.3\lib\net48\Dignus.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Dignus.Unity">
+      <HintPath>Assets\Packages\Dignus.Unity.1.0.4\lib\net48\Dignus.Unity.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Protocol.GSAndClient">
       <HintPath>Assets\Plugins\Debug\Protocol.GSAndClient.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Dignus.Sockets">
+      <HintPath>Assets\Packages\Dignus.Sockets.1.0.4\lib\net48\Dignus.Sockets.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
@@ -630,20 +642,8 @@
       <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d6f9955a5d5f\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Dignus">
-      <HintPath>Assets\Packages\Dignus.1.0.3\lib\net48\Dignus.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Dignus.Log">
       <HintPath>Assets\Packages\Dignus.Log.1.0.3\lib\net48\Dignus.Log.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Dignus.Unity">
-      <HintPath>Assets\Packages\Dignus.Unity.1.0.4\lib\net48\Dignus.Unity.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Dignus.Sockets">
-      <HintPath>Assets\Packages\Dignus.Sockets.1.0.4\lib\net48\Dignus.Sockets.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">

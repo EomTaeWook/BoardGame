@@ -9,6 +9,7 @@ using Protocol.GSAndClient;
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BG.GameServer.Network
 {
@@ -47,7 +48,7 @@ namespace BG.GameServer.Network
             return buffer.ToArray();
         }
 
-        public override void ProcessPacket(in ArraySegment<byte> packet)
+        public override Task ProcessPacketAsync(ArraySegment<byte> packet)
         {
             int category = BitConverter.ToInt16(packet);
 
@@ -59,13 +60,13 @@ namespace BG.GameServer.Network
                 if (ProtocolHandlerMapper.ValidateProtocol<CGProtocolHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
                 try
                 {
-                    ProtocolHandlerMapper.DispatchToHandler(cgProtocolHandler, protocol, body);
+                    return ProtocolHandlerMapper.InvokeHandlerAsync(cgProtocolHandler, protocol, body);
                 }
                 catch (Exception ex)
                 {
@@ -80,14 +81,14 @@ namespace BG.GameServer.Network
                 if (ProtocolHandlerMapper.ValidateProtocol<WallGoCommandHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
 
                 try
                 {
-                    ProtocolHandlerMapper.DispatchToHandler(wallGoCommandHandler, protocol, body);
+                    return ProtocolHandlerMapper.InvokeHandlerAsync(wallGoCommandHandler, protocol, body);
                 }
                 catch (Exception ex)
                 {
@@ -98,8 +99,8 @@ namespace BG.GameServer.Network
             {
                 LogHelper.Error($"not found category : {packetCategory}");
                 _session.Dispose();
-                return;
             }
+            return Task.CompletedTask;
         }
 
         public void SetSession(ISession session)
