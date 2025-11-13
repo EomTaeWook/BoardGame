@@ -9,6 +9,7 @@ using Protocol.GSAndClient;
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Assets.Scripts.Network
 {
@@ -53,7 +54,7 @@ namespace Assets.Scripts.Network
             return buffer.ToArray();
         }
 
-        public override void ProcessPacket(in ArraySegment<byte> packet)
+        public override Task ProcessPacketAsync(ArraySegment<byte> packet)
         {
             int category = BitConverter.ToInt16(packet);
 
@@ -65,10 +66,10 @@ namespace Assets.Scripts.Network
                 if (ProtocolHandlerMapper.ValidateProtocol<GSCProtocolHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
-                    return;
+                    return Task.CompletedTask;
                 }
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
-                ProtocolHandlerMapper.DispatchToHandler(GsCProtocolHandler, protocol, body);
+                ProtocolHandlerMapper.InvokeHandlerAsync(GsCProtocolHandler, protocol, body);
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
@@ -77,17 +78,18 @@ namespace Assets.Scripts.Network
                 if (ProtocolHandlerMapper.ValidateProtocol<WallGoCommandHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 var body = Encoding.UTF8.GetString(packet.Array, packet.Offset + TotalHeaderSize, packet.Count - TotalHeaderSize);
-                ProtocolHandlerMapper.DispatchToHandler(WallGoCommandHandler, protocol, body);
+                ProtocolHandlerMapper.InvokeHandlerAsync(WallGoCommandHandler, protocol, body);
             }
             else
             {
                 LogHelper.Error($"not found category : {packetCategory}");
-                return;
             }
+
+            return Task.CompletedTask;
         }
 
         public void SetSession(ISession session)
