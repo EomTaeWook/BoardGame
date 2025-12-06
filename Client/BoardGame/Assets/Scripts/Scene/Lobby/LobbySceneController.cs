@@ -34,7 +34,7 @@ namespace Assets.Scripts.Scene.Title
             };
         }
 
-        public void RoomListRequest(int pageIndex, int itemSize)
+        public void RequestRoomList(int pageIndex, int itemSize)
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.GetRoomList, new GetRoomList()
             {
@@ -43,15 +43,15 @@ namespace Assets.Scripts.Scene.Title
             }));
         }
 
-        public void CreateRoomReqeust(CreateRoom createRoom)
+        public void ReqeustCreateRoom(CreateRoom createRoom)
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.CreateRoom, createRoom));
         }
-        public void LeaveRoomReqeust()
+        public void ReqeustLeaveRoom()
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.LeaveRoom, new LeaveRoom()));
         }
-        public void JoinRoomRequest(int roomNumber)
+        public void RequestJoinRoom(int roomNumber)
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.JoinRoom, new JoinRoom()
             {
@@ -60,12 +60,12 @@ namespace Assets.Scripts.Scene.Title
 
             Model.JoinRoomNumber = roomNumber;
         }
-        public void StartGameRoomRequest()
+        public void RequestStartGameRoom()
         {
             _gameClientService.Send(Packet.MakePacket(CGSProtocol.StartGameRoom, new StartGameRoom()));
         }
 
-        public void CreateRoom(CreateRoomResponse createRoomResponse)
+        public void ProcessCreateRoom(CreateRoomResponse createRoomResponse)
         {
             if (createRoomResponse.Ok == false)
             {
@@ -75,7 +75,7 @@ namespace Assets.Scripts.Scene.Title
             }
             Model.JoinRoomNumber = createRoomResponse.RoomNumber;
         }
-        public void JoinRoom(JoinRoomResponse joinRoomResponse)
+        public void ProcessJoinRoom(JoinRoomResponse joinRoomResponse)
         {
             if (joinRoomResponse.FailedJoinRoomReason == JoinRoomReason.IsFull)
             {
@@ -94,19 +94,19 @@ namespace Assets.Scripts.Scene.Title
 
             Scene.RoomUIRefresh();
         }
-        public void LeaveRoom(LeaveRoomResponse leaveRoomResponse)
+        public void ProcessLeaveRoom(LeaveRoomResponse leaveRoomResponse)
         {
             Model.RoomMembers = leaveRoomResponse.Members;
 
             Scene.RoomUIRefresh();
         }
 
-        public void RoomList(GetRoomListResponse getRoomListResponse)
+        public void ProcessRoomList(GetRoomListResponse getRoomListResponse)
         {
             Scene.LobbyGameRoomUIRefresh(getRoomListResponse.Page, getRoomListResponse.RoomList);
         }
 
-        public void StartGameRoom(StartGameRoomResponse startGameRoomResponse)
+        public void ProcessStartGameRoom(StartGameRoomResponse startGameRoomResponse)
         {
             if (startGameRoomResponse.StartGameRoomReason == StartGameRoomReason.NotEnoughUser)
             {
@@ -146,11 +146,7 @@ namespace Assets.Scripts.Scene.Title
         {
             foreach (var kv in Model.LobbyRoomInfos)
             {
-                foreach (var item in kv.Value)
-                {
-                    item.Recycle();
-                }
-                kv.Value.Clear();
+                kv.Value.Recycle();
             }
             Model.LobbyRoomInfos.Clear();
         }

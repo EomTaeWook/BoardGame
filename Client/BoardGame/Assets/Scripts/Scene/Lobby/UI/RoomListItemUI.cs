@@ -61,7 +61,7 @@ namespace Assets.Scripts.Scene.Lobby.UI
 
         public void OnJoinButtonClick()
         {
-            _lobbySceneController.JoinRoomRequest(_roomInfo.RoomId);
+            _lobbySceneController.RequestJoinRoom(_roomInfo.RoomId);
         }
     }
 }

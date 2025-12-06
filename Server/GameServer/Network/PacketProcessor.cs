@@ -7,7 +7,6 @@ using Dignus.Sockets.Interfaces;
 using Dignus.Sockets.Processing;
 using Protocol.GSAndClient;
 using System;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace BG.GameServer.Network
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
     internal class PacketProcessor(CGProtocolHandler cgProtocolHandler,
-        WallGoCommandHandler wallGoCommandHandler) : PacketHandlerBase, IPacketSerializer, ISessionComponent
+        WallGoCommandHandler wallGoCommandHandler) : PacketHandlerBase, ISessionComponent
     {
         protected const int SizeToInt = sizeof(int);
         protected const int ProtocolSize = sizeof(ushort);
@@ -30,22 +29,6 @@ namespace BG.GameServer.Network
         public void Dispose()
         {
             _session = null;
-        }
-
-        public ArraySegment<byte> MakeSendBuffer(IPacket packet)
-        {
-            var sendPacket = packet as Packet;
-
-            var packetSize = sendPacket.GetLength();
-
-            var buffer = new ArrayQueue<byte>();
-
-            buffer.AddRange(BitConverter.GetBytes(packetSize));
-            buffer.AddRange(BitConverter.GetBytes(sendPacket.Category));
-            buffer.AddRange(BitConverter.GetBytes(sendPacket.Protocol));
-            buffer.AddRange(sendPacket.Body);
-
-            return buffer.ToArray();
         }
 
         public override Task ProcessPacketAsync(ArraySegment<byte> packet)

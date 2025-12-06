@@ -7,7 +7,7 @@ namespace Protocol.GSAndClient.Models
     public enum LoginReason
     {
         Success,
-        AlreadyLogin,
+        DuplicateLogin,
 
         Max,
     }

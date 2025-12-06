@@ -73,7 +73,7 @@ namespace Assets.Scripts.Scene.Lobby.UI
 
             var gameModeToggle = activeToggle.GetComponent<GameModeToggle>();
 
-            _lobbySceneController.CreateRoomReqeust(new CreateRoom()
+            _lobbySceneController.ReqeustCreateRoom(new CreateRoom()
             {
                 GameType = (int)gameModeToggle.Mode,
                 RoomMode = _roomMode

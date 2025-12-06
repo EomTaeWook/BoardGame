@@ -45,7 +45,7 @@ namespace Assets.Scripts.Scene.Lobby.UI
             }
             var roomNumber = int.Parse(_inputField.text);
 
-            _lobbySceneController.JoinRoomRequest(roomNumber);
+            _lobbySceneController.RequestJoinRoom(roomNumber);
         }
         public void OnCloseButtionClick()
         {

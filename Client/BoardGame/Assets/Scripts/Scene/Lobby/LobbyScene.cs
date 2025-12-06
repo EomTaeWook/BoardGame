@@ -52,7 +52,7 @@ namespace Assets.Scripts.Scene.Title
         {
             if (_lobbyUI != null)
             {
-                _lobbyUI.RefreshRoomUI(pageIndex, roomInfos);
+                _lobbyUI.RefreshRoomUI(roomInfos);
             }
         }
         public void CloseRoomUI()
@@ -83,7 +83,7 @@ namespace Assets.Scripts.Scene.Title
         {
             if (_lobbyUI != null)
             {
-                UIManager.Instance.RemoveUI(_lobbyUI);
+                _lobbyUI.DisposeUI();
                 _lobbyUI = null;
             }
 

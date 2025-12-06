@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.GameContents.Share;
 using Assets.Scripts.GameContents.WallGo;
-using BG.GameServer.ServerContents;
+using BG.GameServer.ServerGameContents;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;

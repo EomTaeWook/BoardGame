@@ -10,6 +10,7 @@ namespace Protocol.GSAndClient
         GetRoomListResponse,
 
         Ping,
+        RemoveGameRoom,
 
         Max
     }

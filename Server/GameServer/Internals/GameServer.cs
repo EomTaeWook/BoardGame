@@ -1,6 +1,5 @@
 ﻿using BG.GameServer.Network;
 using BG.GameServer.Network.Handlers;
-using BG.GameServer.ServerContents;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
@@ -16,6 +15,7 @@ namespace BG.GameServer.Internals
     {
         private readonly GameServerMoudle _gameServerMoudle;
         private readonly IServiceProvider _serviceProvider;
+        private readonly PacketSerializer _packetSerializer = new();
         public GameServerNode(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -34,18 +34,17 @@ namespace BG.GameServer.Internals
         private SessionSetup MakeSerializersFunc()
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
-            RobbyManager robbyManager = _serviceProvider.GetService<RobbyManager>();
+            LobbyManager robbyManager = _serviceProvider.GetService<LobbyManager>();
             HeartBeat heartBeat = _serviceProvider.GetService<HeartBeat>();
 
             return new SessionSetup(
-                packetProcessor,
+                _packetSerializer,
                 packetProcessor,
                 [
                     heartBeat,
                     packetProcessor,
                     packetProcessor.CGProtocolHandler,
                     packetProcessor.WallGoCommandHandler,
-                    robbyManager,
                 ]);
         }
     }

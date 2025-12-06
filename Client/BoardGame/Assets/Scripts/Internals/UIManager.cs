@@ -56,6 +56,10 @@ namespace Assets.Scripts.Internals
             canvasScaler.referenceResolution = ApplicationManager.Instance.GetTargetResolution();
             canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 
+            var letterBoxPrefab = DignusUnityResourceManager.Instance.LoadAsset<GameObject>(Path.Combine(Consts.Path.Common, "LetterBoxUI"));
+            var letterBoxTransform = this.InstantiateWithPool<RectTransform>(letterBoxPrefab);
+            letterBoxTransform.transform.SetParent(_uiCanvas.transform, false);
+
             _uiPopupCanvas = new GameObject("UIPopupCanvas")
             {
                 layer = LayerMask.NameToLayer("UI")
@@ -82,8 +86,6 @@ namespace Assets.Scripts.Internals
             var eventSystem = gameObject.AddComponent<EventSystem>();
             eventSystem.firstSelectedGameObject = _uiCanvas;
             gameObject.AddComponent<InputSystemUIInputModule>();
-
-            ApplicationManager.Instance.AdjustCameraViewportToAspectRatio(UICamera);
         }
         public void ShowAlert(string title, string body, Action onConfirmCallback = null)
         {

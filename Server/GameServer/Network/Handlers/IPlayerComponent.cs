@@ -1,4 +1,4 @@
-﻿using BG.GameServer.ServerContents;
+﻿using BG.GameServer.ServerGameContents;
 
 namespace BG.GameServer.Network.Handlers
 {

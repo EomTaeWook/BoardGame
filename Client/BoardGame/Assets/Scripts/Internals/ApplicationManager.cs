@@ -166,27 +166,8 @@ namespace Assets.Scripts.Internals
         }
         public void OnSceneLoadCompleted(string sceneName)
         {
-            AdjustCameraViewportToAspectRatio(Camera.main);
             var mainCamData = Camera.main.GetUniversalAdditionalCameraData();
             mainCamData.cameraStack.Add(UIManager.Instance.UICamera);
-        }
-
-        public void AdjustCameraViewportToAspectRatio(Camera camera)
-        {
-            var rect = camera.rect;
-            var scaleheight = (float)DeviceWidth / DeviceHeight / ((float)TargetWidth / TargetHeight);
-            var scalewidth = 1F / scaleheight;
-            if (scaleheight < 1F)
-            {
-                rect.height = scaleheight;
-                rect.y = (1f - scaleheight) / 2F;
-            }
-            else
-            {
-                rect.width = scalewidth;
-                rect.x = (1f - scalewidth) / 2F;
-            }
-            camera.rect = rect;
         }
     }
 }

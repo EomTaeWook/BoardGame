@@ -61,10 +61,12 @@ namespace Assets.Scripts.Service
         {
             PacketProcessor packetProcessor = _serviceProvider.GetService<PacketProcessor>();
 
-            var components = new List<ISessionComponent>();
-            components.Add(packetProcessor);
-            components.Add(packetProcessor.GsCProtocolHandler);
-            components.Add(packetProcessor.WallGoCommandHandler);
+            var components = new List<ISessionComponent>
+            {
+                packetProcessor,
+                packetProcessor.GsCProtocolHandler,
+                packetProcessor.WallGoCommandHandler
+            };
 
             return new SessionSetup(
                 packetProcessor,
@@ -101,7 +103,7 @@ namespace Assets.Scripts.Service
             {
                 return;
             }
-            _clientModule.Send(packet);
+            _clientModule.SendAsync(packet);
         }
     }
 }

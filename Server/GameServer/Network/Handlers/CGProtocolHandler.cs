@@ -1,4 +1,5 @@
-﻿using BG.GameServer.ServerContents;
+﻿using BG.GameServer.Internals;
+using BG.GameServer.ServerGameContents;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.Log;
 using Dignus.Sockets.Interfaces;
@@ -10,10 +11,11 @@ using System.Text.Json;
 namespace BG.GameServer.Network.Handlers
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
-    internal class CGProtocolHandler : IProtocolHandler<string>, ISessionComponent
+    internal class CGProtocolHandler(LobbyManager lobbyManager,
+        SessionManager sessionManager,
+        Broadcaster broadcaster) : IProtocolHandler<string>, ISessionComponent
     {
         private HeartBeat _heartBeat;
-        private RobbyManager _robbyManager;
         private Player _player;
         private ISession _session;
         public T DeserializeBody<T>(string body)
@@ -29,7 +31,7 @@ namespace BG.GameServer.Network.Handlers
                 {
                     LeaveRoom(new LeaveRoom());
                 }
-                _robbyManager.TryRemovePlayer(_player);
+                sessionManager.TryRemovePlayer(_player);
             }
             _player = null;
         }
@@ -40,7 +42,7 @@ namespace BG.GameServer.Network.Handlers
                 _session.Dispose();
                 return;
             }
-            var roomList = _robbyManager.GetRooms(getRoomList.Page, getRoomList.ItemSize);
+            var roomList = lobbyManager.GetRooms(getRoomList.Page, getRoomList.ItemSize);
 
             var roomInfos = new List<RoomInfo>();
 
@@ -114,11 +116,11 @@ namespace BG.GameServer.Network.Handlers
 
             if (createRoom.RoomMode == RoomMode.Public)
             {
-                _robbyManager.TryCreateGameRoom(gameType, out room);
+                lobbyManager.TryCreateGameRoom(gameType, out room);
             }
             else if (createRoom.RoomMode == RoomMode.Private)
             {
-                _robbyManager.TryCreatePrivateGameRoom(gameType, out room);
+                lobbyManager.TryCreatePrivateGameRoom(gameType, out room);
             }
             else
             {
@@ -145,7 +147,7 @@ namespace BG.GameServer.Network.Handlers
                         RoomNumber = room.RoomNumber
                     }));
 
-            JoinRoom(new Protocol.GSAndClient.JoinRoom()
+            JoinRoom(new JoinRoom()
             {
                 RoomMode = createRoom.RoomMode,
                 RoomNumber = room.RoomNumber
@@ -159,7 +161,7 @@ namespace BG.GameServer.Network.Handlers
                 return;
             }
 
-            if (_robbyManager.TryGetGameRoom(joinRoom.RoomNumber, joinRoom.RoomMode, out var room) == false)
+            if (lobbyManager.TryGetGameRoom(joinRoom.RoomNumber, joinRoom.RoomMode, out var room) == false)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.JoinRoomResponse,
                     new JoinRoomResponse()
@@ -236,8 +238,18 @@ namespace BG.GameServer.Network.Handlers
 
             if (room.IsEmpty())
             {
-                _robbyManager.RemoveRoom(leaveRoom.RoomMode, room.RoomNumber);
+                var roomNumber = room.RoomNumber;
+                lobbyManager.RemoveRoom(leaveRoom.RoomMode, roomNumber);
                 room.Dispose();
+
+                var packet = Packet.MakePacket((ushort)PacketCategory.Lobby,
+                    (int)GSCProtocol.RemoveGameRoom,
+                    new RemoveGameRoom()
+                    {
+                        RoomNumber = roomNumber
+                    });
+
+                broadcaster.EnqueueBroadcast(packet);
             }
         }
 
@@ -255,13 +267,25 @@ namespace BG.GameServer.Network.Handlers
                 _session.Dispose();
                 return;
             }
+
+            var alreadyLoginPlayer = sessionManager.GetPlayer(login.AccountId);
+            if (alreadyLoginPlayer != null)
+            {
+                alreadyLoginPlayer.Send(Packet.MakePacket(GSCProtocol.LoginResponse, new LoginResponse()
+                {
+                    LoginReason = LoginReason.DuplicateLogin,
+                }));
+                alreadyLoginPlayer.Close();
+                sessionManager.TryRemovePlayer(alreadyLoginPlayer);
+            }
+
             _player = new Player(login.AccountId, login.Nickname, _session);
 
-            if (_robbyManager.TryAddPlayer(_player) == false)
+            if (sessionManager.TryAddPlayer(_player) == false)
             {
                 _player.Send(Packet.MakePacket(GSCProtocol.LoginResponse, new LoginResponse()
                 {
-                    LoginReason = LoginReason.AlreadyLogin,
+                    LoginReason = LoginReason.DuplicateLogin,
                 }));
 
                 _session.Dispose();
@@ -283,7 +307,10 @@ namespace BG.GameServer.Network.Handlers
         }
         public void Pong(Pong pong)
         {
-            _heartBeat.Pong();
+            if(_heartBeat != null)
+            {
+                _heartBeat.Pong();
+            }
         }
 
         void ISessionComponent.SetSession(ISession session)
@@ -292,11 +319,7 @@ namespace BG.GameServer.Network.Handlers
 
             foreach (var component in _session.GetSessionComponents())
             {
-                if (component is RobbyManager robbyManager)
-                {
-                    _robbyManager = robbyManager;
-                }
-                else if (component is HeartBeat heartBeat)
+                if (component is HeartBeat heartBeat)
                 {
                     _heartBeat = heartBeat;
                 }

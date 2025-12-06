@@ -79,11 +79,11 @@ namespace Assets.Scripts.Scene.Lobby.UI
         }
         public void OnStartGameButtonClick()
         {
-            _lobbySceneController.StartGameRoomRequest();
+            _lobbySceneController.RequestStartGameRoom();
         }
         public void OnCloseButtonClick()
         {
-            _lobbySceneController.LeaveRoomReqeust();
+            _lobbySceneController.ReqeustLeaveRoom();
             _onCloseCallback?.Invoke();
         }
     }

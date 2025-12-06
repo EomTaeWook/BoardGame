@@ -39,7 +39,7 @@ namespace Assets.Scripts.Network.Handlers
         {
             UnityMainThread.Add(() =>
             {
-                if (loginResponse.LoginReason == LoginReason.AlreadyLogin)
+                if (loginResponse.LoginReason == LoginReason.DuplicateLogin)
                 {
                     UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1000));
                     DignusUnitySceneManager.Instance.LoadScene<TitleScene>(SceneType.TitleScene);
@@ -53,7 +53,7 @@ namespace Assets.Scripts.Network.Handlers
             UnityMainThread.Add(() =>
             {
                 var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
-                controller.LeaveRoom(leaveRoomResponse);
+                controller.ProcessLeaveRoom(leaveRoomResponse);
             });
         }
         public void GetRoomListResponse(GetRoomListResponse getRoomListResponse)
@@ -61,7 +61,7 @@ namespace Assets.Scripts.Network.Handlers
             UnityMainThread.Add(() =>
             {
                 var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
-                controller.RoomList(getRoomListResponse);
+                controller.ProcessRoomList(getRoomListResponse);
             });
         }
         public void CreateRoomResponse(CreateRoomResponse createRoomResponse)
@@ -77,7 +77,7 @@ namespace Assets.Scripts.Network.Handlers
 
                 var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
 
-                controller.CreateRoom(createRoomResponse);
+                controller.ProcessCreateRoom(createRoomResponse);
             });
         }
         public void JoinRoomResponse(JoinRoomResponse joinRoomResponse)
@@ -96,7 +96,16 @@ namespace Assets.Scripts.Network.Handlers
                     UIManager.Instance.ShowAlert(StringHelper.GetString(1001), StringHelper.GetString(1004));
                     return;
                 }
-                controller.JoinRoom(joinRoomResponse);
+                controller.ProcessJoinRoom(joinRoomResponse);
+            });
+        }
+        public void RemoveGameRoom(RemoveGameRoom removeGameRoom)
+        {
+            UnityMainThread.Add(() =>
+            {
+                var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
+
+                controller.Model.RemoveGameRoom.Value = removeGameRoom.RoomNumber;
             });
         }
         public void StartGameRoomResponse(StartGameRoomResponse startGameRoomResponse)
@@ -110,7 +119,7 @@ namespace Assets.Scripts.Network.Handlers
                 }
 
                 var controller = DignusUnityServiceContainer.GetService<LobbySceneController>();
-                controller.StartGameRoom(startGameRoomResponse);
+                controller.ProcessStartGameRoom(startGameRoomResponse);
             });
         }
     }
