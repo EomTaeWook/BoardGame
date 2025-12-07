@@ -13,3 +13,4 @@ Client/BoardGame/Logs/
 **/obj/*
 Client/Ios/*
 Client/BoardGame/Assets/Resources/PerformanceTestRun*
+/Client/BoardGame/Assembly-CSharp.csproj
