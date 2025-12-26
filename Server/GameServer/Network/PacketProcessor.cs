@@ -96,12 +96,11 @@ namespace BG.GameServer.Network
             consumedBytes = 0;
             packet = null;
 
-            if (buffer.Count < SizeToInt)
+            if(!buffer.TrySlice(out var packetSizeBytes, SizeToInt))
             {
                 return false;
             }
-
-            var packetSize = BitConverter.ToInt32(buffer.Peek(SizeToInt));
+            var packetSize = BitConverter.ToInt32(packetSizeBytes);
             if (buffer.Count < packetSize + SizeToInt)
             {
                 return false;
@@ -113,8 +112,7 @@ namespace BG.GameServer.Network
                 _session.Dispose();
                 return false;
             }
-
-            buffer.Read(SizeToInt);
+            buffer.Advance(SizeToInt);
             consumedBytes = packetSize;
             return buffer.TrySlice(out packet, consumedBytes);
         }
