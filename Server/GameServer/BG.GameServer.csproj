@@ -23,7 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Dignus" Version="1.0.12" />
     <PackageReference Include="Dignus.Log" Version="1.0.8" />
-    <PackageReference Include="Dignus.Sockets" Version="1.0.20" />
+    <PackageReference Include="Dignus.Sockets" Version="1.1.0" />
   </ItemGroup>
 
 
