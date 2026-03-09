@@ -21,9 +21,9 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Dignus" Version="1.1.0" />
+    <PackageReference Include="Dignus" Version="1.1.1" />
     <PackageReference Include="Dignus.Log" Version="1.0.9" />
-    <PackageReference Include="Dignus.Sockets" Version="1.4.1" />
+    <PackageReference Include="Dignus.Sockets" Version="1.5.2" />
   </ItemGroup>
 
 
