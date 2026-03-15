@@ -40,7 +40,7 @@ namespace BG.GameServer.Network
             if (packetCategory == PacketCategory.Lobby)
             {
                 int protocol = BitConverter.ToInt16(packet.Array, packet.Offset + CategorySize);
-                if (ProtocolHandlerMapper.ValidateProtocol<CGProtocolHandler>(protocol) == false)
+                if (ProtocolHandlerMapper.ValidateProtocol<ClientPacketHandler>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return Task.CompletedTask;

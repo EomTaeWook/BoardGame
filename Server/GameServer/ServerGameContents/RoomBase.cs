@@ -17,7 +17,7 @@ namespace BG.GameServer.ServerGameContents
         public int RoomNumber { get; private set; }
         public Player Host { get => _hostPlayer; }
         protected readonly ConcurrentDictionary<string, Player> _accountIdToPlayerMap = new();
-        private List<Player> _members = new List<Player>();
+        private readonly List<Player> _members = new List<Player>();
         private Player _hostPlayer;
 
         public abstract StartGameRoomReason StartGame();

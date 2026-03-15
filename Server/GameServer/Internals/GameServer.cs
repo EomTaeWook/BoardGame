@@ -1,4 +1,5 @@
-﻿using BG.GameServer.Network;
+﻿using BG.GameServer.Actors;
+using BG.GameServer.Network;
 using BG.GameServer.Network.Handlers;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.DependencyInjection.Extensions;
@@ -22,6 +23,9 @@ namespace BG.GameServer.Internals
 
             ProtocolHandlerMapper<CGProtocolHandler, string>.BindProtocol<CGSProtocol>();
             ProtocolHandlerMapper<WallGoCommandHandler, string>.BindProtocol<WallGoCommandProtocol>();
+
+            ProtocolStateHandlerMapper<ClientPacketHandler, object, ClientActor>.BindProtocol<CGSProtocol>();
+            ProtocolStateHandlerMapper<WallGoCommandActorHandler, object, ClientActor>.BindProtocol<WallGoCommandProtocol>();
 
             _gameServerMoudle = new GameServerMoudle(new SessionConfiguration(MakeSerializersFunc));
         }
