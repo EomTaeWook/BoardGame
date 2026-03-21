@@ -1,18 +1,19 @@
-﻿using Dignus.Log;
-using Dignus.Sockets.Interfaces;
+﻿using BG.GameServer.Messages;
+using Dignus.Actor.Network;
+using Dignus.Log;
 using Protocol.GSAndClient;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace BG.GameServer.Network
 {
-    internal class HeartBeat : ISessionComponent
+    internal class HeartBeat
     {
         private const int MaxPingPongFailures = 5;
         private const int PingpongWarningDelay = 60000;
 
         private int _currentPingPongFailCount = 0;
-        private ISession _session;
+        private INetworkSessionRef _sessionRef;
         private CancellationTokenSource _cancellationTokenSource;
         private int _pinging = 0;
         private int _currentPingPongIndex = 0;
@@ -23,18 +24,18 @@ namespace BG.GameServer.Network
         }
         public async Task SendPingAsync(ushort protocol)
         {
-            if (_session == null)
+            if (_sessionRef == null)
             {
                 return;
             }
 
             if (Interlocked.CompareExchange(ref _pinging, 1, 0) != 0)
             {
-                LogHelper.Error($"duplicated pinging! session id: {_session.Id}");
+                LogHelper.Error($"duplicated pinging! session id: {_sessionRef.GetHashCode()}");
                 return;
             }
             var packet = Packet.MakePacket((ushort)PacketCategory.Lobby, protocol, new Ping());
-            _session.Send(packet);
+            _sessionRef.SendAsync(packet);
 
             await CheckPongDelayAsync(protocol, _currentPingPongIndex);
         }
@@ -45,7 +46,7 @@ namespace BG.GameServer.Network
 
             await Task.Delay(PingpongWarningDelay, _cancellationTokenSource.Token);
 
-            if (_session == null)
+            if (_sessionRef == null)
             {
                 return;
             }
@@ -55,6 +56,7 @@ namespace BG.GameServer.Network
                 _currentPingPongFailCount++;
                 if (_currentPingPongFailCount >= MaxPingPongFailures)
                 {
+                    _sessionRef.Post(new KickUserMessage(ErrorCode.PingPongTimeout));
                     Dispose();
                     return;
                 }
@@ -70,21 +72,13 @@ namespace BG.GameServer.Network
         }
         public void Dispose()
         {
-            if (_session == null)
-            {
-                return;
-            }
-            _session.Dispose();
-            _session = null;
-
-            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource?.Cancel();
             _currentPingPongFailCount = 0;
         }
 
-        public void SetSession(ISession session)
+        public void SetSession(INetworkSessionRef session)
         {
-            _session = session;
-
+            _sessionRef = session;
             _ = SendPingAsync((ushort)GSCProtocol.Ping);
         }
     }

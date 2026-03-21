@@ -58,7 +58,7 @@ namespace BG.GameServer.Network.Codecs
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
-                if (ProtocolStateHandlerMapper.ValidateProtocol<WallGoCommandHandler, ClientActor>(protocol) == false)
+                if (ProtocolStateHandlerMapper.ValidateProtocol<WallGoCommandActorHandler, ClientActor>(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return null;
@@ -77,10 +77,7 @@ namespace BG.GameServer.Network.Codecs
             else
             {
                 LogHelper.Error($"not found category : {packetCategory}");
-                return new KickUserMessage()
-                {
-                    Reason = ErrorCode.InvalidRequest
-                };
+                return new KickUserMessage(ErrorCode.InvalidRequest);
             }
         }
 
@@ -89,7 +86,7 @@ namespace BG.GameServer.Network.Codecs
             packet = default;
             consumedBytes = 0;
 
-            if (!buffer.TrySlice(out var packetSizeBytes, SizeToInt))
+            if (buffer.TrySlice(out var packetSizeBytes, SizeToInt) == false)
             {
                 return false;
             }

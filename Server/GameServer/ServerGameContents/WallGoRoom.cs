@@ -1,38 +1,28 @@
 ﻿using Assets.Scripts.GameContents;
 using Assets.Scripts.GameContents.WallGo;
+using BG.GameServer.Actors;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents.EventHandler;
+using Dignus.Actor.Core;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;
 using System.Collections.Generic;
 
 namespace BG.GameServer.ServerGameContents
 {
-    internal class WallGoRoom : RoomBase
+    internal class WallGoRoom : RoomBaseActor
     {
-        private readonly WallGoBoard _wallGoBoard;
+        public const int MaxPlayerCount = 4;
+        public const int MinPlayerCount = 1;
+
         private readonly WallGoEventHandler _wallGoEventHandler;
-        public WallGoRoom(int roomNumber) : base(roomNumber, GameType.WallGo, 2, 4)
+        private readonly WallGoBoard _wallGoBoard;
+        public WallGoRoom(int roomNumber, IActorRef roomManagerRef) : base(roomNumber, GameType.WallGo, MaxPlayerCount, roomManagerRef)
         {
             _wallGoEventHandler = new WallGoEventHandler();
             _wallGoBoard = new WallGoBoard(_wallGoEventHandler);
 
             RegisterEventHandlers();
-        }
-
-        public override StartGameRoomReason StartGame()
-        {
-            if (MinUserCount > GetMembers().Count)
-            {
-                return StartGameRoomReason.NotEnoughUser;
-            }
-
-            var players = new List<IPlayer>();
-            players.AddRange(GetMembers());
-            _wallGoBoard.SetPlayers(players);
-            _wallGoBoard.StartGame();
-
-            return StartGameRoomReason.Success;
         }
         public override void Dispose()
         {
@@ -56,6 +46,20 @@ namespace BG.GameServer.ServerGameContents
             _wallGoEventHandler.MovePiece += WallGoEventHandler_MovePiece;
             _wallGoEventHandler.PlaceWall += WallGoEventHandler_PlaceWall;
             _wallGoEventHandler.RemoveWall += WallGoEventHandler_RemoveWall;
+        }
+        public override StartGameRoomReason StartGame()
+        {
+            if (MinPlayerCount > _accountIdToPlayerMap.Count)
+            {
+                return StartGameRoomReason.NotEnoughUser;
+            }
+
+            var players = new List<IPlayer>();
+            players.AddRange(_accountIdToPlayerMap.Values);
+            _wallGoBoard.SetPlayers(players);
+            _wallGoBoard.StartGame();
+
+            return StartGameRoomReason.Success;
         }
 
         public void MovePieceReqeust(MovePiece movePiece)

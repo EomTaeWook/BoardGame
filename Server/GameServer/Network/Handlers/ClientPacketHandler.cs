@@ -1,5 +1,4 @@
 ﻿using BG.GameServer.Actors;
-using BG.GameServer.ServerGameContents;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using System.Threading.Tasks;
@@ -8,41 +7,38 @@ namespace BG.GameServer.Network.Handlers
 {
     internal class ClientPacketHandler : IProtocolHandler<object>
     {
-        private HeartBeat _heartBeat;
-        private Player _player;
-        private ISession _session;
         public T DeserializeBody<T>(object body)
         {
             return (T)body;
         }
-        public Task GetRoomList(GetRoomList getRoomList)
+        public static async Task GetRoomList(ClientActor clientActor, GetRoomList getRoomList)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(getRoomList);
         }
-        public Task StartGameRoom(ClientActor clientActor, StartGameRoom _)
+        public static async Task StartGameRoom(ClientActor clientActor, StartGameRoom startGameRoom)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(startGameRoom);
         }
-        public Task CreateRoom(ClientActor clientActor, CreateRoom createRoom)
+        public static async Task CreateRoom(ClientActor clientActor, CreateRoom createRoom)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(createRoom);
         }
-        public Task JoinRoom(ClientActor clientActor, JoinRoom joinRoom)
+        public static async Task JoinRoom(ClientActor clientActor, JoinRoom joinRoom)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(joinRoom);
         }
-        public Task LeaveRoom(ClientActor clientActor, LeaveRoom leaveRoom)
+        public static async Task LeaveRoom(ClientActor clientActor, LeaveRoom leaveRoom)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(leaveRoom);
         }
 
-        public Task Login(ClientActor clientActor, Login login)
+        public static async Task Login(ClientActor clientActor, Login login)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(login);
         }
-        public Task Pong(ClientActor clientActor, Pong pong)
+        public static async Task Pong(ClientActor clientActor, Pong pong)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(pong);
         }
     }
 }

@@ -12,25 +12,25 @@ namespace BG.GameServer.Network.Handlers
         {
             return (T)body;
         }
-        public Task RemoveWall(ClientActor clientActor, RemoveWallReqeust reqeust)
+        public static async Task RemoveWall(ClientActor clientActor, RemoveWallReqeust request)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(request);
         }
-        public Task PlaceWall(ClientActor clientActor, PlaceWall placeWall)
+        public static async Task PlaceWall(ClientActor clientActor, PlaceWall request)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(request);
         }
-        public Task MovePiece(ClientActor clientActor, MovePieceReqeust request)
+        public static async Task MovePiece(ClientActor clientActor, MovePieceReqeust request)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(request);
         }
-        public Task SpawnPiece(ClientActor clientActor, SpawnPieceReqeust request)
+        public static async Task SpawnPiece(ClientActor clientActor, SpawnPieceReqeust request)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(request);
         }
-        public Task PlaceWall(ClientActor clientActor, PlaceWallReqeust request)
+        public static async Task PlaceWall(ClientActor clientActor, PlaceWallReqeust request)
         {
-            return Task.CompletedTask;
+            await clientActor.ProcessPacket(request);
         }
     }
 }

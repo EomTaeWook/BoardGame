@@ -4,7 +4,7 @@ namespace Protocol.GSAndClient.Models
     {
         public int RoomId { get; set; }
         public GameType GameType { get; set; }
-
         public int MemberCount { get; set; }
+        public RoomMode RoomMode { get; set; }
     }
 }
