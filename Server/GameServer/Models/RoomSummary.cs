@@ -15,5 +15,6 @@ namespace BG.GameServer.Models
         public GameType GameType { get; set; } = gameType;
         public int CurrentUserCount { get; set; } = currentUserCount;
         public int MaxUserCount { get; set; } = maxUserCount;
+        public bool IsStarted { get; set; }
     }
 }

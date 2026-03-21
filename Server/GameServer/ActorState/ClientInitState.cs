@@ -1,11 +1,13 @@
 ﻿using BG.GameServer.Actors;
 using BG.GameServer.Internals;
 using BG.GameServer.Messages;
+using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
 using Dignus.Actor.Core;
 using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
 using Protocol.GSAndClient;
+using Protocol.GSAndClient.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -51,15 +53,15 @@ namespace BG.GameServer.ActorState
                 return;
             }
 
-            var actorSystem = serviceProvider.GetService<ActorSystem>();
-            if(actorSystem.TryGetActorRef(typeof(RoomManagerActor).Name, out var actorRef))
-            {
-                await clientActor.ChangeStateAsync(new ClientLoggedInState(player, actorRef));
-            }
-            else
-            {
-                clientActor.Self.Post(new KickUserMessage(ErrorCode.InternalServerError), clientActor.Self);
-            }
+            clientActor.SetPlayer(player);
+
+            await clientActor.ChangeStateAsync(new ClientLoggedInState(player, serviceProvider));
+
+            player.Send(Packet.MakePacket(GSCProtocol.LoginResponse,
+                new LoginResponse()
+                {
+                    LoginReason = LoginReason.Success
+                }));
         }
 
         public void OnEnter()

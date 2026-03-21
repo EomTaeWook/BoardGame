@@ -1,7 +1,6 @@
 ﻿using BG.GameServer.Actors;
 using Dignus.Actor.Core.Messages;
 using Dignus.Actor.Network.Messages;
-using Protocol.GSAndClient;
 using System;
 using System.Threading.Tasks;
 
@@ -14,6 +13,5 @@ namespace BG.GameServer.Messages
             await action.Invoke(actor);
         }
     }
-
     internal record OutBoundMessage(byte[] Bytes) : IActorMessage;
 }

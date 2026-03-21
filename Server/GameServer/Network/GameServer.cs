@@ -1,4 +1,5 @@
 ﻿using BG.GameServer.Actors;
+using BG.GameServer.Messages;
 using BG.GameServer.Network.Codecs;
 using BG.GameServer.Network.Handlers;
 using Dignus.Actor.Core;
@@ -60,7 +61,7 @@ namespace BG.GameServer.Network
 
         protected override void OnAccepted(INetworkSessionRef connectedActorRef)
         {
-            
+            connectedActorRef.Post(new AcceptedMessage());
         }
         protected override void OnDeadLetterMessage(DeadLetterMessage deadLetterMessage)
         {

@@ -23,11 +23,13 @@ namespace BG.GameServer.Actors
         protected readonly Dictionary<string, Player> _accountIdToPlayerMap = [];
 
         private Player _hostPlayer;
+        private bool _isStarted;
 
         private readonly IActorRef _roomManagerRef = roomManagerRef;
 
         public abstract StartGameRoomReason StartGame();
         public abstract void Dispose();
+        protected abstract ValueTask HandleGameMessage(IActorMessage message, IActorRef sender);
 
         private bool IsFull()
         {
@@ -42,6 +44,7 @@ namespace BG.GameServer.Actors
             }
 
             _accountIdToPlayerMap.Remove(player.AccountId, out player);
+            _roomManagerRef.Post(new RoomStateUpdated(RoomId, _accountIdToPlayerMap.Count, _isStarted), Self);
 
             player.SetRoom(null);
 
@@ -52,6 +55,7 @@ namespace BG.GameServer.Actors
                     _hostPlayer = _accountIdToPlayerMap.ElementAt(0).Value;
                 }
             }
+
 
             var members = new List<PlayerModel>();
 
@@ -64,7 +68,6 @@ namespace BG.GameServer.Actors
                     IsHost = _hostPlayer.AccountId == member.AccountId,
                 });
             }
-            _roomManagerRef.Post(new UpdateParticipantCountMessage(RoomId, _accountIdToPlayerMap.Count), Self);
 
             Broadcast(Packet.MakePacket(GSCProtocol.LeaveRoomResponse,
                 new LeaveRoomResponse()
@@ -82,7 +85,15 @@ namespace BG.GameServer.Actors
                 sender.Post(new KickUserMessage(ErrorCode.InvalidRequest));
                 return ValueTask.CompletedTask;
             }
+            if(_isStarted)
+            {
+                player.Send(Packet.MakePacket(GSCProtocol.JoinRoomResponse, new JoinRoomResponse()
+                {
+                    FailedJoinRoomReason = JoinRoomReason.GameAlreadyStarted,
+                }));
 
+                return ValueTask.CompletedTask;
+            }
             if (IsFull())
             {
                 player.Send(Packet.MakePacket(GSCProtocol.JoinRoomResponse, new JoinRoomResponse()
@@ -114,7 +125,7 @@ namespace BG.GameServer.Actors
                     });
                 }
 
-                _roomManagerRef.Post(new UpdateParticipantCountMessage(RoomId, _accountIdToPlayerMap.Count), Self);
+                _roomManagerRef.Post(new RoomStateUpdated(RoomId, _accountIdToPlayerMap.Count, _isStarted), Self);
 
                 Broadcast(Packet.MakePacket(GSCProtocol.JoinRoomResponse,
                     new JoinRoomResponse()
@@ -144,12 +155,26 @@ namespace BG.GameServer.Actors
 
             var startRoomReason = StartGame();
 
-            Broadcast(Packet.MakePacket(GSCProtocol.StartGameRoomResponse,
-                new StartGameRoomResponse()
+            if (startRoomReason == StartGameRoomReason.Success)
             {
+                _isStarted = true;
+            }
+
+            _roomManagerRef.Post(new RoomStateUpdated(RoomId, _accountIdToPlayerMap.Count, _isStarted), Self);
+
+            var startRoomResponse = new StartGameRoomResponse()
+            {
+                GameType = gameType,
                 StartGameRoomReason = startRoomReason,
-                GameType = gameType
-            }));
+                RoomId = RoomId
+            };
+
+            foreach (var member in _accountIdToPlayerMap.Values)
+            {
+                member.SessionRef.Post(new PlayerMessage<StartGameRoomResponse>(startRoomResponse, member), Self);
+            }
+
+
 
             return ValueTask.CompletedTask;
         }
@@ -160,7 +185,7 @@ namespace BG.GameServer.Actors
                 JoinMemberMessage request => HandleJoinMember(request.Player, sender),
                 LeaveMemberMessage request => HandleLeaveMember(request.Player, sender),
                 StartGameRoomMessage request => HandleStartGameRoom(request.Player, sender),
-                _ => ValueTask.CompletedTask
+                _ => HandleGameMessage(message, sender)
             };
         }
 

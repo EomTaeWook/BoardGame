@@ -41,6 +41,7 @@ namespace Protocol.GSAndClient
     {
         public StartGameRoomReason StartGameRoomReason { get; set; }
         public GameType GameType { get; set; }
+        public int RoomId { get; set; }
     }
     public class RemoveGameRoom
     {

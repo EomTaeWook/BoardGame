@@ -1,16 +1,18 @@
-﻿using BG.GameServer.Messages;
-using BG.GameServer.Network;
+﻿using BG.GameServer.Actors;
+using BG.GameServer.Messages;
 using BG.GameServer.ServerGameContents;
 using Dignus.Actor.Core;
+using Dignus.DependencyInjection.Extensions;
 using Protocol.GSAndClient;
-using Protocol.GSAndClient.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace BG.GameServer.ActorState
 {
     internal class ClientLoggedInState(Player player,
-        IActorRef lobbyManagerRef) : IClientState
+        IServiceProvider serviceProvider) : IClientState
     {
+        private IActorRef _lobbyManagerRef;
         public ValueTask HandlePacket(object packet)
         {
             return packet switch
@@ -23,17 +25,21 @@ namespace BG.GameServer.ActorState
                 _ => ValueTask.CompletedTask
             };
         }
-        private ValueTask HandleStartGameRoom(StartGameRoom _)
+        private ValueTask HandleStartGameRoom(StartGameRoom message)
         {
-            if (player.RoomActorRef != null)
+            if(player.RoomActorRef == null)
             {
-                player.RoomActorRef.Post(new StartGameRoomMessage(player), player.SessionRef);
+                player.SessionRef.Kill();
+                return ValueTask.CompletedTask;
             }
+
+            player.RoomActorRef.Post(new StartGameRoomMessage(player), player.SessionRef);
+
             return ValueTask.CompletedTask;
         }
         private ValueTask HandleCreateRoom(CreateRoom message)
         {
-            lobbyManagerRef.Post(new CreateRoomMessage(message, player), player.SessionRef);
+            _lobbyManagerRef.Post(new PlayerMessage<CreateRoom>(message, player), player.SessionRef);
             return ValueTask.CompletedTask;
         }
         private ValueTask HandleLeaveRoom(LeaveRoom _)
@@ -46,22 +52,25 @@ namespace BG.GameServer.ActorState
         }
         private ValueTask HandleGetRoomList(GetRoomList message)
         {
-            lobbyManagerRef.Post(new GetRoomListRequestMessage(message), player.SessionRef);
+            _lobbyManagerRef.Post(new PlayerMessage<GetRoomList>(message, player), player.SessionRef);
             return ValueTask.CompletedTask;
         }
         private ValueTask HandleJoinRoom(JoinRoom message)
         {
-            lobbyManagerRef.Post(new JoinRoomMessage(message, player), player.SessionRef);
+            _lobbyManagerRef.Post(new PlayerMessage<JoinRoom>(message, player), player.SessionRef);
             return ValueTask.CompletedTask;
         }
 
         public void OnEnter()
         {
-            player.Send(Packet.MakePacket(GSCProtocol.LoginResponse,
-                new LoginResponse()
-                {
-                    LoginReason = LoginReason.Success
-                }));
+            var actorSystem = serviceProvider.GetService<ActorSystem>();
+
+            if(actorSystem.TryGetActorRef(typeof(RoomManagerActor).Name, out var actorRef) == false)
+            {
+                player.SessionRef.Post(new KickUserMessage(ErrorCode.InternalServerError), player.SessionRef);
+                return;
+            }
+            _lobbyManagerRef = actorRef;
         }
 
         public void OnExit()

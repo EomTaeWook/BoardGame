@@ -41,10 +41,10 @@ namespace BG.GameServer.Actors
             return InvalidRooomId;
         }
 
-        public ValueTask HandleGetRoomList(GetRoomListRequestMessage message, IActorRef sender)
+        public ValueTask HandleGetRoomList(PlayerMessage<GetRoomList> message, IActorRef sender)
         {
-            var page = message.Packet.Page;
-            var size = message.Packet.ItemSize;
+            var page = message.Value.Page;
+            var size = message.Value.ItemSize;
 
             var rooms = _roomSummaries.Values.Skip(page * size).Take(size);
 
@@ -56,6 +56,11 @@ namespace BG.GameServer.Actors
 
             foreach(var item in rooms)
             {
+                if(item.IsStarted)
+                {
+                    continue;
+                }
+
                 responsePacket.RoomList.Add(new RoomInfo()
                 {
                     GameType = item.GameType,
@@ -65,7 +70,9 @@ namespace BG.GameServer.Actors
                 });
             }
 
-            sender.Post(new GetRoomListResultMessage(responsePacket), Self);
+            message.Player.SessionRef.Send(Packet.MakePacket(GSCProtocol.GetRoomListResponse,
+                responsePacket));
+
             return ValueTask.CompletedTask;
         }
 
@@ -104,7 +111,7 @@ namespace BG.GameServer.Actors
 
             return roomId;
         }
-        public async ValueTask HandleCreateRoom(CreateRoomMessage message, IActorRef sender)
+        public async ValueTask HandleCreateRoom(PlayerMessage<CreateRoom> message, IActorRef sender)
         {
             var player = message.Player;
             if (player == null || player.RoomActorRef != null)
@@ -114,7 +121,7 @@ namespace BG.GameServer.Actors
                 return;
             }
 
-            var request = message.Packet;
+            var request = message.Value;
 
             var roomId = CreateGameRoom((GameType)request.GameType, request.RoomMode);
 
@@ -137,15 +144,15 @@ namespace BG.GameServer.Actors
                     }));
 
 
-            var joinRoomPacket = new JoinRoom()
+            var joinRoom = new JoinRoom()
             {
                 RoomMode = request.RoomMode,
                 RoomNumber = roomId
             };
 
-            await HandleJoinRoom(new JoinRoomMessage(joinRoomPacket, player), sender);
+            await HandleJoinRoom(new PlayerMessage<JoinRoom>(joinRoom, player), sender);
         }
-        public ValueTask HandleJoinRoom(JoinRoomMessage message, IActorRef sender)
+        public ValueTask HandleJoinRoom(PlayerMessage<JoinRoom> message, IActorRef sender)
         {
             var player = message.Player;
             if (player == null || player.RoomActorRef != null)
@@ -154,7 +161,7 @@ namespace BG.GameServer.Actors
                 return ValueTask.CompletedTask;
             }
 
-            var request = message.Packet;
+            var request = message.Value;
 
             if(_rooms.TryGetValue(request.RoomNumber, out var roomActorRef) == false)
             {
@@ -171,7 +178,7 @@ namespace BG.GameServer.Actors
 
             return ValueTask.CompletedTask;
         }
-        private ValueTask HandleUpdateParticipantCount(UpdateParticipantCountMessage message, IActorRef sender)
+        private ValueTask HandleUpdateParticipantCount(RoomStateUpdated message, IActorRef sender)
         {
             if(_roomSummaries.TryGetValue(sender, out var roomSummary) == false)
             {
@@ -180,8 +187,9 @@ namespace BG.GameServer.Actors
             }
 
             roomSummary.CurrentUserCount = message.CurrentUserCount;
+            roomSummary.IsStarted = message.IsStarted;
 
-            if(roomSummary.CurrentUserCount == 0)
+            if (roomSummary.CurrentUserCount == 0)
             {
                 _rooms.Remove(roomSummary.RoomId);
                 _roomSummaries.Remove(sender);
@@ -190,14 +198,15 @@ namespace BG.GameServer.Actors
 
             return ValueTask.CompletedTask;
         }
+
         protected override ValueTask OnReceive(IActorMessage message, IActorRef sender)
         {
             return message switch
             {
-                GetRoomListRequestMessage request => HandleGetRoomList(request, sender),
-                CreateRoomMessage request => HandleCreateRoom(request, sender),
-                JoinRoomMessage request => HandleJoinRoom(request, sender),
-                UpdateParticipantCountMessage request => HandleUpdateParticipantCount(request, sender),
+                PlayerMessage<GetRoomList> request => HandleGetRoomList(request, sender),
+                PlayerMessage<CreateRoom> request => HandleCreateRoom(request, sender),
+                PlayerMessage<JoinRoom> request => HandleJoinRoom(request, sender),
+                RoomStateUpdated request => HandleUpdateParticipantCount(request, sender),
                 _ => ValueTask.CompletedTask
             };
         }

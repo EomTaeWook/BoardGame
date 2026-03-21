@@ -17,6 +17,7 @@ namespace Protocol.GSAndClient.Models
         Success,
         IsFull,
         NotFound,
+        GameAlreadyStarted,
 
         Max,
     }
