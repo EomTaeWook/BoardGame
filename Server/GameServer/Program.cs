@@ -1,6 +1,6 @@
-﻿using BG.GameServer.Internals;
-using BG.GameServer.Models;
+﻿using BG.GameServer.Models;
 using BG.GameServer.Network;
+using Dignus.Actor.Core;
 using Dignus.DependencyInjection;
 using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
@@ -25,7 +25,7 @@ namespace BG.GameServer
 
             IServiceProvider serviceProvider = RegisterDependencies();
 
-            GameServerNode gameServer = serviceProvider.GetService<GameServerNode>();
+            Network.GameServer gameServer = serviceProvider.GetService<Network.GameServer>();
             var config = serviceProvider.GetService<Config>();
             gameServer.Start(config.ServerPort);
             LogHelper.Info($"BG.Server Start. port : {config.ServerPort}");
@@ -39,6 +39,10 @@ namespace BG.GameServer
             serviceContainer.RegisterDependencies(Assembly.GetExecutingAssembly());
 
             serviceContainer.RegisterType<HeartBeat, HeartBeat>();
+            serviceContainer.RegisterType((sp) => 
+            {
+                return new ActorSystem(Environment.ProcessorCount);
+            },LifeScope.Singleton);
 
             LoadConfig(serviceContainer);
 

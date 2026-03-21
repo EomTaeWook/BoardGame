@@ -1,40 +1,29 @@
 ﻿using Assets.Scripts.GameContents;
+using Dignus.Actor.Core;
+using Dignus.Actor.Network;
 using Dignus.Sockets.Interfaces;
 
 namespace BG.GameServer.ServerGameContents
 {
-    internal class Player : IPlayer
+    internal class Player(string accountId,
+        string nickname,
+        INetworkSessionRef sessionRef) : IPlayer
     {
-        public string AccountId { get; private set; }
+        public string AccountId { get; private set; } = accountId;
 
-        public string Nickname { get; private set; }
+        public string Nickname { get; private set; } = nickname;
 
-        private ISession _session;
+        public INetworkSessionRef SessionRef { get; init; } = sessionRef;
 
-        public RoomBase Room { get; private set; }
+        public IActorRef RoomActorRef { get; private set; }
 
-        public Player(string accountId, string nickname, ISession session)
+        public void SetRoom(IActorRef roomActorRef)
         {
-            AccountId = accountId;
-            Nickname = nickname;
-            _session = session;
-        }
-        public void SetRoom(RoomBase room)
-        {
-            Room = room;
+            RoomActorRef = roomActorRef;
         }
         public void Send(IPacket packet)
         {
-            _session.SendAsync(packet);
-        }
-        public void Close()
-        {
-            var session = _session;
-            if (session != null)
-            {
-                session.Dispose();
-                _session = null;
-            }
+            SessionRef.SendAsync(packet);
         }
     }
 }

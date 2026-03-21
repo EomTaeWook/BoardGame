@@ -19,7 +19,6 @@ namespace Assets.Scripts.GameContents.WallGo
     public class ChangeState : IWallGoEvent
     {
         public string AccountId { get; set; }
-
         public StateType UpdateStateType { get; set; }
     }
     public class SpawnPiece : IWallGoEvent
@@ -38,7 +37,6 @@ namespace Assets.Scripts.GameContents.WallGo
     public class PlaceWall : IWallGoEvent
     {
         public string AccountId { get; set; }
-
         public Point Point { get; set; }
         public Direction Direction { get; set; }
     }
@@ -46,7 +44,6 @@ namespace Assets.Scripts.GameContents.WallGo
     public class RemoveWall : IWallGoEvent
     {
         public string AccountId { get; set; }
-
         public Point Point { get; set; }
         public Direction Direction { get; set; }
     }

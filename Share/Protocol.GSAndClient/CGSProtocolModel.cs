@@ -5,7 +5,6 @@ namespace Protocol.GSAndClient
     public class Pong
     {
     }
-
     public class Login
     {
         public string AccountId { get; set; }
@@ -37,7 +36,6 @@ namespace Protocol.GSAndClient
     public class StartGameRoom
     {
     }
-
     public class SpawnPieceReqeust
     {
         public int PieceId { get; set; }
@@ -62,5 +60,8 @@ namespace Protocol.GSAndClient
         public int TilePointX { get; set; }
         public int TilePointY { get; set; }
         public int Direction { get; set; }
+    }
+    public class Logout
+    {
     }
 }

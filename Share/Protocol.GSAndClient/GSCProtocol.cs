@@ -11,6 +11,7 @@ namespace Protocol.GSAndClient
 
         Ping,
         RemoveGameRoom,
+        ServerNotify,
 
         Max
     }

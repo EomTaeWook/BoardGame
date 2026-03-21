@@ -13,5 +13,15 @@
 
         Max,
     }
+    public enum ErrorCode
+    {
+        Success,
+        InvalidRequest,
+        DbError,
+        AlreadyLogin,
+        PingPongTimeout,
 
+        InternalServerError,
+        Max
+    }
 }

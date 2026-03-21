@@ -6,7 +6,10 @@ namespace Protocol.GSAndClient
     public class Ping
     {
     }
-
+    public class ServerNotify 
+    {
+        public ErrorCode ErrorCode { get; set; }
+    }
     public class LoginResponse
     {
         public LoginReason LoginReason { get; set; }
@@ -14,7 +17,7 @@ namespace Protocol.GSAndClient
     public class GetRoomListResponse
     {
         public int Page { get; set; }
-        public List<RoomInfo> RoomList { get; set; }
+        public List<RoomInfo> RoomList { get; set; } = new List<RoomInfo>();
     }
 
     public class LeaveRoomResponse
@@ -38,6 +41,7 @@ namespace Protocol.GSAndClient
     {
         public StartGameRoomReason StartGameRoomReason { get; set; }
         public GameType GameType { get; set; }
+        public int RoomId { get; set; }
     }
     public class RemoveGameRoom
     {

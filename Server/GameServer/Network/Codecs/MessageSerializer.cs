@@ -1,11 +1,14 @@
-﻿using Dignus.Collections;
+﻿using BG.GameServer.Messages;
+using Dignus.Actor.Network.Codec;
+using Dignus.Actor.Network.Messages;
+using Dignus.Collections;
 using Dignus.Sockets.Interfaces;
 using System;
 using System.Linq;
 
-namespace BG.GameServer.Network
+namespace BG.GameServer.Network.Codecs
 {
-    internal class PacketSerializer : IPacketSerializer
+    internal class MessageSerializer : IActorMessageSerializer
     {
         public ArraySegment<byte> MakeSendBuffer(IPacket packet)
         {
@@ -21,6 +24,16 @@ namespace BG.GameServer.Network
             buffer.AddRange(sendPacket.Body);
 
             return buffer.ToArray();
+        }
+
+        public ArraySegment<byte> MakeSendBuffer(INetworkActorMessage message)
+        {
+            if (message is OutBoundMessage outBoundMessage)
+            {
+                return outBoundMessage.Bytes;
+            }
+
+            return null;
         }
     }
 }
