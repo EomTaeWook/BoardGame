@@ -12,20 +12,18 @@ namespace BG.GameServer.Internals
     [Injectable(Dignus.DependencyInjection.LifeScope.Singleton)]
     internal class Broadcaster(SessionManager sessionManager)
     {
-        private readonly SynchronizedArrayQueue<IPacket> _broadcastQueue = [];
+        private readonly MpscBoundedQueue<IPacket> _broadcastQueue = new(10000);
 
         private int _processing = 0;
 
         public bool EnqueueBroadcast(IPacket packet)
         {
-            if (_broadcastQueue.Count > 50000)
+            if (_broadcastQueue.TryEnqueue(packet) == false)
             {
                 LogHelper.Fatal("broadcast queue is full. dropping message.");
                 return false;
             }
-
-            _broadcastQueue.Add(packet);
-
+            
             if (Interlocked.CompareExchange(ref _processing, 1, 0) == 1)
             {
                 return true;
@@ -36,39 +34,42 @@ namespace BG.GameServer.Internals
             return true;
         }
 
-        public void SetSession(ISession session)
-        {
-            throw new NotImplementedException();
-        }
-
         private void BroadcastToAll()
         {
-            try
+            while (true)
             {
-                while (_broadcastQueue.Count > 0)
+                try
                 {
-                    if (_broadcastQueue.TryRead(out var packet) == false)
+                    while (_broadcastQueue.TryDequeue(out var packet))
                     {
-                        break;
+                        var players = sessionManager.AllPlayers.ToArray();
+
+                        Parallel.For(0, players.Length, index =>
+                        {
+                            var player = players[index];
+
+                            player.Send(packet);
+                        });
                     }
-
-                    var players = sessionManager.AllPlayers.ToArray();
-
-                    Parallel.For(0, players.Length, index =>
-                    {
-                        var player = players[index];
-
-                        player.Send(packet);
-                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Error(ex);
-            }
-            finally
-            {
-                Interlocked.Exchange(ref _processing, 0);
+                catch (Exception ex)
+                {
+                    LogHelper.Error(ex);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _processing, 0);
+                }
+
+                if (!_broadcastQueue.TryPeek(out var _))
+                {
+                    break;
+                }
+
+                if (Interlocked.CompareExchange(ref _processing, 1, 0) == 1)
+                {
+                    break;
+                }                
             }
         }
     }

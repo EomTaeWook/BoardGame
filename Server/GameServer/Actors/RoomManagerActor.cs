@@ -1,10 +1,10 @@
-﻿using BG.GameServer.Messages;
+﻿using BG.GameServer.Internals;
+using BG.GameServer.Messages;
 using BG.GameServer.Models;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
 using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
-using Dignus.Actor.Core.Messages;
 using Dignus.Collections;
 using Dignus.DependencyInjection.Extensions;
 using Protocol.GSAndClient;
@@ -24,7 +24,9 @@ namespace BG.GameServer.Actors
 
         private readonly UniqueSet<int> _roomNumbers = [];
 
-        private const int InvalidRooomId = -1;
+        private const int InvalidRoomId = -1;
+
+        private Broadcaster _broadcaster = serviceProvider.GetService<Broadcaster>();
         private int GenerateRoomNumber()
         {
             for (int i = 0; i < 10; ++i)
@@ -39,7 +41,7 @@ namespace BG.GameServer.Actors
                     }
                 }
             }
-            return InvalidRooomId;
+            return InvalidRoomId;
         }
 
         public ValueTask HandleGetRoomList(PlayerMessage<GetRoomList> message, IActorRef sender)
@@ -82,14 +84,14 @@ namespace BG.GameServer.Actors
             var roomId = -1;
             if (gameType == GameType.Max)
             {
-                return InvalidRooomId;
+                return InvalidRoomId;
             }
 
             roomId = GenerateRoomNumber();
 
             if (_rooms.ContainsKey(roomId))
             {
-                return InvalidRooomId;
+                return InvalidRoomId;
             }
 
             var actorSystem = serviceProvider.GetService<ActorSystem>();
@@ -103,7 +105,7 @@ namespace BG.GameServer.Actors
 
             if (roomActorRef == null)
             {
-                return InvalidRooomId;
+                return InvalidRoomId;
             }
             var roomSummary = new RoomSummary(roomId, roomMode, gameType, 0, maxUserCount);
 
@@ -126,7 +128,7 @@ namespace BG.GameServer.Actors
 
             var roomId = CreateGameRoom((GameType)request.GameType, request.RoomMode);
 
-            if(roomId == InvalidRooomId)
+            if(roomId == InvalidRoomId)
             {
                 message.Player.Send(Packet.MakePacket(GSCProtocol.CreateRoomResponse,
                     new CreateRoomResponse()
@@ -194,6 +196,11 @@ namespace BG.GameServer.Actors
             {
                 _rooms.Remove(roomSummary.RoomId);
                 _roomSummaries.Remove(sender);
+                var packet = Packet.MakePacket(GSCProtocol.RemoveGameRoom, new RemoveGameRoom()
+                {
+                    RoomNumber = roomSummary.RoomId
+                });
+                _broadcaster.EnqueueBroadcast(packet);
                 sender.Kill();
             }
 
