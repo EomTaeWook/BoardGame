@@ -4,8 +4,8 @@ using BG.GameServer.Internals;
 using BG.GameServer.Messages;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
-using Dignus.Actor.Core.Messages;
 using Dignus.Actor.Network;
 using Dignus.DependencyInjection.Extensions;
 using Protocol.GSAndClient;
@@ -75,7 +75,7 @@ namespace BG.GameServer.Actors
 
             return ValueTask.CompletedTask;
         }
-        public async Task ProcessPacket(object packet)
+        public async Task ProcessPacket(IActorMessage packet)
         {
             await ActorAwait.Join(this);
             if (packet is Pong)

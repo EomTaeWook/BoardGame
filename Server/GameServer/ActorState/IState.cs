@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Dignus.Actor.Abstractions;
+using System.Threading.Tasks;
 
 namespace BG.GameServer.ActorState
 {
@@ -10,6 +11,6 @@ namespace BG.GameServer.ActorState
 
     internal interface IClientState : IState
     {
-        ValueTask HandlePacket(object packet);
+        ValueTask HandlePacket(IActorMessage packet);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using BG.GameServer.Messages;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
-using Dignus.Actor.Core.Messages;
 using Dignus.Sockets.Interfaces;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;

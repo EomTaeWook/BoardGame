@@ -1,7 +1,7 @@
 ﻿using BG.GameServer.Actors;
 using BG.GameServer.Messages;
 using BG.GameServer.Network.Handlers;
-using Dignus.Actor.Core.Messages;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Network.Codec;
 using Dignus.Collections;
 using Dignus.Log;

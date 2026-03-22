@@ -1,6 +1,7 @@
 ﻿using BG.GameServer.Actors;
 using BG.GameServer.Messages;
 using BG.GameServer.ServerGameContents;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
 using Dignus.DependencyInjection.Extensions;
 using Protocol.GSAndClient;
@@ -13,7 +14,7 @@ namespace BG.GameServer.ActorState
         IServiceProvider serviceProvider) : IClientState
     {
         private IActorRef _lobbyManagerRef;
-        public ValueTask HandlePacket(object packet)
+        public ValueTask HandlePacket(IActorMessage packet)
         {
             return packet switch
             {

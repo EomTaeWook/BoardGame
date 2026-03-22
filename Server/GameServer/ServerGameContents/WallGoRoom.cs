@@ -5,6 +5,7 @@ using BG.GameServer.Actors;
 using BG.GameServer.Messages;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents.EventHandler;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
 using Dignus.Actor.Core.Messages;
 using Protocol.GSAndClient;

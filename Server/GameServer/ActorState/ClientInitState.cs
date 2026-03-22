@@ -3,6 +3,7 @@ using BG.GameServer.Internals;
 using BG.GameServer.Messages;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
 using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
@@ -16,9 +17,9 @@ namespace BG.GameServer.ActorState
     internal class ClientInitState(ClientActor clientActor,
         IServiceProvider serviceProvider) : IClientState
     {
-        public ValueTask HandlePacket(object packet)
+        public ValueTask HandlePacket(IActorMessage message)
         {
-            return packet switch
+            return message switch
             {
                 Login request => HandleLogin(request, clientActor.Self),
                 _ => ValueTask.CompletedTask

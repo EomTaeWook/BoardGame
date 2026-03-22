@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dignus" Version="1.1.1" />
-    <PackageReference Include="Dignus.ActorServer" Version="2.0.1" />
+    <PackageReference Include="Dignus.ActorServer" Version="3.0.0-preview.1" />
     <PackageReference Include="Dignus.Log" Version="1.0.9" />
   </ItemGroup>
 

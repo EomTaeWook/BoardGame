@@ -2,6 +2,7 @@
 using BG.GameServer.Messages;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
+using Dignus.Actor.Abstractions;
 using Protocol.GSAndClient;
 using System.Threading.Tasks;
 
@@ -9,9 +10,9 @@ namespace BG.GameServer.ActorState
 {
     internal class ClientInWallGoRoomState(Player player) : IClientState
     {
-        public ValueTask HandlePacket(object packet)
+        public ValueTask HandlePacket(IActorMessage message)
         {
-            return packet switch
+            return message switch
             {
                 RemoveWallReqeust reqeust => HandleRemoveWallReqeust(reqeust),
                 PlaceWall reqeust => HandlePlaceWall(reqeust),

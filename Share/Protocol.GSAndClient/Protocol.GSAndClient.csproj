@@ -6,5 +6,9 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="IF $(ConfigurationName) == Release (&#xD;&#xA;xcopy /S/Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\..\Client\BoardGame\Assets\Plugins\Debug\Protocol.GSAndClient.*&quot;&#xD;&#xA;xcopy /S/Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\..\Client\BoardGame\Assets\Plugins\Release\Protocol.GSAndClient.*&quot;&#xD;&#xA;)" />
   </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Dignus.Actor.Abstractions" Version="1.0.0" />
+  </ItemGroup>
   
 </Project>

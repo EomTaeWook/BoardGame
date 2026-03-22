@@ -2,6 +2,7 @@
 using BG.GameServer.Models;
 using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
+using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
 using Dignus.Actor.Core.Messages;
 using Dignus.Collections;

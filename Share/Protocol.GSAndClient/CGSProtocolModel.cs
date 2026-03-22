@@ -1,67 +1,68 @@
-﻿using Protocol.GSAndClient.Models;
+﻿using Dignus.Actor.Abstractions;
+using Protocol.GSAndClient.Models;
 
 namespace Protocol.GSAndClient
 {
-    public class Pong
+    public class Pong : IActorMessage
     {
     }
-    public class Login
+    public class Login : IActorMessage
     {
         public string AccountId { get; set; }
         public string Nickname { get; set; }
     }
-    public class GetRoomList
+    public class GetRoomList : IActorMessage
     {
         public int Page { get; set; }
 
         public int ItemSize { get; set; }
     }
 
-    public class LeaveRoom
+    public class LeaveRoom : IActorMessage
     {
         public RoomMode RoomMode { get; set; }
     }
-    public class CreateRoom
+    public class CreateRoom : IActorMessage
     {
         public int GameType { get; set; }
 
         public RoomMode RoomMode { get; set; }
     }
-    public class JoinRoom
+    public class JoinRoom : IActorMessage
     {
         public int RoomNumber { get; set; }
 
         public RoomMode RoomMode { get; set; }
     }
-    public class StartGameRoom
+    public class StartGameRoom : IActorMessage
     {
     }
-    public class SpawnPieceReqeust
+    public class SpawnPieceReqeust : IActorMessage
     {
         public int PieceId { get; set; }
         public int SpawnedPointX { get; set; }
         public int SpawnedPointY { get; set; }
     }
-    public class MovePieceReqeust
+    public class MovePieceReqeust : IActorMessage
     {
         public int PieceId { get; set; }
         public int MovePointX { get; set; }
         public int MovePointY { get; set; }
     }
-    public class PlaceWallReqeust
+    public class PlaceWallReqeust : IActorMessage
     {
         public int TilePointX { get; set; }
         public int TilePointY { get; set; }
         public int Direction { get; set; }
     }
 
-    public class RemoveWallReqeust
+    public class RemoveWallReqeust : IActorMessage
     {
         public int TilePointX { get; set; }
         public int TilePointY { get; set; }
         public int Direction { get; set; }
     }
-    public class Logout
+    public class Logout : IActorMessage
     {
     }
 }
