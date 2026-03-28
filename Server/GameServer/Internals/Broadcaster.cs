@@ -61,7 +61,7 @@ namespace BG.GameServer.Internals
                     Interlocked.Exchange(ref _processing, 0);
                 }
 
-                if (!_broadcastQueue.TryPeek(out var _))
+                if (_broadcastQueue.IsEmpty)
                 {
                     break;
                 }
