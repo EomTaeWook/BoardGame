@@ -7,7 +7,7 @@ using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents.EventHandler;
 using Dignus.Actor.Abstractions;
 using Dignus.Actor.Core;
-using Dignus.Actor.Core.Messages;
+using Dignus.Log;
 using Protocol.GSAndClient;
 using Protocol.GSAndClient.Models;
 using System.Collections.Generic;
@@ -170,8 +170,13 @@ namespace BG.GameServer.ServerGameContents
                 PlayerMessage<RemoveWallReqeust> request => HandleRemoveWallReqeust(request.Value, request.Player),
                 PlayerMessage<SpawnPieceReqeust> request => HandleSpawnPieceReqeust(request.Value, request.Player),
 
-                _ => ValueTask.CompletedTask
+                _ => UnhandleMessage(message, sender)
             };
+        }
+        private static ValueTask UnhandleMessage(IActorMessage message, IActorRef sender)
+        {
+            LogHelper.Error($"WallGoRoom: {message.GetType()}");
+            return ValueTask.CompletedTask;
         }
     }
 }

@@ -196,7 +196,7 @@ namespace BG.GameServer.Actors
                 player.Send(packet);
             }
         }
-        public override void OnKill()
+        protected override void OnKill()
         {
             Broadcast(Packet.MakePacket(GSCProtocol.LeaveRoomResponse,
                     new LeaveRoomResponse()

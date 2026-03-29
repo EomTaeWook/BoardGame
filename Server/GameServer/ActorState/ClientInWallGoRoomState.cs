@@ -1,8 +1,8 @@
 ﻿using Assets.Scripts.GameContents.WallGo;
 using BG.GameServer.Messages;
-using BG.GameServer.Network;
 using BG.GameServer.ServerGameContents;
 using Dignus.Actor.Abstractions;
+using Dignus.Log;
 using Protocol.GSAndClient;
 using System.Threading.Tasks;
 
@@ -14,13 +14,19 @@ namespace BG.GameServer.ActorState
         {
             return message switch
             {
+                GetRoomList => ValueTask.CompletedTask,
                 RemoveWallReqeust reqeust => HandleRemoveWallReqeust(reqeust),
                 PlaceWall reqeust => HandlePlaceWall(reqeust),
                 MovePieceReqeust reqeust => HandleMovePieceReqeust(reqeust),
                 SpawnPieceReqeust reqeust => HandleSpawnPieceReqeust(reqeust),
                 PlaceWallReqeust reqeust => HandlePlaceWallReqeust(reqeust),
-                _ => ValueTask.CompletedTask
+                _ => UnhandleMessage(message)
             };
+        }
+        private static ValueTask UnhandleMessage(IActorMessage message)
+        {
+            LogHelper.Error($"[ClientInWallGoRoomState]: {message.GetType()}");
+            return ValueTask.CompletedTask;
         }
         public ValueTask HandlePlaceWallReqeust(PlaceWallReqeust message)
         {

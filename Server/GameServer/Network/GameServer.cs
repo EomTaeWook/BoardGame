@@ -1,7 +1,8 @@
 ﻿using BG.GameServer.Actors;
+using BG.GameServer.Extensions;
+using BG.GameServer.Internals;
 using BG.GameServer.Messages;
 using BG.GameServer.Network.Codecs;
-using BG.GameServer.Network.Handlers;
 using Dignus.Actor.Core;
 using Dignus.Actor.Core.DeadLetter;
 using Dignus.Actor.Network;
@@ -9,8 +10,6 @@ using Dignus.Actor.Network.Options;
 using Dignus.DependencyInjection.Attributes;
 using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
-using Dignus.Sockets;
-using Protocol.GSAndClient;
 using System;
 
 namespace BG.GameServer.Network
@@ -25,12 +24,16 @@ namespace BG.GameServer.Network
         {
             _serviceProvider = serviceProvider;
 
-            ProtocolStateHandlerMapper<ClientPacketHandler, object, ClientActor>.BindProtocol<CGSProtocol>();
+            var systemProtocolMapper = _serviceProvider.GetService<SystemProtocolMapper>();
 
-            ProtocolStateHandlerMapper<WallGoCommandActorHandler, object, ClientActor>.BindProtocol<WallGoCommandProtocol>();
+            var wallGoProtocolMapper = _serviceProvider.GetService<WallGoProtocolMapper>();
+
+            systemProtocolMapper.RegisterServerProtocols();
+
+            wallGoProtocolMapper.RegisterServerProtocols();
 
             var option = ServerOptions.Builder()
-                .UseDecoder(new PacketFramer())
+                .UseDecoder(new PacketFramer(serviceProvider))
                 .UseSerializer(new MessageSerializer())
                 .Build();
 

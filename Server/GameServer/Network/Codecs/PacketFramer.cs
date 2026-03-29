@@ -1,9 +1,9 @@
-﻿using BG.GameServer.Actors;
+﻿using BG.GameServer.Internals;
 using BG.GameServer.Messages;
-using BG.GameServer.Network.Handlers;
 using Dignus.Actor.Abstractions;
 using Dignus.Actor.Network.Codec;
 using Dignus.Collections;
+using Dignus.DependencyInjection.Extensions;
 using Dignus.Log;
 using Dignus.Sockets;
 using Dignus.Sockets.Interfaces;
@@ -11,11 +11,10 @@ using Protocol.GSAndClient;
 using System;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace BG.GameServer.Network.Codecs
 {
-    internal class PacketFramer : IActorMessageDecoder
+    internal class PacketFramer(IServiceProvider serviceProvider) : IActorMessageDecoder
     {
         protected const int SizeToInt = sizeof(int);
         protected const int ProtocolSize = sizeof(ushort);
@@ -23,8 +22,9 @@ namespace BG.GameServer.Network.Codecs
         private const int MaxBodySize = 65536;
         protected const int TotalHeaderSize = CategorySize + ProtocolSize;
 
-        private readonly ClientPacketHandler _clientPacketHandler = new();
-        private readonly WallGoCommandActorHandler _wallGoCommandActorHandler = new();
+        private readonly SystemProtocolMapper _systemProtocolMapper = serviceProvider.GetService<SystemProtocolMapper>();
+
+        private readonly WallGoProtocolMapper _wallGoProtocolMapper = serviceProvider.GetService<WallGoProtocolMapper>();
 
         public IActorMessage Deserialize(ReadOnlySpan<byte> packet)
         {
@@ -40,39 +40,31 @@ namespace BG.GameServer.Network.Codecs
 
             if (packetCategory == PacketCategory.Lobby)
             {
-                if (ProtocolStateHandlerMapper.ValidateProtocol<ClientPacketHandler, ClientActor>(protocol) == false)
+                if (_systemProtocolMapper.Contains(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return null;
                 }
 
-                var bodyType = ProtocolStateHandlerMapper.GetBodyType<ClientPacketHandler, ClientActor>(protocol);
+                var bodyType = _systemProtocolMapper.GetBodyType(protocol);
 
                 var bodyPacketObject = JsonSerializer.Deserialize(bodyString, bodyType);
 
-                async Task lambdaMessage(ClientActor actor)
-                {
-                    await ProtocolStateHandlerMapper.InvokeHandlerAsync(_clientPacketHandler, protocol, actor, bodyPacketObject);
-                }
-                return new InBoundLambda(lambdaMessage);
+                return (IActorMessage)bodyPacketObject;
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
-                if (ProtocolStateHandlerMapper.ValidateProtocol<WallGoCommandActorHandler, ClientActor>(protocol) == false)
+                if (_wallGoProtocolMapper.Contains(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return null;
                 }
 
-                var bodyType = ProtocolStateHandlerMapper.GetBodyType<WallGoCommandActorHandler, ClientActor>(protocol);
+                var bodyType = _wallGoProtocolMapper.GetBodyType(protocol);
 
                 var bodyPacketObject = JsonSerializer.Deserialize(bodyString, bodyType);
 
-                async Task lambdaMessage(ClientActor actor)
-                {
-                    await ProtocolStateHandlerMapper.InvokeHandlerAsync(_wallGoCommandActorHandler, protocol, actor, bodyPacketObject);
-                }
-                return new InBoundLambda(lambdaMessage);
+                return (IActorMessage)bodyPacketObject;
             }
             else
             {

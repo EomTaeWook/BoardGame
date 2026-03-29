@@ -33,13 +33,18 @@ namespace BG.GameServer.Actors
         {
             return message switch
             {
-                InBoundLambda request => HandleInBound(request),
+                Pong => HandlePong(),
                 KickUserMessage request => HandleServerNotify(request),
                 AcceptedMessage => HandleAccept(),
                 PlayerMessage<StartGameRoomResponse> request => HandleStartGame(request),
                 PlayerMessage<EndGame> request => HandleEndGame(request),
-                _ => ValueTask.CompletedTask
+                _ => HandleMessage(message)
             };
+        }
+        private ValueTask HandlePong()
+        {
+            _heartBeat.Pong();
+            return ValueTask.CompletedTask;
         }
         private ValueTask HandleAccept()
         {
@@ -60,9 +65,9 @@ namespace BG.GameServer.Actors
             this.Session.SendAsync(Packet.MakePacket(GSCProtocol.StartGameRoomResponse,
                 message.Value));
         }
-        private async ValueTask HandleInBound(InBoundLambda message)
+        private ValueTask HandleMessage(IActorMessage message)
         {
-            await message.InvokeAsync(this);
+            return _currentState.HandlePacket(message);
         }
         private ValueTask HandleServerNotify(KickUserMessage message)
         {
@@ -75,16 +80,7 @@ namespace BG.GameServer.Actors
 
             return ValueTask.CompletedTask;
         }
-        public async Task ProcessPacket(IActorMessage packet)
-        {
-            await ActorAwait.Join(this);
-            if (packet is Pong)
-            {
-                _heartBeat.Pong();
-                return;
-            }
-            await _currentState.HandlePacket(packet);
-        }
+
         public async ValueTask ChangeStateAsync(IClientState newState)
         {
             await ActorAwait.Join(this);
@@ -102,7 +98,7 @@ namespace BG.GameServer.Actors
         {
             _player = player;
         }
-        public override void OnKill()
+        protected override void OnKill()
         {
             _heartBeat.Dispose();
 
