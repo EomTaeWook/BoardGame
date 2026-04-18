@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Assets.Scripts.Network
 {
     [Injectable(Dignus.DependencyInjection.LifeScope.Transient)]
-    internal class PacketProcessor : PacketHandlerBase, IPacketSerializer, ISessionComponent
+    internal class PacketProcessor : SessionlessPacketProcessor, IPacketSerializer, ISessionComponent
     {
         protected const int SizeToInt = sizeof(int);
         protected const int ProtocolSize = sizeof(ushort);

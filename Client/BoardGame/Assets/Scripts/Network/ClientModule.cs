@@ -5,7 +5,7 @@ using System;
 
 namespace Assets.Scripts.Network
 {
-    public class ClientModule : ClientBase
+    public class ClientModule : TcpClientBase
     {
         public event Action<ISession> Disconnected;
 

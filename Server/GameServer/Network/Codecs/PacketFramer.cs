@@ -40,7 +40,7 @@ namespace BG.GameServer.Network.Codecs
 
             if (packetCategory == PacketCategory.Lobby)
             {
-                if (_systemProtocolMapper.Contains(protocol) == false)
+                if (_systemProtocolMapper.ContainsProtocol(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return null;
@@ -54,7 +54,7 @@ namespace BG.GameServer.Network.Codecs
             }
             else if (packetCategory == PacketCategory.WallGo)
             {
-                if (_wallGoProtocolMapper.Contains(protocol) == false)
+                if (_wallGoProtocolMapper.ContainsProtocol(protocol) == false)
                 {
                     LogHelper.Error($"not found protocol : {protocol}");
                     return null;
