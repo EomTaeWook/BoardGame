@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Dignus.Log</id>
+    <version>1.0.10</version>
+    <title>Dignus.Log</title>
+    <authors>EomTaeWook</authors>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <icon>Icon.jpg</icon>
+    <readme>Dignus.Log.md</readme>
+    <projectUrl>https://github.com/EomTaeWook/Dignus-Public</projectUrl>
+    <description>Lightweight and fast logging library for Dignus.</description>
+    <copyright>© 2021–2026 EomTaeWook. Released under the MIT License.</copyright>
+    <repository type="git" url="https://github.com/EomTaeWook/Dignus" commit="8dce3eefe06986844f7c47a7a39ce9bcd132c494" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="Dignus" version="1.1.3" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.8.1">
+        <dependency id="Dignus" version="1.1.3" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net10.0">
+        <dependency id="Dignus" version="1.1.3" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net8.0">
+        <dependency id="Dignus" version="1.1.3" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0">
+        <dependency id="Dignus" version="1.1.3" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Dignus" version="1.1.3" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
