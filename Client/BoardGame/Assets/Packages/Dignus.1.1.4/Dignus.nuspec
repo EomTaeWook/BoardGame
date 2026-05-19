@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Dignus</id>
+    <version>1.1.4</version>
+    <title>Dignus</title>
+    <authors>EomTaeWook</authors>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <icon>Icon.jpg</icon>
+    <readme>Dignus.Core.md</readme>
+    <projectUrl>https://github.com/EomTaeWook/Dignus-Public</projectUrl>
+    <description>A versatile core library focused on high performance and stability.</description>
+    <copyright>© 2021–2026 EomTaeWook. Released under the MIT License.</copyright>
+    <repository type="git" url="https://github.com/EomTaeWook/Dignus" commit="bf95c2dd901058910284c1aec2a1324716fbbe7d" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.8" />
+      <group targetFramework=".NETFramework4.8.1" />
+      <group targetFramework="net10.0" />
+      <group targetFramework="net8.0" />
+      <group targetFramework="net9.0" />
+      <group targetFramework=".NETStandard2.1" />
+    </dependencies>
+  </metadata>
+</package>

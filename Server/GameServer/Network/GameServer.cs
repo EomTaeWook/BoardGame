@@ -1,5 +1,4 @@
 ﻿using BG.GameServer.Actors;
-using BG.GameServer.Extensions;
 using BG.GameServer.Internals;
 using BG.GameServer.Messages;
 using BG.GameServer.Network.Codecs;
@@ -29,7 +28,6 @@ namespace BG.GameServer.Network
             var wallGoProtocolMapper = _serviceProvider.GetService<WallGoProtocolMapper>();
 
             systemProtocolMapper.RegisterServerProtocols();
-
             wallGoProtocolMapper.RegisterServerProtocols();
 
             var option = ServerOptions.Builder()
