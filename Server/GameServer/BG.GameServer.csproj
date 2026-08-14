@@ -21,8 +21,8 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Dignus.ActorServer" Version="3.1.2" />
-    <PackageReference Include="Dignus.Log" Version="1.0.11" />
+    <PackageReference Include="Dignus.ActorServer" Version="3.1.7" />
+    <PackageReference Include="Dignus.Log" Version="1.0.12" />
   </ItemGroup>
 
 
